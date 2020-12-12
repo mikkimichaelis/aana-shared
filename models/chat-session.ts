@@ -1,4 +1,4 @@
-import { IUserBase } from '.';
+import { IUserBase } from './userBase.class';
 
 export interface IChatSession {
     id: string;

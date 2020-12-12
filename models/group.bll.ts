@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { IGroup, IUserMember, UserBLL } from './';
+import { IGroup, IUserMember  } from '.';
+import { UserBLL } from '../bll';
 
 export class GroupBLL {
 

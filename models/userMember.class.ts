@@ -1,5 +1,5 @@
-import _ = require("lodash");
-import { IHomeGroup, IUserActivity } from ".";
+import _ from 'lodash';
+import { IHomeGroup, IUserActivity } from '.';
 import { UserBLL } from './user.bll';
 import { UserBase } from './userBase.class';
 

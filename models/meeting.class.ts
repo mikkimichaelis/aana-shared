@@ -2,7 +2,8 @@ import * as _ from 'lodash';
 import { FirePoint } from "geofirex";
 
 import { Id } from "./id.class";
-import { IRideRequest, IUserBadge, IUserBase } from ".";
+import { IUserBase } from './userBase.class';
+import { IRideRequest, IUserBadge } from ".";
 
 export interface IMeeting {
     gid: string;        // group id

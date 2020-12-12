@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
-import { UserBase, UserPosition, IUserBase, IUserOnline, IUserPosition, IUserBadge } from ".";
+
+import { IUserBase, UserBase } from './userBase.class';
+import { UserPosition, IUserOnline, IUserPosition, IUserBadge } from ".";
 
 export interface IUserActivity {
     base: IUserBase;

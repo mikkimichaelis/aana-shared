@@ -1,19 +1,16 @@
 import * as _ from 'lodash';
-import { Id } from './id.class';
+import { Id, IId } from './id.class';
 
-export interface IUserBase {
-    id: string;
+export interface IUserBase extends IId {
     name: string;
 }
 
 export class UserBase extends Id implements IUserBase {
-    base!: IUserBase;
     name!: string;
 
-    constructor(user?: any) {
-        super(_.merge({
-            user: ''
-        }, user));
-        this.name = _.defaultTo(this.name, 'Anonymous');
+    constructor(user?: any, defaults?: any) {
+        super(user, _.merge(defaults, {
+            name: 'Anonymous'
+        }));
     }
 }

@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { IGroup, IUser, IUserActivity, IUserMember, HomeGroup, UserMember } from "../models";
+import { IGroup, IUser, IUserActivity, IUserMember, HomeGroup, UserMember, IUserProfile } from ".";
 
 // TODO move to config
 declare const ONLINE_ACTIVITY = 15;
@@ -18,35 +18,35 @@ export class UserBLL {
         return DateTime.local().toUTC().diff(bday).days;
     }
 
-    public static setUserAuthNames(user: IUser, displayName?: string): boolean {
-        if (user.profile.anonymous
+    public static setUserAuthNames(profile: IUserProfile, displayName?: string): boolean {
+        if (profile.anonymous
             // || TODO displayName is all whitespace
             || displayName === undefined
             || displayName === null
             || !displayName.includes(' ')
             || displayName.length < 3
             || displayName.split(' ').length < 2) {
-            user.profile.firstName = 'Anonymous';
-            user.profile.lastInitial = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+            profile.firstName = 'Anonymous';
+            profile.lastInitial = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
         } else {
             const names = displayName.split(' ');
-            user.profile.firstName = names[0];
-            user.profile.lastInitial = names[1][0].toUpperCase();
+            profile.firstName = names[0];
+            profile.lastInitial = names[1][0].toUpperCase();
         }
-        user.profile.name = `${user.profile.firstName} ${user.profile.lastInitial}.`;
+        profile.name = `${profile.firstName} ${profile.lastInitial}.`;
         return true;
     }
 
-    public static setUserNames(user: IUser, firstName: string, lastInitial: string): boolean {
+    public static setUserNames(profile: IUserProfile, firstName: string, lastInitial: string): boolean {
         if (!firstName 
             || !lastInitial
             || firstName.length > 25
             || lastInitial.length !== 1) {
             return false;
         }
-        user.profile.firstName = firstName;
-        user.profile.lastInitial = lastInitial;
-        user.profile.name = `${firstName} ${lastInitial}.`;
+        profile.firstName = firstName;
+        profile.lastInitial = lastInitial;
+        profile.name = `${firstName} ${lastInitial}.`;
         return true;
     }
 

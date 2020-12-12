@@ -5,14 +5,18 @@ export interface IBase {
 }
 
 export class Base implements IBase {
-    constructor(source?: any, obj?: any, exclude?: string[]) {
-        if (source) this.deepCopy(this, source, Object.keys(obj), exclude);
+    constructor(source?: any, defaults?: any, exclude?: string[]) {
+        this.deepCopy(this, source, Object.keys(defaults), exclude);
     }
 
-    private deepCopy(destination: any, source: any, include?: any, exclude?: string[]): any {
+    private deepCopy(destination: any, source: any, defaults?: any, exclude?: string[]): any {
+        const sourceKeys = source ? Object.keys(source): [];
+        const defaultKeys = defaults ? Object.keys(defaults): [];
+        const excludeKeys = exclude ? Object.keys(exclude): [];
+
         if (source) {
             for (const key in source) {
-                if ((include && _.indexOf(include, key) !== -1)
+                if ((defaults && _.indexOf(defaults, key) !== -1)
                     && (exclude && _.indexOf(exclude, key) === -1)) {
                     if (typeof source[key] !== "object") {
                         destination[key] = source[key];
@@ -22,7 +26,7 @@ export class Base implements IBase {
                         } else {
                             destination[key] = {};
                         }
-                        this.deepCopy(destination[key], source[key], include, exclude);
+                        this.deepCopy(destination[key], source[key], defaults, exclude);
                     }
                 }
             }

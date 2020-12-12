@@ -1,4 +1,4 @@
-import { IUserBase } from '.';
+import { IUserBase } from './userBase.class';
 import { IId } from "./id.class";
 
 // Badge

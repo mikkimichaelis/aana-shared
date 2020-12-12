@@ -2,7 +2,10 @@ import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { FirePoint } from 'geofirex';
 
-import { UserBLL, IUserFavorite, IUserFriend, IHomeGroup, IUserBase, IUserMember, UserBase, IUserActivity } from ".";
+import { IUserBase, UserBase } from './userBase.class';
+import { IUserFavorite, IUserFriend, IHomeGroup, IUserMember, IUserActivity } from ".";
+import { UserBLL } from '../bll';
+import { Base } from './base.class';
 
 export interface IUserPosition {
     point: FirePoint;
@@ -21,44 +24,41 @@ export interface IUserProfile {
     bday: string;
 }
 
-export class UserProfile {
+export class UserProfile extends Base {
     anonymous!: boolean;
     firstName!: string;
     lastInitial!: string;
     name!: string;
     bday!: string;
 
-    constructor(user: any) {
-        _.merge({
+    constructor(user?: any) {
+        super(_.merge({
             anonymous: true,
-            firstName: '',
+            firstName: 'Anonymous',
             lastInitial: '',
-            name: '',
+            name: 'Anonymous',
             bday: '',
-        }, user);
+        }, user));
     }
 }
 
-export interface IUser extends UserBase {
-    created: string;
-    base: IUserBase;
+export interface IUser {
     member: IUserMember;
     profile: IUserProfile;
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
     friends: IUserFriend[];
+    created: string;
 }
 
 export class User extends UserBase implements IUser {
-
-    created!: string;
-    base!: IUserBase;
     profile!: IUserProfile;
     member!: IUserMember;
     homeGroup!: IHomeGroup;
     activity!: IUserActivity;
     favGroups!: IUserFavorite[];
     friends!: IUserFriend[];
+    created!: string;
 
     get daysSinceBday(): number {
         return UserBLL.daysSinceBday(this.member);
@@ -69,15 +69,14 @@ export class User extends UserBase implements IUser {
     }
 
     constructor(user?: any) {
-        super(_.merge({
-            created: DateTime.local().toISO,
-            base: new UserBase(user),
-            profile: new UserProfile(user),
+        super(user, {
+            created: DateTime.local().toISO(),
+            profile: new UserProfile(),
             member: {},
             homeGroup: {},
             favGroups: [],
             friends: [],
-        }, user));
+        });
     }
 }
 
