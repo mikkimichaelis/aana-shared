@@ -5,19 +5,10 @@ import { FirePoint } from 'geofirex';
 import { UserBase } from './userBase.class';
 import { Base } from './base.class';
 import { IUserMember, UserMember } from './userMember.class';
-import { IGroup, IHomeGroup } from './group.interface';
 import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
-import { IUserActivity } from './userActivity.class';
-import { HomeGroup } from './group.class';
-
-export interface IUserPosition {
-    point: FirePoint;
-}
-
-export class UserPosition {
-    point!: FirePoint;
-}
+import { IUserActivity, UserActivity } from './userActivity.class';
+import { HomeGroup, IGroup, IHomeGroup } from './group.class';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -29,33 +20,27 @@ export interface IUserProfile {
 }
 
 export class UserProfile extends Base implements IUserProfile {
-    anonymous!: boolean;
-    firstName!: string;
-    lastInitial!: string;
-    name!: string;
-    bday!: string;
+    anonymous: boolean             = true;
+    firstName: string              = 'Anonymous';
+    lastInitial: string            = 'A';
+    name: string                   = 'Anonymous A.';
+    bday: string                   = null;
 
     // ignore provided values that don't exist on object
     // overwrite defaults with provided values
 
-    constructor(profile?: any) {
+    constructor(profile?: IUserProfile) {
         super();
 
-        this.initialize(this, profile, {
-            anonymous: true,
-            firstName: 'Anonymous',
-            lastInitial: '',
-            name: 'Anonymous',
-            bday: '',
-        })
+        this.initialize(this, profile)
     }
 }
 
 export interface IUser {
     profile: IUserProfile;
+    activity: IUserActivity;
     member: IUserMember;
     homeGroup: IHomeGroup;
-    activity: IUserActivity;
     favGroups: IUserFavorite[];
     friends: IUserFriend[];
     created: string;
@@ -63,13 +48,13 @@ export interface IUser {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    profile!: IUserProfile;
-    member!: IUserMember;
-    homeGroup!: IHomeGroup;
-    activity!: IUserActivity;
-    favGroups!: IUserFavorite[];
-    friends!: IUserFriend[];
-    created!: string;
+    profile: IUserProfile           = null;
+    activity: IUserActivity         = null;
+    member: IUserMember             = null;
+    homeGroup: IHomeGroup           = null;
+    favGroups: IUserFavorite[]      = [];
+    friends: IUserFriend[]          = [];
+    created: string                 = DateTime.local().toISO();
 
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
@@ -82,16 +67,12 @@ export class User extends UserBase implements IUser {
     }
 
     constructor(user?: any) {
-        super()
-        
-        _.merge({
-            created: DateTime.local().toISO(),
-            profile: new UserProfile(),
-            member: {},
-            homeGroup: {},
-            favGroups: [],
-            friends: [],
-        }, user);
+        super(user);
+        this.initialize(this, user);
+        if( _.has(user, 'profile')) this.profile = new UserProfile(user.profile);
+        if( _.has(user, 'activity')) this.activity = new UserActivity(user.activity);
+        if( _.has(user, 'member')) this.member = new UserMember(user.member);
+        if( _.has(user, 'homeGroup')) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     public isHomeGroup(group: IGroup): boolean {

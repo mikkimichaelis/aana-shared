@@ -1,17 +1,22 @@
 import { FirePoint } from "geofirex";
 import * as _ from "lodash";
 import { DateTime } from 'luxon';
-import { IAddress } from "./address";
+import { Address, IAddress } from "./address";
 
-import { Base } from './base.class';
+import { Base, IBase } from './base.class';
 import { IBoundingBox } from "./bounding-box";
-import { IGroup, IGroupPrivate, IHomeGroup } from "./group.interface";
 import { Id } from "./id.class";
-import { ILocation } from "./location";
+import { ILocation, Location } from "./location";
 import { ISchedule } from "./schedule.interface";
 import { IUser } from "./user.class";
 import { IUserBadge } from "./userBadge.class";
 import { IUserMember, UserMember } from "./userMember.class";
+
+export interface IGroupPrivate extends IBase {
+  gid: string;
+  owner: IUserBadge;
+  admins: IUserBadge[];
+}
 
 export class GroupPrivate extends Base implements IGroupPrivate {
   gid!: string;
@@ -19,48 +24,76 @@ export class GroupPrivate extends Base implements IGroupPrivate {
   admins!: IUserBadge[];
 }
 
+export interface IHomeGroup {
+  gid: string;
+  name: string;
+  dateJoined: string;
+}
+
 export class HomeGroup extends Base implements IHomeGroup {
-  gid!: string;
-  name!: string;
-  dateJoined!: string;
+  gid: string         = '';
+  name: string        = '';
+  dateJoined: string  = DateTime.local().toISO();
 
-  constructor(group: any) {
+  constructor(homeGroup: any) {
     super();
-    this.initialize(this, group, {
-      gid: '',
-      name: '',
-      dateJoined: DateTime.local().toISO()
-  });
-    // this.gid = group.id;
-    // this.name = group.name;
-    // this.dateJoined = DateTime.local().toISO()
+    this.initialize(this, homeGroup);
+    this.gid = homeGroup.id;
   }
+}
 
+export interface IGroup {
+
+  id: string;
+  sourceUrl: string;
+  name: string;
+  type: string;
+  active: boolean;
+  region: string;
+  tags: string[];
+  about: string;
+  started: string;
+  notes: string;
+  telephone: string;
+  email: string;
+  url: string;
+  address: IAddress;
+  location: ILocation;
+  zoneIANA: string;
+  
+  point: FirePoint;
+  boundingbox: IBoundingBox;
+  
+  members: IUserMember[];
+  schedules: ISchedule[];
+
+  lastActivity: string;
 }
 
 export class Group extends Id implements IGroup {
-  sourceUrl!: string;
-  name!: string;
-  type!: string;
-  active!: true;
-  region!: string;
-  tags!: string[];
-  about!: string;
-  notes!: string;
-  telephone!: string;
-  email!: string;
-  url!: string;
-  started!: string;
-  zoneIANA!: string;
+  sourceUrl: string               = '';
+  name: string                    = '';
+  type: string                    = '';
+  active: boolean                 = true;
+  region: string                  = '';
+  tags: string[]                  = [];
+  about: string                   = '';
+  started: string                 = '';
+  notes: string                   = '';
+  telephone: string               = '';
+  email: string                   = '';
+  url: string                     = '';
+  address: IAddress               = null;
+  location: ILocation             = null;
+  zoneIANA: string                = '';
 
-  boundingbox!: IBoundingBox;
-  point!: FirePoint;
-  address!: IAddress;
-  location!: ILocation;
-  schedules!: ISchedule[];
-  members!: IUserMember[];
-
-  lastActivity!: string;
+  point: FirePoint                = null;
+  boundingbox: IBoundingBox       = null;
+  
+  members: IUserMember[]          = [];
+  schedules: ISchedule[]          = [];
+  
+  lastActivity: string            = DateTime.local().toISO();
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {
@@ -102,27 +135,7 @@ export class Group extends Id implements IGroup {
 
   constructor(group?: any) {
     super(group)
-    // super(_.merge({
-    //     sourceUrl: '',
-    //     name: '',
-    //     type: '',
-    //     active: true,
-    //     region: '',
-    //     tags: [],
-    //     about: '',
-    //     point: null,
-    //     notes: '',
-    //     telephone: '',
-    //     email: '',
-    //     url: '',
-    //     address: {},
-    //     started: '',
-    //     location: {},
-    //     zoneIANA: 0,
-    //     boundingbox: {},
-    //     members: [],
-    //     lastActivity: '',
-    // }, group))
+    this.initialize(this, group);
   }
 
   isHomeGroup(iuser: IUser): boolean {

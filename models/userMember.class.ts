@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { IHomeGroup } from './group.interface';
+import { IHomeGroup } from './group.class';
 import { IUserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
 

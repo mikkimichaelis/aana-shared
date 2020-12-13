@@ -2,7 +2,6 @@ export * from './address';
 export * from './bounding-box';
 export * from './chat-session';
 export * from './group.class';
-export * from './group.interface';
 export * from './location';
 export * from './meeting.class';
 export * from './message';
@@ -18,6 +17,5 @@ export * from './userBlock.class';
 export * from './userFavorite.class';
 export * from './userFriend.class';
 export * from './userMember.class';
-export * from './userOnline.class';
 
 

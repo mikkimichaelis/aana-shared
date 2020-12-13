@@ -6,9 +6,9 @@ import { IUserBase } from './userBase.class';
 import { IRideRequest, IUserBadge } from ".";
 
 export interface IMeeting {
-    gid: string;        // group id
-    sid: string;        // schedule
-    badge: IUserBadge;  // secretary uid
+    gid: string;
+    sid: string;
+    badge: IUserBadge;
     point: FirePoint;
     start: string;
     end: string;
@@ -31,43 +31,26 @@ export interface IZoomMeeting extends IMeeting {
 }
 
 export class Meeting extends Id implements IMeeting {
-    gid!: string;
-    sid!: string;
-    badge!: IUserBadge;
-    point!: FirePoint;
-    start!: string;
-    end!: string;
-    secretary!: string;
-    speaker!: string;
-    collection!: number;
-    attendance!: number;
-    usersAttend!: IUserBase[];
-    birthdays!: string[];
-    firstTimers!: string[];
-    visitors!: string[];
-    topic!: string;
-    notes!: string;
-    rideRequests: IRideRequest[] = [];
+    gid: string                     = '';
+    sid: string                     = '';
+    badge: IUserBadge               = null;
+    point: FirePoint                = null;
+    start: string                   = '';
+    end: string                     = '';
+    secretary: string               = '';
+    speaker: string                 = '';
+    collection: number              = 0;
+    attendance: number              = 0;
+    usersAttend: IUserBase[]        = [];
+    birthdays: string[]             = [];
+    firstTimers: string[]           = [];
+    visitors: string[]              = [];
+    topic: string                   = '';
+    notes: string                   = '';
+    rideRequests: IRideRequest[]    = [];
 
     constructor(meeting?: IMeeting) {
-        super(_.merge({
-            gid: '',
-            sid: '',
-            aid: null,
-            point: null,
-            start: '',
-            end: '',
-            secretary: '',
-            speaker: '',
-            collection: 0,
-            attendance: 0,
-            usersAttend: [],
-            birthdays: [],
-            firstTimers: [],
-            visitors: [],
-            topic: '',
-            notes: '',
-            rideRequests: [],
-        }, meeting));
+        super(meeting);
+        this.initialize(this, meeting);
     }
 }

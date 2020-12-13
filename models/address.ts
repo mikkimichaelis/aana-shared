@@ -10,20 +10,14 @@ export interface IAddress {
     zip: string;
 }
 export class Address extends Base implements IAddress {
-    address1!: string;
-    address2!: string;
-    city!: string;
-    state!: string;
-    zip!: string;
+    address1: string    = '';
+    address2: string    = '';
+    city: string        = '';
+    state: string       = '';
+    zip: string         = '';
 
     constructor(address?: any) {
         super()
-        this.initialize(this, address, {
-            address1: '',
-            address2: '',
-            city: '',
-            state: '',
-            zip: '',
-        });
+        this.initialize(this, address);
     }
 }

@@ -1,48 +1,24 @@
+import { FirePoint } from 'geofirex';
 import * as _ from 'lodash';
-import { IUserPosition, UserPosition } from './user.class';
-import { IUserBadge } from './userBadge.class';
 
-import { IUserBase, UserBase } from './userBase.class';
-import { IUserOnline } from './userOnline.class';
+import { UserBase } from './userBase.class';
 
 export interface IUserActivity {
-    base: IUserBase;
-    lid: string; // LastUserActivity id
-    aid: string;
-    bid: IUserBadge; // If is an AdminActivity : null
-    olid: IUserOnline;
-
-    activity: {};
-    lastPosition: IUserPosition;
     lastLogon: string;
     lastTime: string;
-    serverTimestamp: string;
+    point: FirePoint;
+    activity: {};
 }
 
 export class UserActivity extends UserBase implements IUserActivity {
+    lastLogon: string;
+    lastTime: string;
+    point: FirePoint;
+    activity: {};
 
-    constructor(user?: any) {
-        super(_.mergeWith({
-            base: {},
-            lid: '',
-            aid: '',
-            bid: {},
-            olid: {},
-            lastPosition: new UserPosition(),
-            lastLogon: '',
-            lastTime: '',
-            activity: {},
-            serverTimestamp: '',
-        }, user));
+    constructor(userActivity?: any) {
+        super(userActivity);
+        this.initialize(this, userActivity);
     }
-    base!: IUserBase;
-    lid!: string;
-    aid!: string;
-    bid!: IUserBadge;
-    olid!: IUserOnline;
-    lastPosition!: IUserPosition;
-    lastLogon!: string;
-    lastTime!: string;
-    activity!: {};
-    serverTimestamp!: string;
+    
 }

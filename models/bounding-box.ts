@@ -9,18 +9,13 @@ export interface IBoundingBox {
 };
 
 export class BoundingBox extends Base implements IBoundingBox {
-    latBottomLeft!: number;
-    lonBottomLeft!: number;
-    latTopRight!: number;
-    lonTopRight!: number;
+    latBottomLeft: number  = 0;
+    lonBottomLeft: number  = 0;
+    latTopRight: number    = 0;
+    lonTopRight: number    = 0;
 
     constructor(boundingBox?: BoundingBox) {
         super();
-        this.initialize( this, boundingBox, {
-            latBottomLeft: 0,
-            lonBottomLeft: 0,
-            latTopRight: 0,
-            lonTopRight: 0,
-        });
+        this.initialize(this, boundingBox);
     }
 }

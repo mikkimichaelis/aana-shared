@@ -8,24 +8,16 @@ export interface ILocation extends IAddress {
 };
 
 export class Location extends Base implements ILocation {
-    name!: string;
-    notes!: string;
-    address1!: string;
-    address2!: string;
-    city!: string;
-    state!: string;
-    zip!: string;
+    name: string        = '';
+    notes: string       = '';
+    address1: string    = '';
+    address2: string    = '';
+    city: string        = '';
+    state: string       = '';
+    zip: string         = '';
 
     constructor(location?: any) {
         super()
-        this.initialize( this, location, {
-            name: '',
-            notes: '',
-            address1: '',
-            address2: '',
-            city: '',
-            state: '',
-            zip: '',
-        });
+        this.initialize( this, location);
     }
 }

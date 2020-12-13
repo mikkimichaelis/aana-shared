@@ -5,17 +5,19 @@ export interface IBase {
 }
 
 export class Base implements IBase {
-    constructor() {}
+    constructor() { }
     // constructor(source?: any, defaults?: any, exclude?: string[]) {
     //     this.deepCopy(this, source, Object.keys(defaults), exclude);
     // }
 
-    public initialize(obj: object, source: any, defaults: any) {
-        _.mergeWith(obj, source, (objValue: any, srcValue: any, key: any, object: any, source: any, stack: any) => {
-            if(objValue != undefined) {
-                return srcValue;
-            }
-        })
+    public initialize(obj: any, source: any) {
+        if (source) {
+            _.mergeWith(obj, source, (objValue: any, srcValue: any, key: any, object: any, source: any, stack: any) => {
+                if (objValue != undefined) {
+                    return srcValue;
+                }
+            });
+        }
     }
 
     private deepCopy(destination: any, source: any, defaults?: any, exclude?: string[]): any {
