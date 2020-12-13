@@ -1,32 +1,24 @@
-import { Injectable } from '@angular/core';
-
 import * as luxon from 'luxon';
 
 import { ISchedule } from '../models';
-import { IGroupBLLService } from '../../shared/bll';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class GroupBLLService implements IGroupBLLService {
+export class GroupBLLService {
 
-  constructor() { }
-
-  orderSchedules(schedules: ISchedule[]): ISchedule[] {
+  public static orderSchedules(schedules: ISchedule[]): ISchedule[] {
     let week = 7 * 24 * 60 * 1000;  // 1 week in ms
     let now: any = luxon.DateTime.local();
     now = luxon.DateTime.fromObject({ year: 1970, month: 1, day: now.weekday, hour: now.hour, minute: now.min, second: now.second });
     now = now.toMillis();
     let rv: ISchedule[] = [];
     schedules.forEach(s => {
-      const x = this.getNextSchedule(now, schedules);
+      const x = GroupBLLService.getNextSchedule(now, schedules);
       rv.push(x);
       now = x.millis + 1;
     });
     return rv;
   }
 
-  public getNextSchedule(now: number, schedules: ISchedule[]): ISchedule {
+  public static  getNextSchedule(now: number, schedules: ISchedule[]): ISchedule {
     let rv: ISchedule;
     schedules.forEach(schedule => {
       // ignore if not active

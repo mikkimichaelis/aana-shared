@@ -1,9 +1,17 @@
 import { FirePoint } from "geofirex";
+import _ from "lodash";
 import { DateTime } from 'luxon';
+import { IAddress } from "./address";
 
 import { Base, IBase } from './base.class';
+import { IBoundingBox } from "./bounding-box";
+import { IGroup, IGroupPrivate, IHomeGroup } from "./group.interface";
 import { Id } from "./id.class";
-import { IAddress, IGroup, ILocation, ISchedule, IBoundingBox, IGroupPrivate, IUserMember, IHomeGroup, GroupBLL, IUserBadge } from ".";
+import { ILocation } from "./location";
+import { ISchedule } from "./schedule.interface";
+import { IUserBadge } from "./userBadge.class";
+import { IUserMember, UserMember } from "./userMember.class";
+//import { IAddress, IGroup, ILocation, ISchedule, IBoundingBox, IGroupPrivate, IUserMember, IHomeGroup, GroupBLL, IUserBadge } from ".";
 
 
 export class GroupPrivate extends Base implements IGroupPrivate {
@@ -51,19 +59,41 @@ export class Group extends Id implements IGroup {
     lastActivity!: string;
 
     public get tagsString(): string {
-        return GroupBLL.tagsString(this);
+        if( Array.isArray(this.tags) ) {
+            return this.tags.join(' ');
+        } else {
+            return '';
+        }
     }
 
     public get memberCount(): number {
-        return GroupBLL.memberCount(this);
+        if( Array.isArray(this.members) ) {
+            return this.members.length;
+        } else {
+            return 0;
+        }
     }
 
     public get yearsSobriety(): number {
-        return GroupBLL.yearsSobriety(this);
+        if( Array.isArray(this.members) ) {
+            // TODO check algorithm
+            return _.sum(_.map(this.members, (member:IUserMember) => {
+                return member.daysSinceBday;
+            })) / 365;
+        } else {
+            return 0;
+        }
     }
 
     public get membersOnline(): number {
-        return GroupBLL.membersOnline(this);
+        if( Array.isArray(this.members) ) {
+            // TODO check algorithm
+            return _.sum(_.map(this.members, (member:IUserMember) => {
+                return this.isOnline(member.lastActivity) ? 1 : 0;
+            })) / 365;
+        } else {
+            return 0;
+        }
     }
  
     constructor(group?: any) {

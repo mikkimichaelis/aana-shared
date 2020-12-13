@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { IHomeGroup, IUserActivity } from '.';
-import { UserBLL } from './user.bll';
+import { DateTime } from 'luxon';
+import { IHomeGroup } from './group.interface';
+import { IUserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
 
 // Member of a homegroup
@@ -8,21 +9,26 @@ export interface IUserMember {
     aid: string;    // aid in UsersActivity collection
     bday: string;
     homeGroup: IHomeGroup;
-    lastActivity: IUserActivity;
+    activity: IUserActivity;
+
+    daysSinceBday: number;
 }
 
+declare const ONLINE_ACTIVITY = 15;
 export class UserMember extends UserBase implements IUserMember {
     aid!: string;        // Admin
     bday!: string;
     homeGroup!: IHomeGroup;
-    lastActivity!: IUserActivity;
-
-    get daysSinceBday(): number {
-        return UserBLL.daysSinceBday(this);
+    activity!: IUserActivity;
+    
+    public get isOnline(): boolean {
+        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
+        return DateTime.local().diff(lastActivity).minutes < ONLINE_ACTIVITY;
     }
 
-    get isOnline(): boolean {
-        return UserBLL.isOnline(this.lastActivity);
+    public get daysSinceBday() {
+        const bday:DateTime = DateTime.fromISO(this.bday);
+        return DateTime.local().toUTC().diff(bday).days;
     }
 
     constructor(user?: any) {
@@ -30,6 +36,6 @@ export class UserMember extends UserBase implements IUserMember {
         }, user));
         this.bday = user.bday;
         this.homeGroup = user.homeGroup;
-        this.lastActivity = user.lastActivity;
+        this.activity = user.activity;
     }
 }

@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
+import { IUserPosition, UserPosition } from './user.class';
+import { IUserBadge } from './userBadge.class';
 
 import { IUserBase, UserBase } from './userBase.class';
-import { UserPosition, IUserOnline, IUserPosition, IUserBadge } from ".";
+import { IUserOnline } from './userOnline.class';
 
 export interface IUserActivity {
     base: IUserBase;
