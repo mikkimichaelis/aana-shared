@@ -72,7 +72,7 @@ export class User extends UserBase implements IUser {
     }
 
     public get daysSinceBday() {
-        const bday:DateTime = DateTime.fromISO(this.profile.bday);
+        const bday: DateTime = DateTime.fromISO(this.profile.bday);
         return DateTime.local().toUTC().diff(bday).days;
     }
 
@@ -85,6 +85,10 @@ export class User extends UserBase implements IUser {
             favGroups: [],
             friends: [],
         });
+    }
+
+    public isHomeGroup(group: IGroup): boolean {
+        return group.id === (_.has(this, 'homeGroup.gid') ? this.homeGroup.gid : false);
     }
 
     public static setUserAuthNames(user: IUser, displayName?: string): boolean {
@@ -107,7 +111,7 @@ export class User extends UserBase implements IUser {
     }
 
     public static setUserNames(user: IUser, firstName: string, lastInitial: string): boolean {
-        if (!firstName 
+        if (!firstName
             || !lastInitial
             || firstName.length > 25
             || lastInitial.length !== 1) {
@@ -121,7 +125,7 @@ export class User extends UserBase implements IUser {
 
     public static makeHomeGroup(user: IUser, group: IGroup) {
         // TODO error check not duplicate add
-        if( !group.members ) group.members = [];
+        if (!group.members) group.members = [];
         group.members.push(new UserMember(user).toObject());
         user.homeGroup = new HomeGroup(group).toObject();
     }

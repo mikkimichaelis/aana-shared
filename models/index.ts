@@ -1,7 +1,6 @@
 export * from './address';
 export * from './bounding-box';
 export * from './chat-session';
-export * from './group.bll';
 export * from './group.class';
 export * from './group.interface';
 export * from './location';

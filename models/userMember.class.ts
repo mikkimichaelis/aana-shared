@@ -12,6 +12,7 @@ export interface IUserMember {
     activity: IUserActivity;
 
     daysSinceBday: number;
+    isOnline: boolean;
 }
 
 declare const ONLINE_ACTIVITY = 15;
