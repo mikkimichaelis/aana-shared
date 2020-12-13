@@ -16,13 +16,14 @@ export class Address extends Base implements IAddress {
     state!: string;
     zip!: string;
 
-    constructor(address?: IAddress) {
-        super(_.merge({
+    constructor(address?: any) {
+        super()
+        this.initialize(this, address, {
             address1: '',
             address2: '',
             city: '',
             state: '',
             zip: '',
-        }, address));
+        });
     }
 }

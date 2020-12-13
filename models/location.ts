@@ -17,7 +17,8 @@ export class Location extends Base implements ILocation {
     zip!: string;
 
     constructor(location?: any) {
-        super(_.merge({
+        super()
+        this.initialize( this, location, {
             name: '',
             notes: '',
             address1: '',
@@ -25,6 +26,6 @@ export class Location extends Base implements ILocation {
             city: '',
             state: '',
             zip: '',
-        }, location));
+        });
     }
 }

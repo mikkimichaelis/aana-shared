@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { IHomeGroup } from './group.interface';
 import { IUserActivity } from './userActivity.class';

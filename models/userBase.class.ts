@@ -8,9 +8,11 @@ export interface IUserBase extends IId {
 export class UserBase extends Id implements IUserBase {
     name!: string;
 
-    constructor(user?: any, defaults?: any) {
-        super(user, _.merge(defaults, {
+    constructor(user?: any) {
+        super();
+        
+        _.merge({
             name: 'Anonymous'
-        }));
+        }, user);
     }
 }

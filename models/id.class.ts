@@ -9,10 +9,11 @@ export interface IId extends IBase {
 export class Id extends Base implements IId {
     id!: string;
 
-    constructor(data?: any, defaults?: any) {
-        super(data, _.merge(defaults, {
+    constructor(id?: any) {
+        super();
+        this.initialize(this, id, {
             id: uuidv4(),
-        }));
+        });
 
     }
 }

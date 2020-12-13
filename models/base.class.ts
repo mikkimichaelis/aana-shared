@@ -5,14 +5,23 @@ export interface IBase {
 }
 
 export class Base implements IBase {
-    constructor(source?: any, defaults?: any, exclude?: string[]) {
-        this.deepCopy(this, source, Object.keys(defaults), exclude);
+    constructor() {}
+    // constructor(source?: any, defaults?: any, exclude?: string[]) {
+    //     this.deepCopy(this, source, Object.keys(defaults), exclude);
+    // }
+
+    public initialize(obj: object, source: any, defaults: any) {
+        _.mergeWith(obj, source, (objValue: any, srcValue: any, key: any, object: any, source: any, stack: any) => {
+            if(objValue != undefined) {
+                return srcValue;
+            }
+        })
     }
 
     private deepCopy(destination: any, source: any, defaults?: any, exclude?: string[]): any {
-        const sourceKeys = source ? Object.keys(source): [];
-        const defaultKeys = defaults ? Object.keys(defaults): [];
-        const excludeKeys = exclude ? Object.keys(exclude): [];
+        // const sourceKeys = source ? Object.keys(source): [];
+        // const defaultKeys = defaults ? Object.keys(defaults): [];
+        // const excludeKeys = exclude ? Object.keys(exclude): [];
 
         if (source) {
             for (const key in source) {

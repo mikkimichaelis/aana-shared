@@ -15,12 +15,12 @@ export class BoundingBox extends Base implements IBoundingBox {
     lonTopRight!: number;
 
     constructor(boundingBox?: BoundingBox) {
-        super(_.merge({
+        super();
+        this.initialize( this, boundingBox, {
             latBottomLeft: 0,
             lonBottomLeft: 0,
             latTopRight: 0,
             lonTopRight: 0,
-        },
-            boundingBox));
+        });
     }
 }
