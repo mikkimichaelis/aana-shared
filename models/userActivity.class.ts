@@ -13,7 +13,7 @@ export interface IUserActivity {
 export class UserActivity extends UserBase implements IUserActivity {
     lastLogon: string   = '';
     lastTime: string    = '';
-    point: FirePoint    = null;
+    point: FirePoint    = <any>null;
     activity: any       = '';
 
     constructor(userActivity?: any) {

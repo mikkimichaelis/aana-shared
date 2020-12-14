@@ -47,10 +47,10 @@ export interface IUser {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    profile: IUserProfile       = null;
-    activity: IUserActivity     = null;
-    member: IUserMember         = null;
-    homeGroup: IHomeGroup       = null;
+    profile: IUserProfile       = <any>null;
+    activity: IUserActivity     = <any>null;
+    member: IUserMember         = <any>null;
+    homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     friends: IUserFriend[]      = [];
     created: string             = DateTime.local().toISO();
@@ -75,7 +75,7 @@ export class User extends UserBase implements IUser {
     }
 
     public isHomeGroup(group: IGroup): boolean {
-        return group.id === (_.has(this, 'homeGroup.id') ? this.homeGroup.id : false);
+        return group.id === _.get(this, 'homeGroup.id', false);
     }
 
     public setUserAuthNames(displayName?: string): boolean {

@@ -20,7 +20,7 @@ export interface IGroupPrivate extends IBase {
 
 export class GroupPrivate extends Base implements IGroupPrivate {
   id: string            = '';
-  owner: IUserBadge     = null;
+  owner: IUserBadge     = <any>null;
   admins: IUserBadge[]  = [];
 }
 
@@ -82,12 +82,12 @@ export class Group extends Id implements IGroup {
   telephone: string         = '';
   email: string             = '';
   url: string               = '';
-  address: IAddress         = null;
-  location: ILocation       = null;
+  address: IAddress         = <any>null;
+  location: ILocation       = <any>null;
   zoneIANA: string          = '';
 
-  point: FirePoint          = null;
-  boundingbox: IBoundingBox = null;
+  point: FirePoint          = <any>null;
+  boundingbox: IBoundingBox = <any>null;
 
   members: IUserMember[]    = [];
   schedules: ISchedule[]    = [];

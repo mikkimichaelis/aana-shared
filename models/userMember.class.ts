@@ -17,7 +17,7 @@ export interface IUserMember {
 declare const ONLINE_ACTIVITY = 15;
 export class UserMember extends UserBase implements IUserMember {
     bday:string                 = '';
-    activity: IUserActivity     = null;
+    activity: IUserActivity     = <any>null;
     
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
