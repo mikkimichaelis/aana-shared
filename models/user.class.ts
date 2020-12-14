@@ -14,7 +14,6 @@ export interface IUserProfile {
     anonymous: boolean;
     firstName: string;
     lastInitial: string;
-    name: string;
     bday: string;
 }
 
@@ -22,7 +21,6 @@ export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean             = true;
     firstName: string              = 'Anonymous';
     lastInitial: string            = 'A';
-    name: string                   = 'Anonymous A.';
     bday: string                   = '';
 
     // ignore provided values that don't exist on object
