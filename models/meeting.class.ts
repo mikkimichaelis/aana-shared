@@ -33,8 +33,8 @@ export interface IZoomMeeting extends IMeeting {
 export class Meeting extends Id implements IMeeting {
     gid: string                     = '';
     sid: string                     = '';
-    badge: IUserBadge               = null;
-    point: FirePoint                = null;
+    badge!: IUserBadge;
+    point!: FirePoint;
     start: string                   = '';
     end: string                     = '';
     secretary: string               = '';

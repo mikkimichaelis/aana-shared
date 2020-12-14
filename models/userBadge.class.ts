@@ -1,5 +1,4 @@
-import { IUserBase, UserBase } from './userBase.class';
-import { IId } from "./id.class";
+import { UserBase } from './userBase.class';
 
 export interface IUserBadge {
     gid: string;
@@ -9,8 +8,8 @@ export interface IUserBadge {
 
 export class UserBadge extends UserBase implements IUserBadge {
     gid: string     = '';
-    role: {}        = null;
-    perms: {}       = null;
+    role: any       = null;
+    perms: any      = null;
 
     constructor(user?: any) {
         super(user);

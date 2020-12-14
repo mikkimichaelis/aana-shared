@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { FirePoint } from 'geofirex';
 
 import { UserBase } from './userBase.class';
 import { Base } from './base.class';
@@ -24,15 +23,15 @@ export class UserProfile extends Base implements IUserProfile {
     firstName: string              = 'Anonymous';
     lastInitial: string            = 'A';
     name: string                   = 'Anonymous A.';
-    bday: string                   = null;
+    bday: string                   = '';
 
     // ignore provided values that don't exist on object
     // overwrite defaults with provided values
 
-    constructor(profile?: IUserProfile) {
+    constructor(user?: any) {
         super();
 
-        this.initialize(this, profile)
+        this.initialize(this, user)
     }
 }
 
@@ -48,10 +47,10 @@ export interface IUser {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    profile: IUserProfile           = null;
-    activity: IUserActivity         = null;
-    member: IUserMember             = null;
-    homeGroup: IHomeGroup           = null;
+    profile!: IUserProfile;
+    activity!: IUserActivity;
+    member!: IUserMember;
+    homeGroup!: IHomeGroup;
     favGroups: IUserFavorite[]      = [];
     friends: IUserFriend[]          = [];
     created: string                 = DateTime.local().toISO();
