@@ -29,7 +29,7 @@ export class Base implements IBase {
                                 destination[key] = _.cloneDeep(source[key]);
                             } else {
                                 destination[key] = {};
-                                this.deepCopy(destination[key], source[key], exclude, existing);
+                                this.deepCopy(destination[key], source[key], exclude, false);
                             }
                         }
                     }

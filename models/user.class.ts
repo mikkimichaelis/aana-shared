@@ -47,13 +47,13 @@ export interface IUser {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    profile!: IUserProfile;
-    activity!: IUserActivity;
-    member!: IUserMember;
-    homeGroup!: IHomeGroup;
-    favGroups: IUserFavorite[] = [];
-    friends: IUserFriend[] = [];
-    created: string = DateTime.local().toISO();
+    profile: IUserProfile       = null;
+    activity: IUserActivity     = null;
+    member: IUserMember         = null;
+    homeGroup: IHomeGroup       = null;
+    favGroups: IUserFavorite[]  = [];
+    friends: IUserFriend[]      = [];
+    created: string             = DateTime.local().toISO();
 
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();

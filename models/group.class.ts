@@ -19,9 +19,9 @@ export interface IGroupPrivate extends IBase {
 }
 
 export class GroupPrivate extends Base implements IGroupPrivate {
-  id: string = '';
-  owner!: IUserBadge;
-  admins: IUserBadge[] = [];
+  id: string            = '';
+  owner: IUserBadge     = null;
+  admins: IUserBadge[]  = [];
 }
 
 export interface IHomeGroup {
@@ -70,29 +70,29 @@ export interface IGroup {
 }
 
 export class Group extends Id implements IGroup {
-  sourceUrl: string = '';
-  name: string = '';
-  type: string = '';
-  active: boolean = true;
-  region: string = '';
-  tags: string[] = [];
-  about: string = '';
-  started: string = '';
-  notes: string = '';
-  telephone: string = '';
-  email: string = '';
-  url: string = '';
-  address!: IAddress;
-  location!: ILocation;
-  zoneIANA: string = '';
+  sourceUrl: string         = '';
+  name: string              = '';
+  type: string              = '';
+  active: boolean           = true;
+  region: string            = '';
+  tags: string[]            = [];
+  about: string             = '';
+  started: string           = '';
+  notes: string             = '';
+  telephone: string         = '';
+  email: string             = '';
+  url: string               = '';
+  address: IAddress         = null;
+  location: ILocation       = null;
+  zoneIANA: string          = '';
 
-  point!: FirePoint;
-  boundingbox!: IBoundingBox;
+  point: FirePoint          = null;
+  boundingbox: IBoundingBox = null;
 
-  members: IUserMember[] = [];
-  schedules: ISchedule[] = [];
+  members: IUserMember[]    = [];
+  schedules: ISchedule[]    = [];
 
-  lastActivity: string = DateTime.local().toISO();
+  lastActivity: string      = DateTime.local().toISO();
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {
