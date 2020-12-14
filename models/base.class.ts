@@ -20,15 +20,14 @@ export class Base implements IBase {
         }
     }
 
-    private deepCopy(destination: any, source: any, defaults?: any, exclude?: string[]): any {
+    private deepCopy(destination: any, source: any, exclude?: string[]): any {
         // const sourceKeys = source ? Object.keys(source): [];
         // const defaultKeys = defaults ? Object.keys(defaults): [];
         // const excludeKeys = exclude ? Object.keys(exclude): [];
 
         if (source) {
             for (const key in source) {
-                if ((defaults && _.indexOf(defaults, key) !== -1)
-                    && (exclude && _.indexOf(exclude, key) === -1)) {
+                if (!(exclude && _.indexOf(exclude, key) === -1)) {
                     if (typeof source[key] !== "object") {
                         destination[key] = source[key];
                     } else {
@@ -37,7 +36,7 @@ export class Base implements IBase {
                         } else {
                             destination[key] = {};
                         }
-                        this.deepCopy(destination[key], source[key], defaults, exclude);
+                        this.deepCopy(destination[key], source[key], exclude);
                     }
                 }
             }
