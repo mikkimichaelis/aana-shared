@@ -91,7 +91,7 @@ export class User extends UserBase implements IUser {
             this.profile.firstName = names[0];
             this.profile.lastInitial = names[1][0].toUpperCase();
         }
-        this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}.`;
+        this.name = `${this.profile.firstName} ${this.profile.lastInitial}.`;
         return true;
     }
 
@@ -104,7 +104,7 @@ export class User extends UserBase implements IUser {
         }
         this.profile.firstName = firstName;
         this.profile.lastInitial = lastInitial;
-        this.profile.name = `${firstName} ${lastInitial}.`;
+        this.name = `${firstName} ${lastInitial}.`;
         return true;
     }
 
