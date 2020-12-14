@@ -2,18 +2,19 @@
 import * as _ from 'lodash';
 import { Id } from "./id.class";
 import { ISchedule } from '.';
+import { DateTime } from 'luxon';
 
 export class Schedule extends Id implements ISchedule {
-    gid!: string;
-    zoom!: boolean;
-    day!: string;
-    time!: string;
-    duration!: number;
-    recurring!: boolean;
-    active!: boolean;
-    notes!: string;
-    millis!: number;
-    lastUpdate!: string;
+    gid: string             = '';
+    zoom: boolean           = false;
+    day: string             = '';
+    time: string            = '';
+    duration: number        = 60;
+    recurring: boolean      = true; // TODO verify used in scheduling algorithms
+    active: boolean         = true;
+    notes: string           = '';
+    millis: number          = 0;
+    lastUpdate: string      = DateTime.local().toISO();
 
     constructor(schedule?: any) {
         super(_.merge({

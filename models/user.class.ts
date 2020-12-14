@@ -18,10 +18,10 @@ export interface IUserProfile {
 }
 
 export class UserProfile extends Base implements IUserProfile {
-    anonymous: boolean             = true;
-    firstName: string              = 'Anonymous';
-    lastInitial: string            = 'A';
-    bday: string                   = '';
+    anonymous: boolean = true;
+    firstName: string = 'Anonymous';
+    lastInitial: string = 'A';
+    bday: string = '';
 
     // ignore provided values that don't exist on object
     // overwrite defaults with provided values
@@ -34,6 +34,8 @@ export class UserProfile extends Base implements IUserProfile {
 }
 
 export interface IUser {
+    id: string;             // Id
+    name: string;           // UserBase
     profile: IUserProfile;
     activity: IUserActivity;
     member: IUserMember;
@@ -49,9 +51,9 @@ export class User extends UserBase implements IUser {
     activity!: IUserActivity;
     member!: IUserMember;
     homeGroup!: IHomeGroup;
-    favGroups: IUserFavorite[]      = [];
-    friends: IUserFriend[]          = [];
-    created: string                 = DateTime.local().toISO();
+    favGroups: IUserFavorite[] = [];
+    friends: IUserFriend[] = [];
+    created: string = DateTime.local().toISO();
 
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
@@ -66,14 +68,14 @@ export class User extends UserBase implements IUser {
     constructor(user?: any) {
         super(user);
         this.initialize(this, user);
-        if( _.has(user, 'profile')) this.profile = new UserProfile(user.profile);
-        if( _.has(user, 'activity')) this.activity = new UserActivity(user.activity);
-        if( _.has(user, 'member')) this.member = new UserMember(user.member);
-        if( _.has(user, 'homeGroup')) this.homeGroup = new HomeGroup(user.homeGroup);
+        if (_.has(user, 'profile')) this.profile = new UserProfile(user.profile);
+        if (_.has(user, 'activity')) this.activity = new UserActivity(user.activity);
+        if (_.has(user, 'member')) this.member = new UserMember(user.member);
+        if (_.has(user, 'homeGroup')) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     public isHomeGroup(group: IGroup): boolean {
-        return group.id === (_.has(this, 'homeGroup.gid') ? this.homeGroup.gid : false);
+        return group.id === (_.has(this, 'homeGroup.id') ? this.homeGroup.id : false);
     }
 
     public setUserAuthNames(displayName?: string): boolean {
@@ -108,11 +110,12 @@ export class User extends UserBase implements IUser {
         return true;
     }
 
-    public makeHomeGroup(group: IGroup) {
-        // TODO error check not duplicate add
-        if (!group.members) group.members = [];
-        group.members.push(new UserMember(this).toObject());
-        this.homeGroup = new HomeGroup(group).toObject();
+    public setHomeGroup(group: IGroup) {
+        this.homeGroup = new HomeGroup(group);
+    }
+
+    public removeHomeGroup() {
+        this.homeGroup = <any>null;
     }
 }
 

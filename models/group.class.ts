@@ -8,42 +8,41 @@ import { IBoundingBox } from "./bounding-box";
 import { Id } from "./id.class";
 import { ILocation } from "./location";
 import { ISchedule } from "./schedule.interface";
-import { IUser } from "./user.class";
+import { IUser, User } from "./user.class";
 import { IUserBadge } from "./userBadge.class";
 import { IUserMember, UserMember } from "./userMember.class";
 
 export interface IGroupPrivate extends IBase {
-  gid: string;
+  id: string;
   owner: IUserBadge;
   admins: IUserBadge[];
 }
 
 export class GroupPrivate extends Base implements IGroupPrivate {
-  gid!: string;
+  id: string = '';
   owner!: IUserBadge;
-  admins!: IUserBadge[];
+  admins: IUserBadge[] = [];
 }
 
 export interface IHomeGroup {
-  gid: string;
+  id: string;
   name: string;
   dateJoined: string;
 }
 
 export class HomeGroup extends Base implements IHomeGroup {
-  gid: string         = '';
-  name: string        = '';
-  dateJoined: string  = DateTime.local().toISO();
+  id: string = '';
+  name: string = '';
+  dateJoined: string = DateTime.local().toISO();
 
-  constructor(homeGroup: any) {
+  constructor(group: any) {
     super();
-    this.initialize(this, homeGroup);
-    this.gid = homeGroup.id;
+    this.initialize(this, group);
+    this.id = group.id;
   }
 }
 
 export interface IGroup {
-
   id: string;
   sourceUrl: string;
   name: string;
@@ -60,10 +59,10 @@ export interface IGroup {
   address: IAddress;
   location: ILocation;
   zoneIANA: string;
-  
+
   point: FirePoint;
   boundingbox: IBoundingBox;
-  
+
   members: IUserMember[];
   schedules: ISchedule[];
 
@@ -71,29 +70,29 @@ export interface IGroup {
 }
 
 export class Group extends Id implements IGroup {
-  sourceUrl: string               = '';
-  name: string                    = '';
-  type: string                    = '';
-  active: boolean                 = true;
-  region: string                  = '';
-  tags: string[]                  = [];
-  about: string                   = '';
-  started: string                 = '';
-  notes: string                   = '';
-  telephone: string               = '';
-  email: string                   = '';
-  url: string                     = '';
+  sourceUrl: string = '';
+  name: string = '';
+  type: string = '';
+  active: boolean = true;
+  region: string = '';
+  tags: string[] = [];
+  about: string = '';
+  started: string = '';
+  notes: string = '';
+  telephone: string = '';
+  email: string = '';
+  url: string = '';
   address!: IAddress;
   location!: ILocation;
-  zoneIANA: string                = '';
+  zoneIANA: string = '';
 
   point!: FirePoint;
   boundingbox!: IBoundingBox;
-  
-  members: IUserMember[]          = [];
-  schedules: ISchedule[]          = [];
-  
-  lastActivity: string            = DateTime.local().toISO();
+
+  members: IUserMember[] = [];
+  schedules: ISchedule[] = [];
+
+  lastActivity: string = DateTime.local().toISO();
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {
@@ -138,8 +137,8 @@ export class Group extends Id implements IGroup {
     this.initialize(this, group);
   }
 
-  isHomeGroup(iuser: IUser): boolean {
-    return this.id === (_.has(iuser, 'homeGroup.gid') ? iuser.homeGroup.gid : false);
+  isHomeGroup(iuser: User): boolean {
+    return iuser.isHomeGroup(this);
   }
 
 
@@ -190,12 +189,25 @@ export class Group extends Id implements IGroup {
     return rv;
   }
 
-  public makeHomeGroup(user: IUser) {
+  public addMember(user: IUser) {
     // TODO error check not duplicate add
     if (!this.members) this.members = [];
-    this.members.push(new UserMember(user).toObject());
-    user.homeGroup = new HomeGroup(this).toObject();
-}
+    const userMember = new UserMember(user);
+    const iuserMember = userMember.toObject();
+    this.members.push(iuserMember);
+  }
+
+  public removeMember(user: IUser) {
+    _.remove(this.members, (value:any, index:number, array:any) => {
+      return value.id === user.id;
+    })
+  }
+
+  public isMember(user: IUser) {
+    return this.members.findIndex(m => {
+      return m.id === user.id;
+    });
+  }
 
   toObject() {
     return super.toObject(['schedules']);

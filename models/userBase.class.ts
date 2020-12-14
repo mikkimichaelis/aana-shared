@@ -6,7 +6,7 @@ export interface IUserBase extends IId {
 }
 
 export class UserBase extends Id implements IUserBase {
-    name!: string;
+    name: string    = '';
 
     constructor(userBase?: any) {
         super(userBase);

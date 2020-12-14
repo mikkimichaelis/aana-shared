@@ -1,14 +1,13 @@
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { IHomeGroup } from './group.class';
 import { IUserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
 
 // Member of a homegroup
 export interface IUserMember {
-    aid: string;    // aid in UsersActivity collection
+    id: string;
+    name: string;
     bday: string;
-    homeGroup: IHomeGroup;
     activity: IUserActivity;
 
     daysSinceBday: number;
@@ -17,9 +16,7 @@ export interface IUserMember {
 
 declare const ONLINE_ACTIVITY = 15;
 export class UserMember extends UserBase implements IUserMember {
-    aid!: string;        // Admin
-    bday!: string;
-    homeGroup!: IHomeGroup;
+    bday:string                 = '';
     activity!: IUserActivity;
     
     public get isOnline(): boolean {
@@ -33,10 +30,9 @@ export class UserMember extends UserBase implements IUserMember {
     }
 
     constructor(user?: any) {
-        super(_.merge({
-        }, user));
-        this.bday = user.bday;
-        this.homeGroup = user.homeGroup;
+        super(user)
+        this.initialize(this, user);
+        this.bday = user.profile.bday;
         this.activity = user.activity;
     }
 }
