@@ -5,15 +5,14 @@ export interface IBase {
 }
 
 export class Base implements IBase {
-    constructor() { }
     // constructor(source?: any, defaults?: any, exclude?: string[]) {
     //     this.deepCopy(this, source, Object.keys(defaults), exclude);
     // }
 
-    public initialize(obj: any, source: any) {
+    public initialize(object: any, source: any) {
         if (source) {
-            _.mergeWith(obj, source, (objValue: any, srcValue: any, key: any, object: any, source: any, stack: any) => {
-                if (objValue != undefined) {
+            _.mergeWith(object, source, (objValue: any, srcValue: any, key: any, obj: any, src: any, stack: any) => {
+                if (objValue !== undefined) {
                     return srcValue;
                 }
             });
@@ -45,6 +44,7 @@ export class Base implements IBase {
         return destination;
     }
 
+    // exclude attached properties (ie Group.schedules)
     public toObject(exclude?: string[]): any {
         return JSON.parse(JSON.stringify(this.deepCopy({}, this, exclude)));
     }

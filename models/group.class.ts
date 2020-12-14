@@ -1,12 +1,12 @@
 import { FirePoint } from "geofirex";
 import * as _ from "lodash";
 import { DateTime } from 'luxon';
-import { Address, IAddress } from "./address";
+import { IAddress } from "./address";
 
 import { Base, IBase } from './base.class';
 import { IBoundingBox } from "./bounding-box";
 import { Id } from "./id.class";
-import { ILocation, Location } from "./location";
+import { ILocation } from "./location";
 import { ISchedule } from "./schedule.interface";
 import { IUser } from "./user.class";
 import { IUserBadge } from "./userBadge.class";
@@ -83,12 +83,12 @@ export class Group extends Id implements IGroup {
   telephone: string               = '';
   email: string                   = '';
   url: string                     = '';
-  address: IAddress               = null;
-  location: ILocation             = null;
+  address!: IAddress;
+  location!: ILocation;
   zoneIANA: string                = '';
 
-  point: FirePoint                = null;
-  boundingbox: IBoundingBox       = null;
+  point!: FirePoint;
+  boundingbox!: IBoundingBox;
   
   members: IUserMember[]          = [];
   schedules: ISchedule[]          = [];
@@ -148,12 +148,12 @@ export class Group extends Id implements IGroup {
     let now: any = DateTime.local();
     now = DateTime.fromObject({ year: 1970, month: 1, day: now.weekday, hour: now.hour, minute: now.min, second: now.second });
     now = now.toMillis();
-    let rv: ISchedule[] = [];
+    const rv: ISchedule[] = [];
     try {
       this.schedules.forEach(s => {
         const x = this.getNextSchedule(now);
         if (!x) throw new Error();  // exit forEach
-        rv.push(<ISchedule>x);
+        rv.push(x);
         now = x.millis + 1;
       });
     } catch { }

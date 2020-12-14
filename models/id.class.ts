@@ -7,7 +7,7 @@ export interface IId extends IBase {
 }
 
 export class Id extends Base implements IId {
-    id!: string;
+    id: string  = uuidv4();
 
     constructor(id?: any) { // IId
         super();
