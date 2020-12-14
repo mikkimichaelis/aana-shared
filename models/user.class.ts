@@ -68,10 +68,10 @@ export class User extends UserBase implements IUser {
     constructor(user?: any) {
         super(user);
         this.initialize(this, user);
-        if (_.has(user, 'profile')) this.profile = new UserProfile(user.profile);
-        if (_.has(user, 'activity')) this.activity = new UserActivity(user.activity);
-        if (_.has(user, 'member')) this.member = new UserMember(user.member);
-        if (_.has(user, 'homeGroup')) this.homeGroup = new HomeGroup(user.homeGroup);
+        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) this.profile = new UserProfile(user.profile);
+        if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
+        if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
+        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     public isHomeGroup(group: IGroup): boolean {
