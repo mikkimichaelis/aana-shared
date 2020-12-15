@@ -1,4 +1,5 @@
 import { FirePoint } from "geofirex";
+import * as geofirex from 'geofirex';
 import * as _ from "lodash";
 import { DateTime } from 'luxon';
 import { IAddress } from "./address";
@@ -60,13 +61,15 @@ export interface IGroup {
   location: ILocation;
   zoneIANA: string;
 
-  point: FirePoint;
+  point: any;
   boundingbox: IBoundingBox;
 
   members: IUserMember[];
   schedules: ISchedule[];
 
   lastActivity: string;
+  lastUpdate: string;
+  created: string;
 }
 
 export class Group extends Id implements IGroup {
@@ -86,13 +89,15 @@ export class Group extends Id implements IGroup {
   location: ILocation       = <any>null;
   zoneIANA: string          = '';
 
-  point: FirePoint          = <any>null;
+  point: any                = <any>null;
   boundingbox: IBoundingBox = <any>null;
 
   members: IUserMember[]    = [];
   schedules: ISchedule[]    = [];
 
   lastActivity: string      = DateTime.local().toISO();
+  lastUpdate: string        = DateTime.local().toISO();
+  created: string           = DateTime.local().toISO();
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {
@@ -209,7 +214,9 @@ export class Group extends Id implements IGroup {
     });
   }
 
-  toObject() {
-    return super.toObject(['schedules']);
+  toGeoObject(geo?: geofirex.GeoFireClient) {
+    const obj = super.toObject(['schedules']);
+    if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
+    return obj;
   }
 }
