@@ -28,8 +28,12 @@ export class Base implements IBase {
                             if (Array.isArray(source[key])) {
                                 destination[key] = _.cloneDeep(source[key]);
                             } else {
-                                destination[key] = {};
-                                this.deepCopy(destination[key], source[key], exclude, false);
+                                if (key === 'point') {
+                                    destination[key] = source[key];
+                                } else {
+                                    destination[key] = {};
+                                    this.deepCopy(destination[key], source[key], exclude, false);
+                                }
                             }
                         }
                     }

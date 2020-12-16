@@ -61,7 +61,7 @@ export interface IGroup {
   location: ILocation;
   zoneIANA: string;
 
-  point: any;
+  point: FirePoint;
   boundingbox: IBoundingBox;
 
   members: IUserMember[];
@@ -89,7 +89,7 @@ export class Group extends Id implements IGroup {
   location: ILocation       = <any>null;
   zoneIANA: string          = '';
 
-  point: any                = <any>null;
+  point: FirePoint          = <any>null;
   boundingbox: IBoundingBox = <any>null;
 
   members: IUserMember[]    = [];
@@ -140,6 +140,12 @@ export class Group extends Id implements IGroup {
   constructor(group?: any) {
     super(group)
     this.initialize(this, group);
+  }
+
+  toGeoObject(geo?: geofirex.GeoFireClient) {
+    const obj = super.toObject(['schedules']);
+    if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
+    return obj;
   }
 
   isHomeGroup(iuser: User): boolean {
@@ -212,11 +218,5 @@ export class Group extends Id implements IGroup {
     return this.members.findIndex(m => {
       return m.id === user.id;
     });
-  }
-
-  toGeoObject(geo?: geofirex.GeoFireClient) {
-    const obj = super.toObject(['schedules']);
-    if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
-    return obj;
   }
 }
