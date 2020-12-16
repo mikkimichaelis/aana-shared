@@ -1,16 +1,15 @@
 import { FirePoint } from 'geofirex';
 import * as _ from 'lodash';
-import { Base } from './base.class';
 
-import { UserBase } from './userBase.class';
+import { IUserBase, UserBase } from './userBase.class';
 
-export interface IUserActivity {
+export interface IUserActivity extends IUserBase {
     lastLogon: string;
     lastTime: string;
     point: FirePoint;
 }
 
-export class UserActivity extends Base implements IUserActivity {
+export class UserActivity extends UserBase implements IUserActivity {
     lastLogon: string   = '';
     lastTime: string    = '';
     point: FirePoint    = <any>null;
@@ -19,5 +18,4 @@ export class UserActivity extends Base implements IUserActivity {
         super();
         this.initialize(this, userActivity);
     }
-    
 }

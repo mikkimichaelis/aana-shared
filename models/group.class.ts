@@ -117,7 +117,7 @@ export class Group extends Id implements IGroup {
   public get yearsSobriety(): number {
     if (Array.isArray(this.members)) {
       // TODO check algorithm
-      return _.sum(_.map(this.members, (member: IUserMember) => {
+      return _.sum(_.map(this.members, (member: UserMember) => {
         return member.daysSinceBday;
       })) / 365;
     } else {
@@ -128,7 +128,7 @@ export class Group extends Id implements IGroup {
   public get membersOnline(): number {
     if (Array.isArray(this.members)) {
       // TODO check algorithm
-      return _.sum(_.map(this.members, (member: IUserMember) => {
+      return _.sum(_.map(this.members, (member: UserMember) => {
         return member.isOnline ? 1 : 0;
       })) / 365;
     } else {
@@ -141,9 +141,10 @@ export class Group extends Id implements IGroup {
     this.initialize(this, group);
   }
 
-  toGeoObject(geo?: geofirex.GeoFireClient) {
-    const obj = super.toObject(['schedules']);
-    if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
+  toGeoObject(geo?: geofirex.GeoFireClient): IGroup {
+    const members = this.members;
+    const obj = super.toGeoObject(geo, ['schedules']);
+    obj.members = members.map( member => member.toGeoObject(geo))
     return obj;
   }
 
@@ -203,8 +204,8 @@ export class Group extends Id implements IGroup {
     // TODO error check not duplicate add
     if (!this.members) this.members = [];
     const userMember = new UserMember(user);
-    const iuserMember = userMember.toObject();
-    this.members.push(iuserMember);
+    //const iuserMember = userMember.toObject();
+    this.members.push(userMember);
   }
 
   public removeMember(user: IUser) {

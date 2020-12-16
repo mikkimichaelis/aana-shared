@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 
 import { UserBase } from './userBase.class';
@@ -72,6 +73,13 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
         if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
+    }
+
+    toGeoObject(geo?: geofirex.GeoFireClient): IUser {
+        const activity = this.activity;
+        const obj = super.toGeoObject(geo);
+        obj.activity = activity.toGeoObject(geo);
+        return obj;
     }
 
     public isHomeGroup(group: IGroup): boolean {

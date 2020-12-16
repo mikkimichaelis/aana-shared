@@ -4,14 +4,9 @@ import { IUserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
 
 // Member of a homegroup
-export interface IUserMember {
-    id: string;
-    name: string;
+export interface IUserMember extends UserBase {
     bday: string;
     activity: IUserActivity;
-
-    daysSinceBday: number;
-    isOnline: boolean;
 }
 
 declare const ONLINE_ACTIVITY = 15;
