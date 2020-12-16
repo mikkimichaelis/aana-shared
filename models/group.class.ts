@@ -1,4 +1,3 @@
-import { FirePoint } from "geofirex";
 import * as geofirex from 'geofirex';
 import * as _ from "lodash";
 import { DateTime } from 'luxon';
@@ -61,7 +60,7 @@ export interface IGroup {
   location: ILocation;
   zoneIANA: string;
 
-  point: FirePoint;
+  point: geofirex.FirePoint;
   boundingbox: IBoundingBox;
 
   members: IUserMember[];
@@ -89,7 +88,7 @@ export class Group extends Id implements IGroup {
   location: ILocation       = <any>null;
   zoneIANA: string          = '';
 
-  point: FirePoint          = <any>null;
+  point: geofirex.FirePoint = <any>null;
   boundingbox: IBoundingBox = <any>null;
 
   members: IUserMember[]    = [];
