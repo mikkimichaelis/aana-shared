@@ -43,6 +43,7 @@ export interface IUser {
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
     friends: IUserFriend[];
+    chatUser: any;
     created: string;
 }
 
@@ -54,6 +55,7 @@ export class User extends UserBase implements IUser {
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     friends: IUserFriend[]      = [];
+    chatUser: any               = null;
     created: string             = DateTime.local().toISO();
 
     public get isOnline(): boolean {
