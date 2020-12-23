@@ -88,6 +88,14 @@ export class User extends UserBase implements IUser {
         return group.id === _.get(this, 'homeGroup.id', false);
     }
 
+    public isFavorite(group: IGroup): boolean {
+        const rv = -1 !== _.findIndex( this.favGroups, (fg => {
+            return (fg.gid === group.id) // TODO add schedule logic && (!_.has(fg, 'sid') || fg.sid === data.sid)
+        }))
+
+        return rv;
+    }
+
     public setUserAuthNames(displayName?: string): boolean {
         if (this.profile.anonymous
             // || TODO displayName is all whitespace

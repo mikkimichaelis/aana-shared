@@ -152,6 +152,10 @@ export class Group extends Id implements IGroup {
     return iuser.isHomeGroup(this);
   }
 
+  isFavorite(iuser: User): boolean {
+    return iuser.isFavorite(this);
+  }
+
 
   public orderSchedules(): ISchedule[] {
     // let week = 7 * 24 * 60 * 1000;  // 1 week in ms
