@@ -71,6 +71,8 @@ export class User extends UserBase implements IUser {
     constructor(user?: any) {
         super(user);
         this.initialize(this, user);
+        
+        // Create Custom Object Properties
         if (_.has(user, 'profile') && !_.isEmpty(user.profile)) this.profile = new UserProfile(user.profile);
         if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);

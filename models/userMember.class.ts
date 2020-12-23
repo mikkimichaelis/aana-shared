@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { IUserActivity } from './userActivity.class';
+import { IUserActivity, UserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
 
 // Member of a homegroup
@@ -24,10 +24,14 @@ export class UserMember extends UserBase implements IUserMember {
         return DateTime.local().toUTC().diff(bday).days;
     }
 
-    constructor(user?: any) {
-        super(user)
-        this.initialize(this, user);
-        this.bday = user.profile.bday;
-        this.activity = user.activity;
+    constructor(member?: any) {
+        super(member)
+        this.initialize(this, member);
+
+        // Overwrite custom member paths if passed IUser
+        this.bday = _.get(member, 'profile.bday', this.bday);   // TODO bday is null?
+        this.activity = _.get(member, 'activity', this.activity);
+
+        if(!_.isEmpty(this.activity)) this.activity = new UserActivity(this.activity);
     }
 }

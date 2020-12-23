@@ -1,7 +1,4 @@
-import { IBase } from "./base.class";
-
-
-export interface IUserFavorite extends IBase {
+export interface IUserFavorite {
     gid: string; // group id
     sid: string; // schedule id
     active: boolean;

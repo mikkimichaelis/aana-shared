@@ -139,6 +139,10 @@ export class Group extends Id implements IGroup {
   constructor(group?: any) {
     super(group)
     this.initialize(this, group);
+    // Create Custom Object Properties
+    if (_.has(group, 'members') && _.isArray(group.members) ) this.members = group.members.map( (um: IUserMember) => {
+      return new UserMember(um);
+    });
   }
 
   toGeoObject(geo?: geofirex.GeoFireClient): IGroup {
