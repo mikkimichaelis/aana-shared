@@ -22,15 +22,22 @@ export class Base implements IBase {
 
         if (source) {
             for (const key in source) {
-                if (!existing || (existing && _.has(destination, key))) {
+                // not doing an existing property copy or we are and the destination has an existing dest property
+                if (!existing || _.has(destination, key)) {
+                    // are we specifically excluding this key?
                     if (_.indexOf(exclude, key) === -1) {
+                        // if not an object, perform simple assignment
                         if (typeof source[key] !== "object") {
                             destination[key] = source[key];
                         } else {
+                            // if is an array, deepCopy the array non existing 
                             if (Array.isArray(source[key])) {
-                                destination[key] = _.cloneDeep(source[key]);
+                                //destination[key] = _.cloneDeep(source[key]);
+                                destination[key] = [];
+                                this.deepCopy(destination[key], source[key], exclude, false);
                             } else {
-                                if (key === 'point') {
+                                if (key === 'point') {  
+                                    // point properties are already Firebase GeoPoint type, use existing object
                                     destination[key] = source[key];
                                 } else {
                                     destination[key] = {};
@@ -54,5 +61,5 @@ export class Base implements IBase {
         const obj = this.toObject(exclude);
         if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
         return obj;
-      }
+    }
 }
