@@ -15,15 +15,15 @@ export class UserMember extends UserBase implements IUserMember {
     activity: IUserActivity     = <any>null;
     
     public get isOnline(): boolean {
-        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
-        const diff = DateTime.local().diff(lastActivity);
+        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
+        const diff = DateTime.utc().diff(lastActivity);
         const online =  (diff.milliseconds / 1000 / 60) < 15;
         return online;
     }
 
     public get daysSinceBday() {
         const bday:DateTime = DateTime.fromISO(this.bday);
-        return DateTime.local().toUTC().diff(bday).days;
+        return DateTime.utc().diff(bday).days;
     }
 
     constructor(member?: any) {

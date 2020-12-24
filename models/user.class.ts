@@ -56,16 +56,16 @@ export class User extends UserBase implements IUser {
     favGroups: IUserFavorite[]  = [];
     friends: IUserFriend[]      = [];
     chatUser: any               = null;
-    created: string             = DateTime.local().toISO();
+    created: string             = DateTime.utc().toISO();
 
     public get isOnline(): boolean {
-        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
-        return DateTime.local().diff(lastActivity).minutes < ONLINE_ACTIVITY;
+        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
+        return DateTime.utc().diff(lastActivity).minutes < ONLINE_ACTIVITY;
     }
 
     public get daysSinceBday() {
         const bday: DateTime = DateTime.fromISO(this.profile.bday);
-        return DateTime.local().toUTC().diff(bday).days;
+        return DateTime.utc().diff(bday).days;
     }
 
     constructor(user?: any) {

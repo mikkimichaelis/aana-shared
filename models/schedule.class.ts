@@ -14,7 +14,7 @@ export class Schedule extends Id implements ISchedule {
     active: boolean         = true;
     notes: string           = '';
     millis: number          = 0;
-    lastUpdate: string      = DateTime.local().toISO();
+    lastUpdate: string      = DateTime.utc().toISO();
 
     constructor(schedule?: any) {
         super(_.merge({
