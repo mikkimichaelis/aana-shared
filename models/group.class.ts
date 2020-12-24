@@ -19,9 +19,9 @@ export interface IGroupPrivate extends IBase {
 }
 
 export class GroupPrivate extends Base implements IGroupPrivate {
-  id: string            = '';
-  owner: IUserBadge     = <any>null;
-  admins: IUserBadge[]  = [];
+  id: string = '';
+  owner: IUserBadge = <any>null;
+  admins: IUserBadge[] = [];
 }
 
 export interface IHomeGroup {
@@ -72,31 +72,31 @@ export interface IGroup {
 }
 
 export class Group extends Id implements IGroup {
-  sourceUrl: string         = '';
-  name: string              = '';
-  type: string              = '';
-  active: boolean           = true;
-  region: string            = '';
-  tags: string[]            = [];
-  about: string             = '';
-  started: string           = '';
-  notes: string             = '';
-  telephone: string         = '';
-  email: string             = '';
-  url: string               = '';
-  address: IAddress         = <any>null;
-  location: ILocation       = <any>null;
-  zoneIANA: string          = '';
+  sourceUrl: string = '';
+  name: string = '';
+  type: string = '';
+  active: boolean = true;
+  region: string = '';
+  tags: string[] = [];
+  about: string = '';
+  started: string = '';
+  notes: string = '';
+  telephone: string = '';
+  email: string = '';
+  url: string = '';
+  address: IAddress = <any>null;
+  location: ILocation = <any>null;
+  zoneIANA: string = '';
 
   point: geofirex.FirePoint = <any>null;
   boundingbox: IBoundingBox = <any>null;
 
-  members: IUserMember[]    = [];
-  schedules: ISchedule[]    = [];
+  members: IUserMember[] = [];
+  schedules: ISchedule[] = [];
 
-  lastActivity: string      = DateTime.local().toISO();
-  lastUpdate: string        = DateTime.local().toISO();
-  created: string           = DateTime.local().toISO();
+  lastActivity: string = DateTime.local().toISO();
+  lastUpdate: string = DateTime.local().toISO();
+  created: string = DateTime.local().toISO();
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {
@@ -114,14 +114,26 @@ export class Group extends Id implements IGroup {
     }
   }
 
-  public get yearsSobriety(): number {
+  public get yearsSobriety(): string {
     if (Array.isArray(this.members)) {
       // TODO check algorithm
-      return _.sum(_.map(this.members, (member: UserMember) => {
+      const years = _.sum(_.map(this.members, (member: UserMember) => {
         return member.daysSinceBday;
       })) / 365;
+
+      if (_.isNaN(years)) {
+        return '0.0';
+      } else {
+        return years.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 2,
+          }
+        );
+      }
     } else {
-      return 0;
+      return '0.0';
     }
   }
 
@@ -130,7 +142,7 @@ export class Group extends Id implements IGroup {
       // TODO check algorithm
       return _.sum(_.map(this.members, (member: UserMember) => {
         return member.isOnline ? 1 : 0;
-      })) / 365;
+      }));
     } else {
       return 0;
     }
@@ -140,7 +152,7 @@ export class Group extends Id implements IGroup {
     super(group)
     this.initialize(this, group);
     // Create Custom Object Properties
-    if (_.has(group, 'members') && _.isArray(group.members) ) this.members = group.members.map( (um: IUserMember) => {
+    if (_.has(group, 'members') && _.isArray(group.members)) this.members = group.members.map((um: IUserMember) => {
       return new UserMember(um);
     });
   }
@@ -148,7 +160,7 @@ export class Group extends Id implements IGroup {
   toGeoObject(geo?: geofirex.GeoFireClient): IGroup {
     const members = this.members;
     const obj = super.toGeoObject(geo, ['schedules']);
-    obj.members = members.map( member => member.toGeoObject(geo))
+    obj.members = members.map(member => member.toGeoObject(geo))
     return obj;
   }
 
@@ -217,7 +229,7 @@ export class Group extends Id implements IGroup {
   }
 
   public removeMember(user: IUser) {
-    _.remove(this.members, (value:any, index:number, array:any) => {
+    _.remove(this.members, (value: any, index: number, array: any) => {
       return value.id === user.id;
     })
   }

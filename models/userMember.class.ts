@@ -16,7 +16,9 @@ export class UserMember extends UserBase implements IUserMember {
     
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime).toLocal();
-        return DateTime.local().diff(lastActivity).minutes < ONLINE_ACTIVITY;
+        const diff = DateTime.local().diff(lastActivity);
+        const online =  (diff.milliseconds / 1000 / 60) < 15;
+        return online;
     }
 
     public get daysSinceBday() {
