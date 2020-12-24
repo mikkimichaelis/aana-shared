@@ -17,7 +17,7 @@ export class UserBase extends Id implements IUserBase {
         super(userBase);
         this.initialize(this, userBase);
         if( _.isEmpty(this.avatar) ) {
-            md5 = new Md5();
+            const md5 = new Md5();
             this.avatar = `https://www.gravatar.com/avatar/${md5.appendStr(`${this.id.toLocaleLowerCase()}@anonymousmeetings.app`).end()}?d=identicon`;;
         }
     }
