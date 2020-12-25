@@ -51,7 +51,7 @@ declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
-    member: IUserMember         = <any>null;
+    member: IUserMember         = <any>null;    // TODO ???
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     friends: IUserFriend[]      = [];
