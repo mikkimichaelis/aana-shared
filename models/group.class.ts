@@ -224,7 +224,6 @@ export class Group extends Id implements IGroup {
     // TODO error check not duplicate add
     if (!this.members) this.members = [];
     const userMember = new UserMember(user);
-    //const iuserMember = userMember.toObject();
     this.members.push(userMember);
   }
 
@@ -232,6 +231,11 @@ export class Group extends Id implements IGroup {
     _.remove(this.members, (value: any, index: number, array: any) => {
       return value.id === user.id;
     })
+  }
+
+  public updateMember(user: IUser) {
+    this.removeMember(user);
+    this.addMember(user);
   }
 
   public isMember(user: IUser) {
