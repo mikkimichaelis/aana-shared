@@ -23,7 +23,12 @@ export class UserMember extends UserBase implements IUserMember {
 
     public get daysSinceBday() {
         const bday:DateTime = DateTime.fromISO(this.bday);
-        return DateTime.utc().diff(bday).days;
+        const days = DateTime.utc().diff(bday).days;
+        if( _.isNaN(days) ) {
+            return 0;
+        } else {
+            return days;
+        }
     }
 
     constructor(member?: any) {
