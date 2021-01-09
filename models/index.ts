@@ -2,6 +2,7 @@ export * from './address';
 export * from './bounding-box';
 export * from './chat-session';
 export * from './group.class';
+export * from './id.class';
 export * from './location';
 export * from './meeting.class';
 export * from './message';
