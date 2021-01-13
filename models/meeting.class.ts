@@ -1,28 +1,25 @@
 import * as _ from 'lodash';
 import { FirePoint } from "geofirex";
 
-import { Id } from "./id.class";
+import { Id, IId } from "./id.class";
 import { IUserBase } from './userBase.class';
 import { IRideRequest, IUserBadge } from ".";
+import { IRecurrence } from '../listings';
 
-export interface IMeeting {
-    gid: string;
-    sid: string;
-    badge: IUserBadge;
-    point: FirePoint;
-    start: string;
-    end: string;
-    secretary: string;
-    speaker: string;
-    collection: number;
-    attendance: number;
-    usersAttend: IUserBase[];
-    birthdays: string[];
-    firstTimers: string[];
-    visitors: string[];
+export interface IMeeting extends IId {
+    id: string;
+    isOwner: boolean;
+    name: string;
+    zoomMeetingNumber: string;
     topic: string;
-    notes: string;
-    rideRequests: IRideRequest[] | undefined
+    continuous: boolean;
+
+    timezone: string;
+    startTime: string;
+    duration: number;
+
+    recurrence: IRecurrence;
+
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -31,23 +28,18 @@ export interface IZoomMeeting extends IMeeting {
 }
 
 export class Meeting extends Id implements IMeeting {
-    gid: string                     = '';
-    sid: string                     = '';
-    badge: IUserBadge               = <any>null;
-    point: FirePoint                = <any>null;
-    start: string                   = '';
-    end: string                     = '';
-    secretary: string               = '';
-    speaker: string                 = '';
-    collection: number              = 0;
-    attendance: number              = 0;
-    usersAttend: IUserBase[]        = [];
-    birthdays: string[]             = [];
-    firstTimers: string[]           = [];
-    visitors: string[]              = [];
-    topic: string                   = '';
-    notes: string                   = '';
-    rideRequests: IRideRequest[]    = [];
+    id: string                 = '';
+    isOwner: boolean            = false;
+    name: string                = '';
+    zoomMeetingNumber: string   = '';
+    topic: string               = '';
+    continuous: boolean         = false;
+
+    timezone: string            = "-5";
+    startTime: string           = "00:00";
+    duration: number            = 60;
+
+    recurrence: IRecurrence     = null;
 
     constructor(meeting?: IMeeting) {
         super(meeting);
