@@ -42,6 +42,7 @@ export interface IUser {
     member: IUserMember;
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
+    favMeetings: string[];
     friends: IUserFriend[];
     chatUser: any;
     created: string;
@@ -54,6 +55,7 @@ export class User extends UserBase implements IUser {
     member: IUserMember         = <any>null;    // TODO ???
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
+    favMeetings: any[]          = [];
     friends: IUserFriend[]      = [];
     chatUser: any               = null;
     created: string             = DateTime.utc().toISO();

@@ -8,9 +8,10 @@ import { IRecurrence } from '../listings';
 
 export interface IMeeting extends IId {
     id: string;
-    isOwner: boolean;
+    uid: string;
+    isZoomOwner: boolean;
     name: string;
-    zoomMeetingNumber: string;
+    password: string;
     topic: string;
     continuous: boolean;
 
@@ -19,7 +20,6 @@ export interface IMeeting extends IId {
     duration: number;
 
     recurrence: IRecurrence;
-
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -28,10 +28,10 @@ export interface IZoomMeeting extends IMeeting {
 }
 
 export class Meeting extends Id implements IMeeting {
-    id: string                 = '';
-    isOwner: boolean            = false;
+    uid: string                 = '';
+    isZoomOwner: boolean        = false;
     name: string                = '';
-    zoomMeetingNumber: string   = '';
+    password: string            = '';
     topic: string               = '';
     continuous: boolean         = false;
 
