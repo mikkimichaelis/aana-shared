@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import { FirePoint } from "geofirex";
 
-import { Id, IId } from "./id.class";
-import { IUserBase } from './userBase.class';
-import { IRideRequest, IUserBadge } from ".";
-import { IRecurrence } from '../listings';
+import { Id, IId } from "../models/id.class";
+import { IUserBase } from '../models/userBase.class';
+import { IRideRequest, ISchedule, IUserBadge } from "../models";
+import { IRecurrence } from '.';
+import { Schedule } from '../models/schedule.class';
 
 export interface IMeeting extends IId {
     id: string;
@@ -20,6 +21,7 @@ export interface IMeeting extends IId {
     duration: number;
 
     recurrence: IRecurrence;
+    schedule: ISchedule;
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -40,6 +42,7 @@ export class Meeting extends Id implements IMeeting {
     duration: number            = 60;
 
     recurrence: IRecurrence     = null;
+    schedule: ISchedule         = new Schedule();
 
     constructor(meeting?: IMeeting) {
         super(meeting);

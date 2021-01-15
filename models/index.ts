@@ -4,7 +4,7 @@ export * from './chat-session';
 export * from './group.class';
 export * from './id.class';
 export * from './location';
-export * from './meeting.class';
+export * from '../listings/meeting';
 export * from './message';
 export * from './reminder';
 export * from './ride-request';
