@@ -9,3 +9,15 @@ export interface IRecurrence {
     end_times:          number;
     end_date_time:      string;
 } 
+
+export class Recurrence implements IRecurrence {
+    type:               number  = 1;
+    repeat_interval:    number  = null;
+    weekly_day:         string  = '';
+    weekly_days:        string[] = [];
+    monthly_day:        number;
+    monthly_week:       number;
+    monthly_week_day:   number;
+    end_times:          number;
+    end_date_time:      string;
+}

@@ -4,11 +4,11 @@ import { FirePoint } from "geofirex";
 import { Id, IId } from "../models/id.class";
 import { IUserBase } from '../models/userBase.class';
 import { IRideRequest, ISchedule, IUserBadge } from "../models";
-import { IRecurrence } from '.';
+import { IRecurrence, Recurrence } from '.';
 import { Schedule } from '../models/schedule.class';
 
 export interface IMeeting extends IId {
-    id: string;
+    zid: string;
     uid: string;
     isZoomOwner: boolean;
     name: string;
@@ -30,6 +30,7 @@ export interface IZoomMeeting extends IMeeting {
 }
 
 export class Meeting extends Id implements IMeeting {
+    zid: string                 = '';
     uid: string                 = '';
     isZoomOwner: boolean        = false;
     name: string                = '';
@@ -41,7 +42,7 @@ export class Meeting extends Id implements IMeeting {
     startTime: string           = "00:00";
     duration: number            = 60;
 
-    recurrence: IRecurrence     = null;
+    recurrence: IRecurrence     = new Recurrence()
     schedule: ISchedule         = new Schedule();
 
     constructor(meeting?: IMeeting) {
