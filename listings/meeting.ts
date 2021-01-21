@@ -1,11 +1,8 @@
 import * as _ from 'lodash';
-import { FirePoint } from "geofirex";
 
 import { Id, IId } from "../models/id.class";
-import { IUserBase } from '../models/userBase.class';
-import { IRideRequest, ISchedule, IUserBadge } from "../models";
-import { IRecurrence, Recurrence } from '.';
-import { Schedule } from '../models/schedule.class';
+import { Schedule, ISchedule } from '../models/schedule.class';
+import { IRecurrence, Recurrence } from './recurrence';
 
 export interface IMeeting extends IId {
     zid: string;

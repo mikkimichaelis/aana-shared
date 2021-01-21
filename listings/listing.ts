@@ -1,5 +1,6 @@
 import _ from "lodash";
-import { Id, IId, ISchedule, Schedule } from "../models";
+import { Id, IId } from "../models/id.class";
+import { ISchedule, Schedule } from "../models/schedule.class";
 
 export interface IListing extends IId {
     ownerId: string;

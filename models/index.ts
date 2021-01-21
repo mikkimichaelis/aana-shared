@@ -9,7 +9,6 @@ export * from './message';
 export * from './reminder';
 export * from './ride-request';
 export * from './schedule.class';
-export * from './schedule.interface';
 export * from './user.class';
 export * from './userActivity.class';
 export * from './userAttend.class';
