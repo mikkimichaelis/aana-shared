@@ -7,7 +7,7 @@ import { Base, IBase } from './base.class';
 import { IBoundingBox } from "./bounding-box";
 import { Id } from "./id.class";
 import { ILocation } from "./location";
-import { ISchedule } from "./schedule.interface";
+import { ISchedule } from './schedule.class';
 import { IUser, User } from "./user.class";
 import { IUserBadge } from "./userBadge.class";
 import { IUserMember, UserMember } from "./userMember.class";
