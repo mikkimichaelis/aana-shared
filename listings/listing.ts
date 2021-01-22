@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _  from "lodash";
 import { Id, IId } from "../models/id.class";
 import { ISchedule, Schedule } from "../models/schedule.class";
 

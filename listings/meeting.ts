@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { Date } from 'moment'
 
 import { Id, IId } from "../models/id.class";
 import { Schedule, ISchedule } from '../models/schedule.class';
