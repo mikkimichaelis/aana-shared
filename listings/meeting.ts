@@ -53,6 +53,23 @@ export class Meeting extends Id implements IMeeting {
         return this.tConvert(this.startTime);
     }
 
+    get startTimeFormatLocal(): DateTime {
+        try {
+            const start = DateTime.fromObject({
+                hour: Number.parseInt(this.startTime.split(':')[0]),
+                minute: Number.parseInt(this.startTime.split(':')[1]),
+                zone: this.timezone
+            }).setZone('local');
+            return start;
+        } catch (e) {
+            LogRocket.error(e);
+            // TODO
+            // return;
+            return null;
+        }
+
+    }
+
     get isLive(): boolean {
         const now = this.makeThat70sTime(DateTime.local().toISO());
         return   (this.start <= now) && (now <= this.end);      // start <= now <= end
