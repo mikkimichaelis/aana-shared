@@ -53,6 +53,11 @@ export class Meeting extends Id implements IMeeting {
         return this.tConvert(this.startTime);
     }
 
+    get isLive(): boolean {
+        const now = this.makeThat70sTime(DateTime.local().toISO());
+        return   (this.start <= now) && (now <= this.end);      // start <= now <= end
+    }
+
     constructor(meeting?: IMeeting) {
         super(meeting);
         this.initialize(this, meeting);
@@ -104,16 +109,28 @@ export class Meeting extends Id implements IMeeting {
         this.end = this.start + (this.duration * 60 * 1000);
     }
 
-    // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
-  tConvert (time: any) {
-    // Check correct time format and split into components
-    time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)?$/) || [time];
-  
-    if (time.length > 1) { // If time format correct
-      time = time.slice (1);  // Remove full string match value
-      time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
-      time[0] = +time[0] % 12 || 12; // Adjust hours
+    makeThat70sTime(time: string) {
+        let _70sTime = DateTime.fromObject({
+            year: 1970,
+            month: 1,
+            day: 2,
+            hour: DateTime.fromISO(time).hour,  // search.bySpecific.start
+            minute: DateTime.fromISO(time).minute,
+            zone: DateTime.local().zone
+          }).toUTC().toMillis();
+        return _70sTime;
     }
-    return time.join (''); // return adjusted time or original string
-  }
+
+    // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
+    tConvert(time: any) {
+        // Check correct time format and split into components
+        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)?$/) || [time];
+
+        if (time.length > 1) { // If time format correct
+            time = time.slice(1);  // Remove full string match value
+            time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
+            time[0] = +time[0] % 12 || 12; // Adjust hours
+        }
+        return time.join(''); // return adjusted time or original string
+    }
 }
