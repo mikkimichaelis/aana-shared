@@ -9,17 +9,25 @@ import { IRecurrence, Recurrence } from './recurrence';
 export interface IMeeting extends IId {
     zid: string;
     uid: string;
+    
+    active: boolean;
+    verified: boolean;
+
     isZoomOwner: boolean;
+
     name: string;
     password: string;
     topic: string;
-    continuous: boolean;
 
+    continuous: boolean;
     timezone: string;
     startTime: string;
     duration: number;
 
     recurrence: IRecurrence;
+
+    start: number;      // Millisecond UTC 0 time offset of 1/2/1970 + timezone + startTime
+    end: number;        // start + duration
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -31,13 +39,14 @@ export class Meeting extends Id implements IMeeting {
     zid: string = '';
     uid: string = '';
     active: boolean = true;
+    verified: boolean = false;
     // private
     isZoomOwner: boolean = false;
     name: string = '';
     password: string = '';
     topic: string = '';
-    continuous: boolean = false;
 
+    continuous: boolean = false;
     timezone: string = "America/New_York";
     startTime: string = "00:00";
     duration: number = 60;

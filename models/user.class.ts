@@ -43,7 +43,9 @@ export interface IUser {
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
     favMeetings: string[];
+    blkMeetings: string[];
     friends: IUserFriend[];
+    
     chatUser: any;
     created: string;
 }
@@ -56,6 +58,7 @@ export class User extends UserBase implements IUser {
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     favMeetings: any[]          = [];
+    blkMeetings: any[]          = [];
     friends: IUserFriend[]      = [];
     chatUser: any               = null;
     created: string             = DateTime.utc().toISO();
@@ -71,7 +74,11 @@ export class User extends UserBase implements IUser {
     }
 
     constructor(user?: any) {
-        super(user);
+        super(user);    // pass to super user?
+
+        // This is the BaseClass (root) initialize()
+        // parm1: subclass instance (this)
+        // parm2: constructor parameters
         this.initialize(this, user);
         
         // Create Custom Object Properties
