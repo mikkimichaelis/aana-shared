@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import LogRocket from 'logrocket';
+
 import { DateTime } from 'luxon'
 
 import { Id, IId } from "../models/id.class";
@@ -71,7 +71,7 @@ export class Meeting extends Id implements IMeeting {
             }).setZone('local');
             return start;
         } catch (e) {
-            LogRocket.error(e);
+            console.error(e);
             // TODO
             // return;
             return null;
@@ -118,7 +118,7 @@ export class Meeting extends Id implements IMeeting {
                 zone: this.timezone
             }).toUTC().toMillis();
         } catch (e) {
-            LogRocket.error(e);
+            console.error(e);
             // TODO
             // return;
         }
