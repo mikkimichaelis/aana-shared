@@ -9,6 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
+import { IMeeting } from '../listings';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -40,6 +41,7 @@ export interface IUser {
     profile: IUserProfile;
     activity: IUserActivity;
     member: IUserMember;
+    homeMeeting: IMeeting;
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
     favMeetings: string[];
@@ -55,6 +57,7 @@ export class User extends UserBase implements IUser {
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
     member: IUserMember         = <any>null;    // TODO ???
+    homeMeeting: IMeeting       = <any>null;
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     favMeetings: any[]          = [];
