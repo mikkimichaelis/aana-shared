@@ -98,7 +98,7 @@ export class Meeting extends Id implements IMeeting {
 
     updateDayTime() {
 
-        if (this.recurrence.type == 1) {
+        if (this.recurrence.type == 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
             this.recurrence.weekly_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         }

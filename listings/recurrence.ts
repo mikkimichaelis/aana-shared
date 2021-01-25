@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export interface IRecurrence {
-    type:               number;     // allowed 1, 2, 3 required
+    type:               string;     
     repeat_interval:    number;
     weekly_day:         string;
     weekly_days:        string[];
@@ -13,7 +13,7 @@ export interface IRecurrence {
 } 
 
 export class Recurrence implements IRecurrence {
-    type:               number  = 1;
+    type:               string  = 'Daily';
     repeat_interval:    number  = null;
     weekly_day:         string  = 'Sunday';
     weekly_days:        string[] = [];

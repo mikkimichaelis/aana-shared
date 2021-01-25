@@ -9,7 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
-import { IMeeting } from '../listings';
+import { IMeeting, Meeting } from '../listings';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -57,7 +57,7 @@ export class User extends UserBase implements IUser {
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
     member: IUserMember         = <any>null;    // TODO ???
-    homeMeeting: IMeeting       = <any>null;
+    homeMeeting: Meeting        = <any>null;
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     favMeetings: any[]          = [];
@@ -89,6 +89,7 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
         if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
+        if (_.has(user, 'homeMeeting') && !_.isEmpty(user.homeMeeting)) this.homeMeeting = new Meeting(user.homeMeeting);
     }
 
     toGeoObject(geo?: geofirex.GeoFireClient): IUser {
