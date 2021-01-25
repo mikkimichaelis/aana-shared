@@ -85,7 +85,7 @@ export class Meeting extends Id implements IMeeting {
 
     get isLive(): boolean {
         const now = this.makeThat70sTime(DateTime.local().toISO());
-        return   (this.start <= now) && (now <= this.end);      // start <= now <= end
+        return   (this.continuous) || (this.start <= now) && (now <= this.end);      // start <= now <= end
     }
 
     constructor(meeting?: IMeeting) {
