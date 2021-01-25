@@ -28,6 +28,8 @@ export interface IMeeting extends IId {
 
     start: number;      // Millisecond UTC 0 time offset of 1/2/1970 + timezone + startTime
     end: number;        // start + duration
+
+    buymeacoffee: any;
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -57,6 +59,8 @@ export class Meeting extends Id implements IMeeting {
     // tags
 
     recurrence: IRecurrence = new Recurrence();
+
+    buymeacoffee: any = {};
 
     get startTimeFormat(): string {
         return this.tConvert(this.startTime);
