@@ -14,14 +14,14 @@ export interface IListing extends IId {
 }
 
 export class Listing extends Id {
-    ownerId: string;
-    name: string;
-    zoomId: string;
-    zoomPw: string;
-    start: string;
-    topic: string;
+    ownerId: string = '';
+    name: string = '';
+    zoomId: string = '';
+    zoomPw: string = '';
+    start: string = '';
+    topic: string = '';
 
-    schedule: ISchedule;
+    schedule: ISchedule = <any>{};
 
     constructor(listing?: any) {
         super(listing);

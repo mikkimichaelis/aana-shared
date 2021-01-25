@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
 
-import { DateTime } from 'luxon'
+import { DateTime } from 'luxon';
 
 import { Id, IId } from "../models/id.class";
-import { Schedule, ISchedule } from '../models/schedule.class';
 import { IRecurrence, Recurrence } from './recurrence';
 
 export interface IMeeting extends IId {
@@ -72,14 +71,14 @@ export class Meeting extends Id implements IMeeting {
             const start = DateTime.fromObject({
                 hour: Number.parseInt(this.startTime.split(':')[0]),
                 minute: Number.parseInt(this.startTime.split(':')[1]),
-                zone: this.timezone
+                zone: this.timezone,
             }).setZone('local');
             return start;
         } catch (e) {
             console.error(e);
             // TODO
             // return;
-            return null;
+            return <any>null;
         }
 
     }
@@ -98,7 +97,7 @@ export class Meeting extends Id implements IMeeting {
 
     updateDayTime() {
 
-        if (this.recurrence.type == 'Daily') {
+        if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
             this.recurrence.weekly_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         }
@@ -120,7 +119,7 @@ export class Meeting extends Id implements IMeeting {
                 day: 2,
                 hour: Number.parseInt(this.startTime.split(':')[0]),
                 minute: Number.parseInt(this.startTime.split(':')[1]),
-                zone: this.timezone
+                zone: this.timezone,
             }).toUTC().toMillis();
         } catch (e) {
             console.error(e);
@@ -134,20 +133,20 @@ export class Meeting extends Id implements IMeeting {
             day: 2,
             hour: Number.parseInt(this.startTime.split(':')[0]),
             minute: Number.parseInt(this.startTime.split(':')[1]),
-            zone: this.timezone
+            zone: this.timezone,
         })
 
         this.end = this.start + (this.duration * 60 * 1000);
     }
 
     makeThat70sTime(time: string) {
-        let _70sTime = DateTime.fromObject({
+        const _70sTime = DateTime.fromObject({
             year: 1970,
             month: 1,
             day: 2,
             hour: DateTime.fromISO(time).hour,  // search.bySpecific.start
             minute: DateTime.fromISO(time).minute,
-            zone: DateTime.local().zone
+            zone: DateTime.local().zone,
           }).toUTC().toMillis();
         return _70sTime;
     }
@@ -155,13 +154,13 @@ export class Meeting extends Id implements IMeeting {
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
     tConvert(time: any) {
         // Check correct time format and split into components
-        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)?$/) || [time];
+        let t = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)?$/) || [time];
 
-        if (time.length > 1) { // If time format correct
-            time = time.slice(1);  // Remove full string match value
-            time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
-            time[0] = +time[0] % 12 || 12; // Adjust hours
+        if (t.length > 1) { // If time format correct
+            t = t.slice(1);  // Remove full string match value
+            t[5] = +t[0] < 12 ? ' am' : ' pm'; // Set AM/PM
+            t[0] = +t[0] % 12 || 12; // Adjust hours
         }
-        return time.join(''); // return adjusted time or original string
+        return t.join(''); // return adjusted time or original string
     }
 }

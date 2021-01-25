@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _  from "lodash";
 
 export interface IRecurrence {
     type:               string;     
@@ -14,12 +14,15 @@ export interface IRecurrence {
 
 export class Recurrence implements IRecurrence {
     type:               string  = 'Daily';
-    repeat_interval:    number  = null;
+    
     weekly_day:         string  = 'Sunday';
     weekly_days:        string[] = [];
-    monthly_day:        number;
-    monthly_week:       number;
-    monthly_week_day:   number;
-    end_times:          number;
-    end_date_time:      string;
+
+    // TODO Unused
+    repeat_interval:    number  = 0;
+    monthly_day:        number = 0;
+    monthly_week:       number = 0;
+    monthly_week_day:   number = 0;
+    end_times:          number = 0;
+    end_date_time:      string = '';
 }
