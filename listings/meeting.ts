@@ -41,7 +41,7 @@ export class Meeting extends Id implements IMeeting {
     uid: string = '';
     active: boolean = true;
     verified: boolean = false;
-    authorized: boolean = false;  // TODO some extended verification?
+    authorized: boolean = false;  // TODO is owner paid?
     // private
     isZoomOwner: boolean = false;
     name: string = '';
