@@ -41,7 +41,7 @@ export interface IUser {
     profile: IUserProfile;
     activity: IUserActivity;
     member: IUserMember;
-    homeMeeting: IMeeting;
+    homeMeeting: string;
     homeGroup: IHomeGroup;
     favGroups: IUserFavorite[];
     favMeetings: string[];
@@ -57,7 +57,7 @@ export class User extends UserBase implements IUser {
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
     member: IUserMember         = <any>null;    // TODO ???
-    homeMeeting: Meeting        = <any>null;
+    homeMeeting: string         = <any>null;
     homeGroup: IHomeGroup       = <any>null;
     favGroups: IUserFavorite[]  = [];
     favMeetings: any[]          = [];
@@ -88,8 +88,7 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'profile') && !_.isEmpty(user.profile)) this.profile = new UserProfile(user.profile);
         if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
-        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
-        if (_.has(user, 'homeMeeting') && !_.isEmpty(user.homeMeeting)) this.homeMeeting = new Meeting(user.homeMeeting);
+        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);    
     }
 
     toGeoObject(geo?: geofirex.GeoFireClient): IUser {
