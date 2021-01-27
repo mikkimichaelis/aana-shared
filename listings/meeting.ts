@@ -18,6 +18,8 @@ export interface IMeeting extends IId {
     password: string;
     topic: string;
 
+    tags: string[]
+
     continuous: boolean;
     timezone: string;
     startTime: string;
@@ -47,6 +49,8 @@ export class Meeting extends Id implements IMeeting {
     name: string = '';
     password: string = '';
     topic: string = '';
+    
+    tags: string[] = [];
 
     continuous: boolean = false;
     timezone: string = "America/New_York";
@@ -55,8 +59,6 @@ export class Meeting extends Id implements IMeeting {
 
     start: number = 0;    // Millisecond UTC 0 time offset of 1/2/1970 + timezone + startTime
     end: number = 0;    // start + duration
-
-    // tags
 
     recurrence: IRecurrence = new Recurrence();
 
