@@ -127,14 +127,14 @@ export class Meeting extends Id implements IMeeting {
             // return;
         }
 
-        console.log({
-            year: 1970,
-            month: 1,
-            day: 2,
-            hour: Number.parseInt(this.startTime.split(':')[0]),
-            minute: Number.parseInt(this.startTime.split(':')[1]),
-            zone: this.timezone,
-        })
+        // console.log({
+        //     year: 1970,
+        //     month: 1,
+        //     day: 2,
+        //     hour: Number.parseInt(this.startTime.split(':')[0]),
+        //     minute: Number.parseInt(this.startTime.split(':')[1]),
+        //     zone: this.timezone,
+        // })
 
         this.end = this.start + (this.duration * 60 * 1000);
     }

@@ -25,13 +25,18 @@ export class Id extends Base implements IId {
     constructor(id?: any) { // IId
         super();
         this.initialize(this, id);
+
+        if (!this.ts.createdAt) {
+            this.ts.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
     }
 
     public toObject(exclude?: string[]): any {
+        const ts_createdAt = this.ts.createdAt;
         const obj = super.toObject(exclude);
         obj.ts.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+        obj.ts.createdAt = ts_createdAt;
         return obj;
-
     }
 
     public toGeoObject(geo?: geofirex.GeoFireClient, exclude?: string[]) {
