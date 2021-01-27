@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase';
 import * as geofirex from 'geofirex';
 import * as _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,7 +19,7 @@ export class Id extends Base implements IId {
 
     ts = { 
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     }
 
     constructor(id?: any) { // IId
