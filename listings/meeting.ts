@@ -48,6 +48,8 @@ export class Meeting extends Id implements IMeeting {
     authorized: boolean = false;  // TODO is owner paid?
     // private
     isZoomOwner: boolean = false;
+    requiresLogin: boolean = false;
+    
     name: string = '';
     password: string = '';
     topic: string = '';
