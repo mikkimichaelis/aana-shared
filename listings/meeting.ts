@@ -11,25 +11,27 @@ export interface IMeeting extends IId {
     
     active: boolean;
     verified: boolean;
+    authorized: boolean;
 
     isZoomOwner: boolean;
+    requiresLogin: boolean;
 
     name: string;
     password: string;
     topic: string;
-
     tags: string[]
 
     continuous: boolean;
-    timezone: string;
-    startTime: string;
+    recurrence: IRecurrence;
+    startTime: string;  // HH:MM
     duration: number;
 
-    recurrence: IRecurrence;
-
-    start: number;      // Millisecond UTC 0 time offset of 1/2/1970 + timezone + startTime
+    // Meeting window of time on 1/2/1970 00:00Z - 24:00Z
+    start: number;      // that70sTime
     end: number;        // start + duration
 
+    timezone: string;   // Use this to offset local to Z time to search within start:end window
+    
     buymeacoffee: any;
 }
 
