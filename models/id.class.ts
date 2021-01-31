@@ -3,7 +3,6 @@ import * as geofirex from 'geofirex';
 import * as _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Base, IBase } from './base.class';
-
 export interface IId extends IBase {
     id: string;
 
@@ -26,9 +25,9 @@ export class Id extends Base implements IId {
         super();
         this.initialize(this, id);
 
-        if (!this.ts.createdAt) {
+        // if (!this.ts.createdAt) {
             this.ts.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        }
+        // }
     }
 
     public toObject(exclude?: string[]): any {
