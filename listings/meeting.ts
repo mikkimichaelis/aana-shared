@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 import { DateTime } from 'luxon';
+import { User } from '../models';
 
 import { Id, IId } from "../models/id.class";
 import { IRecurrence, Recurrence } from './recurrence';
@@ -68,8 +69,12 @@ export class Meeting extends Id implements IMeeting {
 
     buymeacoffee: any = {};
 
+    get nextTime(): DateTime {
+        return this.startTimeFormatLocal;
+    }
+
     get startTimeFormat(): string {
-        return this.tConvert(this.startTime);
+        return this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
     }
 
     get startTimeFormatLocal(): DateTime {
@@ -86,7 +91,6 @@ export class Meeting extends Id implements IMeeting {
             // return;
             return <any>null;
         }
-
     }
 
     get isLive(): boolean {
@@ -99,6 +103,10 @@ export class Meeting extends Id implements IMeeting {
         this.initialize(this, meeting);
 
         this.updateDayTime();
+    }
+
+    isHome(user: User): boolean {
+        return user.homeMeeting === this.id;
     }
 
     updateDayTime() {

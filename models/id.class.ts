@@ -18,8 +18,8 @@ export class Id extends Base implements IId {
     id: string  = uuidv4();
 
     ts = { 
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp,
     }
 
     constructor(id?: any) { // IId
@@ -27,21 +27,21 @@ export class Id extends Base implements IId {
         this.initialize(this, id);
 
         if (!this.ts.createdAt) {
-            this.ts.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            this.ts.createdAt = firebase.firestore.FieldValue.serverTimestamp;
         }
     }
 
     public toObject(exclude?: string[]): any {
         const ts_createdAt = this.ts.createdAt;
         const obj = super.toObject(exclude);
-        obj.ts.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
         obj.ts.createdAt = ts_createdAt;
+        obj.ts.updatedAt = firebase.firestore.FieldValue.serverTimestamp;
         return obj;
     }
 
     public toGeoObject(geo?: geofirex.GeoFireClient, exclude?: string[]) {
         const obj = super.toGeoObject(geo, exclude);
-        obj.ts.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+        obj.ts.updatedAt = firebase.firestore.FieldValue.serverTimestamp;
         return obj;
     }
 }
