@@ -1,10 +1,3 @@
-// MERGE CONFLICT
-//
-// KEEP
-//
-// import * as firebase from 'firebase';
-import * as firebase from 'firebase';
-import * as geofirex from 'geofirex';
 import * as _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Base, IBase } from './base.class';
