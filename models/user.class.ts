@@ -9,6 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
+import { IMeeting } from '.';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -108,6 +109,14 @@ export class User extends UserBase implements IUser {
     public isFavorite(group: IGroup): boolean {
         const rv = -1 !== _.findIndex( this.favGroups, (fg => {
             return (fg.gid === group.id) // TODO add schedule logic && (!_.has(fg, 'sid') || fg.sid === data.sid)
+        }))
+
+        return rv;
+    }
+
+    public isFavoriteMeeting(meeting: IMeeting): boolean {
+        const rv = -1 !== _.findIndex( this.favMeetings, (fmid => {
+            return (fmid === meeting.id);
         }))
 
         return rv;
