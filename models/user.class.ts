@@ -90,6 +90,10 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);    
     }
 
+    toObject(): IUser {
+        return super.toObject(['isOnline','daysSinceBday'])
+    }
+
     toGeoObject(geo?: geofirex.GeoFireClient): IUser {
         const activity = this.activity;
         const obj = super.toGeoObject(geo);
