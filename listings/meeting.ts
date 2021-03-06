@@ -34,6 +34,8 @@ export interface IMeeting extends IId {
     timezone: string;   // Use this to offset local to Z time to search within start:end window
     
     buymeacoffee: any;
+
+    tagsString: string;
 }
 
 export interface IZoomMeeting extends IMeeting {
@@ -98,11 +100,19 @@ export class Meeting extends Id implements IMeeting {
         return   (this.continuous) || (this.start <= now) && (now <= this.end);      // start <= now <= end
     }
 
+    get tagsString(): string {
+        return _.join(this.tags, ',').toLowerCase();
+    }
+
     constructor(meeting?: IMeeting) {
         super(meeting);
         this.initialize(this, meeting);
 
         this.updateDayTime();
+    }
+
+    toObject(): IMeeting {
+        return super.toObject(['tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
     isHome(user: User): boolean {
