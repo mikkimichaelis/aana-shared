@@ -16,6 +16,7 @@ export interface IMeeting extends IId {
 
     isZoomOwner: boolean;
     requiresLogin: boolean;
+    open: boolean;
 
     name: string;
     password: string;
@@ -33,7 +34,7 @@ export interface IMeeting extends IId {
 
     timezone: string;   // Use this to offset local to Z time to search within start:end window
     
-    buymeacoffee: any;
+    buymeacoffee: string;
 
     tagsString: string;
 }
@@ -52,6 +53,7 @@ export class Meeting extends Id implements IMeeting {
     // private
     isZoomOwner: boolean = false;
     requiresLogin: boolean = false;
+    open: boolean = true;
     
     name: string = '';
     password: string = '';
@@ -69,7 +71,7 @@ export class Meeting extends Id implements IMeeting {
 
     recurrence: IRecurrence = new Recurrence();
 
-    buymeacoffee: any = {};
+    buymeacoffee: '';
 
     get nextTime(): DateTime {
         return this.startTimeFormatLocal;
