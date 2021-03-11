@@ -125,8 +125,7 @@ export class User extends UserBase implements IUser {
     public setUserAuthNames(displayName?: string): boolean {
         if (this.profile.anonymous
             // || TODO displayName is all whitespace
-            || displayName === undefined
-            || displayName === null
+            || _.isNil(displayName)
             || !displayName.includes(' ')
             || displayName.length < 3
             || displayName.split(' ').length < 2) {
