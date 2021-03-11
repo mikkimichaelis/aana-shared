@@ -7,21 +7,31 @@ import { Id, IId } from "../models/id.class";
 import { IRecurrence, Recurrence } from './recurrence';
 
 export interface IMeeting extends IId {
-    zid: string;
+    
     uid: string;
     
     active: boolean;
     verified: boolean;
     authorized: boolean;
 
+    zid: string;
     isZoomOwner: boolean;
-    requiresLogin: boolean;
-    open: boolean;
-
-    name: string;
     password: string;
-    topic: string;
-    tags: string[]
+    requiresLogin: boolean;
+    restricted: boolean;
+    restrictedDescription: string;
+
+    postal: string;
+    group: string;  // 12 Step clubhouse name (ie 'Westside Club')
+    name: string;
+    language: string;
+
+    closed: boolean;
+    types: string[];
+    typesString: string;
+
+    tags: string[];
+    tagsString: string;
 
     continuous: boolean;
     recurrence: IRecurrence;
@@ -36,29 +46,31 @@ export interface IMeeting extends IId {
     
     buymeacoffee: string;
 
-    tagsString: string;
-}
-
-export interface IZoomMeeting extends IMeeting {
-    zid: string;
-    zUsersAttend: string[]; // Zoom users in attendance
+    
 }
 
 export class Meeting extends Id implements IMeeting {
-    zid: string = '';
+    
     uid: string = '';
     active: boolean = true;
     verified: boolean = true;
     authorized: boolean = true;  // TODO is owner paid?
     // private
+
+    zid: string = '';
     isZoomOwner: boolean = false;
     requiresLogin: boolean = false;
-    open: boolean = true;
-    
-    name: string = '';
     password: string = '';
-    topic: string = '';
+    restricted: boolean = false;
+    restrictedDescription: string = '';
     
+    postal: string = '';
+    group: string = '';
+    name: string = '';
+    language: string = 'en-us';
+    
+    closed: boolean = false;
+    types: string[] = [];
     tags: string[] = [];
 
     continuous: boolean = false;
@@ -106,6 +118,10 @@ export class Meeting extends Id implements IMeeting {
         return _.join(this.tags, ',').toLowerCase();
     }
 
+    get typesString(): string {
+        return _.join(this.types, ',').toUpperCase();
+    }
+
     constructor(meeting?: IMeeting) {
         super(meeting);
         this.initialize(this, meeting);
@@ -114,7 +130,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     toObject(): IMeeting {
-        return super.toObject(['tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
+        return super.toObject(['typesString', 'tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
     isHome(user: User): boolean {
