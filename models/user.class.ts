@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 
-import { UserBase } from './userBase.class';
+import { IUserBase, UserBase } from './userBase.class';
 import { Base } from './base.class';
 import { IUserMember, UserMember } from './userMember.class';
 import { IUserFavorite } from './userFavorite.class';
@@ -35,9 +35,8 @@ export class UserProfile extends Base implements IUserProfile {
     }
 }
 
-export interface IUser {
-    id: string;             // Id
-    name: string;           // UserBase
+export interface IUser extends IUserBase {
+    email: string;
     profile: IUserProfile;
     activity: IUserActivity;
     member: IUserMember;
@@ -54,6 +53,7 @@ export interface IUser {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
+    email: string               = '';
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
     member: IUserMember         = <any>null;    // TODO ???
