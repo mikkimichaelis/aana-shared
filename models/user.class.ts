@@ -9,6 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
+import { IMeeting } from '.';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -92,6 +93,10 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);    
     }
 
+    toObject(): IUser {
+        return super.toObject(['isOnline','daysSinceBday'])
+    }
+
     toGeoObject(geo?: geofirex.GeoFireClient): IUser {
         const activity = this.activity;
         const obj = super.toGeoObject(geo);
@@ -111,11 +116,18 @@ export class User extends UserBase implements IUser {
         return rv;
     }
 
+    public isFavoriteMeeting(meeting: IMeeting): boolean {
+        const rv = -1 !== _.findIndex( this.favMeetings, (fmid => {
+            return (fmid === meeting.id);
+        }))
+
+        return rv;
+    }
+
     public setUserAuthNames(displayName?: string): boolean {
         if (this.profile.anonymous
             // || TODO displayName is all whitespace
-            || displayName === undefined
-            || displayName === null
+            || _.isNil(displayName)
             || !displayName.includes(' ')
             || displayName.length < 3
             || displayName.split(' ').length < 2) {
