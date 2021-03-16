@@ -83,7 +83,7 @@ export class Meeting extends Id implements IMeeting {
 
     recurrence: IRecurrence = new Recurrence();
 
-    buymeacoffee: '';
+    buymeacoffee: string = '';
 
     get nextTime(): DateTime {
         return this.startTimeFormatLocal;
