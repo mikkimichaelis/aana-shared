@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 import { DateTime } from 'luxon';
+import { syntaxHighlight } from 'src/app/utils/common';
 import { User } from '../models';
 
 import { Id, IId } from "../models/id.class";
@@ -101,8 +102,8 @@ export class Meeting extends Id implements IMeeting {
                 zone: this.timezone,
             }).setZone('local');
             return start;
-        } catch (e) {
-            console.error(e);
+        } catch (error) {
+            console.error(syntaxHighlight(error));
             // TODO
             // return;
             return <any>null;
@@ -163,13 +164,13 @@ export class Meeting extends Id implements IMeeting {
                 minute: Number.parseInt(this.startTime.split(':')[1]),
                 zone: this.timezone,
             }).toUTC().toMillis();
-        } catch (e) {
-            console.error(e);
+        } catch (error) {
+            console.error(syntaxHighlight(error));
             // TODO
             // return;
         }
 
-        // console.log({
+        // console.info({
         //     year: 1970,
         //     month: 1,
         //     day: 2,
