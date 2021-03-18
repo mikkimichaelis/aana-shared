@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
 import { DateTime } from 'luxon';
-import { syntaxHighlight } from 'src/app/utils/common';
 import { User } from '../models';
 
 import { Id, IId } from "../models/id.class";
@@ -103,7 +102,7 @@ export class Meeting extends Id implements IMeeting {
             }).setZone('local');
             return start;
         } catch (error) {
-            console.error(syntaxHighlight(error));
+            console.error(error);
             // TODO
             // return;
             return <any>null;
@@ -165,7 +164,7 @@ export class Meeting extends Id implements IMeeting {
                 zone: this.timezone,
             }).toUTC().toMillis();
         } catch (error) {
-            console.error(syntaxHighlight(error));
+            console.error(error);
             // TODO
             // return;
         }
