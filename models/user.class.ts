@@ -14,6 +14,7 @@ import { IMeeting } from '.';
 // this data never goes to !uid
 export interface IUserProfile {
     anonymous: boolean;
+    name: string;
     firstName: string;
     lastInitial: string;
     bday: string;
@@ -21,6 +22,7 @@ export interface IUserProfile {
 
 export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean = true;
+    name: string = 'Anonymous A';
     firstName: string = 'Anonymous';
     lastInitial: string = 'A';
     bday: string = '';
@@ -151,7 +153,8 @@ export class User extends UserBase implements IUser {
         }
         this.profile.firstName = firstName;
         this.profile.lastInitial = lastInitial;
-        this.name = `${firstName} ${lastInitial}.`;
+        this.profile.name = `${firstName} ${lastInitial}.`;
+        this.name = this.profile.name;
         return true;
     }
 
