@@ -151,8 +151,6 @@ export class Meeting extends Id implements IMeeting {
         // that happens recurring at intervals (ie a DateTime specifies a single
         // specific point in time), I use the following algorithm for recurring Time.
         //
-        // Problem
-        //
         // start needs to be numeric in value for range 
         //
         try {
