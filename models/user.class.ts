@@ -40,6 +40,7 @@ export class UserProfile extends Base implements IUserProfile {
 export interface IUser extends IUserBase {
     email: string;
     emailVerified: boolean;
+    zoomUser: boolean;
     profile: IUserProfile;
     activity: IUserActivity;
     member: IUserMember;
@@ -58,6 +59,7 @@ declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
     email: string               = '';
     emailVerified: boolean      = false;
+    zoomUser: boolean           = false;
     profile: IUserProfile       = <any>null;
     activity: IUserActivity     = <any>null;
     member: IUserMember         = <any>null;    // TODO ???
