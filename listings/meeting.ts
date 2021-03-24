@@ -17,16 +17,23 @@ export interface IMeeting extends IId {
     zid: string;
     isZoomOwner: boolean;
     password: string;
+
     requiresLogin: boolean;
+    closed: boolean;
     restricted: boolean;
     restrictedDescription: string;
 
+    language: string;
     postal: string;
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
+    _group: string; // group.toLowercase()
     name: string;
-    language: string;
+    _name: string;  // name.toLowercase()
+    
+    description: string;
+    descriptionTags: string[];
 
-    closed: boolean;
+    meetingTypes: string[];
     types: string[];
     typesString: string;
 
@@ -66,11 +73,20 @@ export class Meeting extends Id implements IMeeting {
 
     postal: string = '';
     group: string = '';
+    get _group(): string {
+        return this.group.toLowerCase();
+    }
     name: string = '';
+    get _name(): string {
+        return this.name.toLowerCase();
+    }
     language: string = 'en-us';
 
+    description: string = '';
+    descriptionTags: string[] = [];
     closed: boolean = false;
     types: string[] = [];
+    meetingTypes: string[] = [];
     tags: string[] = [];
 
     continuous: boolean = false;
@@ -157,6 +173,11 @@ export class Meeting extends Id implements IMeeting {
         return _.join(this.types, ',').toUpperCase();
     }
 
+    // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
+    get weekday() {
+        return Meeting.weekday2index(this.recurrence.weekly_day);
+    }
+
     constructor(meeting?: IMeeting) {
         super(meeting);
         this.initialize(this, meeting);
@@ -169,10 +190,6 @@ export class Meeting extends Id implements IMeeting {
         return super.toObject(['weekdays', 'weekday', 'typesString', 'tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
-    // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
-    get weekday() {
-        return Meeting.weekday2index(this.recurrence.weekly_day);
-    }
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     static weekday2index(weekday: string) {
         try {
