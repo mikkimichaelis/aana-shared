@@ -15,9 +15,9 @@ export interface IMeeting extends IId {
     authorized: boolean;
 
     zid: string;
-    isZoomOwner: boolean;
     password: string;
 
+    isZoomOwner: boolean;
     requiresLogin: boolean;
     closed: boolean;
     restricted: boolean;
@@ -25,21 +25,16 @@ export interface IMeeting extends IId {
 
     language: string;
     postal: string;
+
+    groupType: string;
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
     _group: string; // group.toLowercase()
-    name: string;
+    name: string;   
     _name: string;  // name.toLowercase()
-    
-    description: string;
-    descriptionTags: string[];
-
     meetingTypes: string[];
-    types: string[];
-    typesString: string;
-
+    description: string;
     tags: string[];
-    tagsString: string;
-
+    
     continuous: boolean;
     recurrence: IRecurrence;
 
@@ -54,6 +49,15 @@ export interface IMeeting extends IId {
     startDateTime: number;
 
     buymeacoffee: string;
+
+    // Non serialized getter properties
+    tagsString: string;
+    meetingTypesString: string;
+    weekday: number;
+    isLive: boolean;
+    startTimeFormatLocal: DateTime;
+    startTimeFormat: string;
+    nextTime: DateTime;
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -83,9 +87,9 @@ export class Meeting extends Id implements IMeeting {
     language: string = 'en-us';
 
     description: string = '';
-    descriptionTags: string[] = [];
     closed: boolean = false;
-    types: string[] = [];
+    
+    groupType: string = ''; 
     meetingTypes: string[] = [];
     tags: string[] = [];
 
@@ -165,16 +169,16 @@ export class Meeting extends Id implements IMeeting {
         return (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
     }
 
+    get meetingTypesString(): string {
+        return _.join(this.meetingTypes, ',').toUpperCase();
+    }
+
     get tagsString(): string {
         return _.join(this.tags, ',').toLowerCase();
     }
 
-    get typesString(): string {
-        return _.join(this.types, ',').toUpperCase();
-    }
-
     // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
-    get weekday() {
+    get weekday(): number {
         return Meeting.weekday2index(this.recurrence.weekly_day);
     }
 
@@ -187,7 +191,7 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        return super.toObject(['weekdays', 'weekday', 'typesString', 'tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
+        return super.toObject(['weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
