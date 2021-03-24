@@ -7,9 +7,9 @@ import { Id, IId } from "../models/id.class";
 import { IRecurrence, Recurrence } from './recurrence';
 
 export interface IMeeting extends IId {
-    
+
     uid: string;
-    
+
     active: boolean;
     verified: boolean;
     authorized: boolean;
@@ -35,22 +35,22 @@ export interface IMeeting extends IId {
 
     continuous: boolean;
     recurrence: IRecurrence;
-    startTime: string;  // HH:MM
+
+    timezone: string;
+    time24h: string;  // HH:MM    // startTime
     duration: number;
 
     // Meeting window of time on 1/2/1970 00:00Z - 24:00Z
-    start: number;      // that70sTime
-    end: number;        // start + duration
+    startTime: number;      // that70sTime
+    endTime: number;        // start + duration
 
-    timezone: string;   // Use this to offset local to Z time to search within start:end window
-    
+    startDateTime: number;
+
     buymeacoffee: string;
-
-    
 }
 
 export class Meeting extends Id implements IMeeting {
-    
+
     uid: string = '';
     active: boolean = true;
     verified: boolean = true;
@@ -63,41 +63,76 @@ export class Meeting extends Id implements IMeeting {
     password: string = '';
     restricted: boolean = false;
     restrictedDescription: string = '';
-    
+
     postal: string = '';
     group: string = '';
     name: string = '';
     language: string = 'en-us';
-    
+
     closed: boolean = false;
     types: string[] = [];
     tags: string[] = [];
 
     continuous: boolean = false;
     timezone: string = "America/New_York";
-    startTime: string = "00:00";
+    time24h: string = "00:00";
     duration: number = 60;
 
-    start: number = 0;    // Millisecond UTC 0 time offset of 1/2/1970 + timezone + startTime
-    end: number = 0;    // start + duration
+    // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
+    // this is used to search where byDay is any
+    startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
+    endTime: number = 0;        // start + duration
+
+    // startDateTime is a point in time this meeting starts which can be searched for within a window of time
+    // this is used to search for meetings withing a specific day
+    startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
 
     recurrence: IRecurrence = new Recurrence();
 
     buymeacoffee: string = '';
 
     get nextTime(): DateTime {
-        return this.startTimeFormatLocal;
+        return this.nextDateTime;
     }
 
     get startTimeFormat(): string {
         return this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
     }
 
+    get nextDateTime(): DateTime {
+        let now = DateTime.local().setZone(this.timezone);
+        if (this.continuous) {
+            return now.toLocal();
+        } else {
+        
+            // get next recurrence of meeting this week
+            let next = now.set({
+                // TODO is this in 24h?
+                hour: Number.parseInt(this.time24h.split(':')[0]),    
+                minute: Number.parseInt(this.time24h.split(':')[1]),
+                weekday: this.recurrence.type === 'Daily' ? now.weekday : this.weekday,
+            });
+
+            if (next < now) {
+                // meeting has past, move to next day meeting occurs on
+                next = this.recurrence.type === 'Daily' ? next.plus({
+                    days: 1 // meeting is every day, move to tomorrow
+                }) : 
+                next.plus({ 
+                    days: 7 // meeting is weekly, move to next weekday of recurrence
+                });
+            } else {
+                // meeting is later today, do nothing
+            }
+            return next.toLocal();
+        }
+    }
+
     get startTimeFormatLocal(): DateTime {
         try {
             const start = DateTime.fromObject({
-                hour: Number.parseInt(this.startTime.split(':')[0]),
-                minute: Number.parseInt(this.startTime.split(':')[1]),
+                hour: Number.parseInt(this.time24h.split(':')[0]),
+                minute: Number.parseInt(this.time24h.split(':')[1]),
                 zone: this.timezone,
             }).setZone('local');
             return start;
@@ -111,7 +146,7 @@ export class Meeting extends Id implements IMeeting {
 
     get isLive(): boolean {
         const now = this.makeThat70sTime(DateTime.local().toISO());
-        return   (this.continuous) || (this.start <= now) && (now <= this.end);      // start <= now <= end
+        return (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
     }
 
     get tagsString(): string {
@@ -130,7 +165,21 @@ export class Meeting extends Id implements IMeeting {
     }
 
     toObject(): IMeeting {
-        return super.toObject(['typesString', 'tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
+        // list properties that are static or computed (not serialized into the database)
+        return super.toObject(['weekdays', 'weekday', 'typesString', 'tagsString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
+    }
+
+    // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
+    get weekday() {
+        return Meeting.weekday2index(this.recurrence.weekly_day);
+    }
+    static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    static weekday2index(weekday: string) {
+        try {
+            return this.weekdays.indexOf(weekday) + 1;
+        } catch {
+            throw new Error(`Meeting.weekday(): ERROR invalid dow: ${weekday}`);
+        }
     }
 
     isHome(user: User): boolean {
@@ -141,54 +190,54 @@ export class Meeting extends Id implements IMeeting {
 
         if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
-            this.recurrence.weekly_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            this.recurrence.weekly_days = Meeting.weekdays;
         }
 
-        //
-        // This is the start date / time of this meeting on each recurrence.
-        // Since there is no DateTime concept of specifying a point in time
-        // that happens recurring at intervals (ie a DateTime specifies a single
-        // specific point in time), I use the following algorithm for recurring Time.
-        //
-        // start needs to be numeric in value for range 
-        //
         try {
-            this.start = DateTime.fromObject({
+            this.startTime = DateTime.fromObject({
                 year: 1970,
                 month: 1,
-                day: 2,
-                hour: Number.parseInt(this.startTime.split(':')[0]),
-                minute: Number.parseInt(this.startTime.split(':')[1]),
+                day: 1,
+                hour: Number.parseInt(this.time24h.split(':')[0]),
+                minute: Number.parseInt(this.time24h.split(':')[1]),
                 zone: this.timezone,
             }).toUTC().toMillis();
+
+            const oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
+            if (this.startTime >= oneDayMillis) this.startTime = this.startTime - oneDayMillis;
+            if (this.startTime < 0) this.startTime = this.startTime + oneDayMillis;
+
+            this.endTime = this.startTime + (this.duration * 60 * 1000);
+
+            this.startDateTime = DateTime.fromObject({
+                year: 1970,
+                month: 1,
+                day: 1,
+                hour: Number.parseInt(this.time24h.split(':')[0]),
+                minute: Number.parseInt(this.time24h.split(':')[1]),
+                zone: this.timezone,
+            }).set({weekday: Meeting.weekday2index(this.recurrence.weekly_day)}).toUTC().toMillis();
+
+            const oneWeekMillis = 7 * oneDayMillis;  // 7 * 24 * 60 * 60 * 1000
+            if (this.startDateTime >= oneWeekMillis) this.startDateTime = this.startDateTime - oneWeekMillis;
+            if (this.startDateTime < 0) this.startTime = this.startDateTime + oneWeekMillis;
+
         } catch (error) {
             console.error(error);
             // TODO
             // return;
         }
-
-        // console.info({
-        //     year: 1970,
-        //     month: 1,
-        //     day: 2,
-        //     hour: Number.parseInt(this.startTime.split(':')[0]),
-        //     minute: Number.parseInt(this.startTime.split(':')[1]),
-        //     zone: this.timezone,
-        // })
-
-        this.end = this.start + (this.duration * 60 * 1000);
     }
 
     makeThat70sTime(time: string) {
-        const _70sTime = DateTime.fromObject({
+        return DateTime.fromObject({
             year: 1970,
             month: 1,
-            day: 2,
+            day: 1,
             hour: DateTime.fromISO(time).hour,  // search.bySpecific.start
             minute: DateTime.fromISO(time).minute,
             zone: DateTime.local().zone,
-          }).toUTC().toMillis();
-        return _70sTime;
+        }).toUTC().toMillis();
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
