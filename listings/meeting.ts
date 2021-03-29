@@ -14,8 +14,6 @@ export interface IMeeting extends IId {
     verified: boolean;
     authorized: boolean;
 
-    // test
-
     zid: string;
     password: string;
 
