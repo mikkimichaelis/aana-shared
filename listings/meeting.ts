@@ -25,12 +25,19 @@ export interface IMeeting extends IId {
 
     language: string;
     postal: string;
+    location: string;
 
-    groupType: string;
+    meetingUrl: string;
+    homeUrl: string;
+    sourceUrl: string;
+
+    
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
     _group: string; // group.toLowercase()
     name: string;   
     _name: string;  // name.toLowercase()
+    
+    groupType: string;
     meetingTypes: string[];
     description: string;
     tags: string[];
@@ -75,6 +82,11 @@ export class Meeting extends Id implements IMeeting {
     restricted: boolean = false;
     restrictedDescription: string = '';
 
+    meetingUrl: string = '';
+    homeUrl: string = '';
+    sourceUrl: string = '';
+
+    location: string = '';
     postal: string = '';
     group: string = '';
     get _group(): string {
@@ -89,7 +101,7 @@ export class Meeting extends Id implements IMeeting {
     description: string = '';
     closed: boolean = false;
     
-    groupType: string = ''; 
+    groupType : string; 
     meetingTypes: string[] = [];
     tags: string[] = [];
 
@@ -224,7 +236,7 @@ export class Meeting extends Id implements IMeeting {
                 zone: this.timezone,
             }).toUTC().toMillis();
 
-            const oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
+            const oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000 TODO this exceeds 1 day by 1ms
             if (this.startTime >= oneDayMillis) this.startTime = this.startTime - oneDayMillis;
             if (this.startTime < 0) this.startTime = this.startTime + oneDayMillis;
 
