@@ -221,12 +221,35 @@ export class Meeting extends Id implements IMeeting {
 
     updateDayTime() {
 
+        const oneDayMillis = 86400000 - 1;  // 24 * 60 * 60 * 1000 -1
+                                            // remove one because last ms actually starts the next day
+                                            // or think like this
+                                            // Each day starts with 0ms
+                                            // Realize that that 0th ms did go by in Time.
+                                            // Just because the number value is 0 does not mean it did not exist.
+                                            // Then....
+                                            // The 1st ms goes by and we have past another Unit of Time
+                                            // and we are at the 1st ms of that day, as we had previously existed
+                                            // in the 0th Unit of Time on that day.
+                                            //
+                                            // Essentially Time is a zero based index of Units of Time
+
         if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
             this.recurrence.weekly_days = Meeting.weekdays;
         }
 
         try {
+
+            // This is the little magic box of Time.
+            // All meeting's startTime(s) are set to occur on 1/1/1970 in UTC ms.
+            // This creates a 24h box of time in which all startTimes exist.
+            // A recurring time is indifferent to the specific day it happens on
+            // because the time happens on all days.
+            //
+            // This allows for searches for startTime for any meeting on any Day.
+            // Of course, meetings actually happen at a time on a Specific Day
+            // That is addressed below.
             this.startTime = DateTime.fromObject({
                 year: 1970,
                 month: 1,
@@ -236,7 +259,16 @@ export class Meeting extends Id implements IMeeting {
                 zone: this.timezone,
             }).toUTC().toMillis();
 
-            const oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000 TODO this exceeds 1 day by 1ms
+            // Here is the magic.
+            // If the startTime falls outside 1/1/1970 UTC (due to startTimes in different UTC offsets),
+            // simply rotate the startTime back into the opposite edge of the 24h window
+
+            // ie [--------1/1/1970--------]                                box of 24hs
+            //    [[--------1/1/1970--------][--------1/2/1970--------]]    box of 48hs
+            //      ---------------------------->startTime                  st @ 4th h of 1/2/1970
+            //
+            // startTime is created in the TZ of the meeting and then placed in 1/1/1970 (above code)
+            // if the TZ of the meeting is -6 
             if (this.startTime >= oneDayMillis) this.startTime = this.startTime - oneDayMillis;
             if (this.startTime < 0) this.startTime = this.startTime + oneDayMillis;
 
