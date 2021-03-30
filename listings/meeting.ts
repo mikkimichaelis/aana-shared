@@ -178,7 +178,7 @@ export class Meeting extends Id implements IMeeting {
 
     get isLive(): boolean {
         // const now = Meeting.makeThat70sTime(;
-        return true; // TODO (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
+        return false; // TODO (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
     }
 
     get meetingTypesString(): string {
@@ -224,7 +224,7 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static oneDayMillis = 86400000 - 1;  // 24 * 60 * 60 * 1000 -1
+    static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000 -1
     // Remove one because the last ms actually starts the next day
     // or think like this
     // Each day starts with 0ms
@@ -241,7 +241,7 @@ export class Meeting extends Id implements IMeeting {
     // but time is a zero based array of UoT and to adjust for this
     // we subtract 1 from the non zero based index.
 
-    static oneWeekMillis = (7 * (Meeting.oneDayMillis + 1)) - 1;  // add back in the 0th index, make a week unit of time
+    static oneWeekMillis = (7 * (Meeting.oneDayMillis));  // add back in the 0th index, make a week unit of time
     // the reason for the removal of 1ms is the same concept as the above oneDayMills
     // We still have a zero based array of Millis
     // so the last ms belongs -to the next week- ;-)
@@ -375,6 +375,11 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
+    static makeThat70sTimeFromISO(iso_time: string) {
+        let time = DateTime.fromISO(iso_time);
+        return Meeting.makeThat70sTime(`${time.hour}:${time.minute}`, time.zoneName);
+    }
+
     static makeThat70sTime(time24h: string, timezone: string): number {
         let startTime = DateTime.fromObject({
             year: 1970,
@@ -389,6 +394,11 @@ export class Meeting extends Id implements IMeeting {
         if (startTime < 0) startTime = startTime + Meeting.oneDayMillis;
 
         return startTime;
+    }
+
+    static makeThat70sDateTimeFromISO(iso_dateTime: string) {
+        let dateTime = DateTime.fromISO(iso_dateTime);
+        return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
