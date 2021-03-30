@@ -178,7 +178,7 @@ export class Meeting extends Id implements IMeeting {
 
     get isLive(): boolean {
         const now = this.makeThat70sTime(DateTime.local());
-        return (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
+        return true; // TODO (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
     }
 
     get meetingTypesString(): string {
@@ -206,12 +206,21 @@ export class Meeting extends Id implements IMeeting {
         return super.toObject(['weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
+    static first_weekdays = ['Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
+    static first_weekday2index(weekday: string) {
+        try {
+            return this.first_weekdays.indexOf(weekday) + 1;
+        } catch {
+            throw new Error(`Meeting.first_weekday2index(): ERROR invalid dow: ${weekday}`);
+        }
+    }
+
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     static weekday2index(weekday: string) {
         try {
             return this.weekdays.indexOf(weekday) + 1;
         } catch {
-            throw new Error(`Meeting.weekday(): ERROR invalid dow: ${weekday}`);
+            throw new Error(`Meeting.weekday2index(): ERROR invalid dow: ${weekday}`);
         }
     }
 
@@ -361,7 +370,7 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    makeThat70sTime(dateTime: DateTime) {
+    makeThat70sTime(dateTime: DateTime): number {
         // TODO rotate here too!
 
         let startTime = DateTime.fromObject({
@@ -378,8 +387,7 @@ export class Meeting extends Id implements IMeeting {
         // If this startTime happens in 12/31/1969 UTC+0, rotate it forward onDayMillis
         if (this.startTime < 0) this.startTime = this.startTime + Meeting.oneDayMillis;
 
-        // set the endTime
-        this.endTime = this.startTime + (this.duration * 60 * 1000);
+        return startTime;
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
