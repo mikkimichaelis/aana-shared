@@ -259,6 +259,8 @@ export class Meeting extends Id implements IMeeting {
 
         try {
 
+            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
+
             // This is the little magic box of Time.
             // All meeting's startTime(s) are set to occur on 1/1/1970 in UTC ms.
             // This creates a 24h box of time in which all startTimes exist.
@@ -268,14 +270,14 @@ export class Meeting extends Id implements IMeeting {
             // This allows for searches for startTime for any meeting on any Day.
             // Of course, meetings actually happen at a time on a Specific Day
             // That is addressed below.
-            this.startTime = DateTime.fromObject({
-                year: 1970,
-                month: 1,
-                day: 1,
-                hour: Number.parseInt(this.time24h.split(':')[0]),
-                minute: Number.parseInt(this.time24h.split(':')[1]),
-                zone: this.timezone,
-            }).toUTC().toMillis();
+            // this.startTime = DateTime.fromObject({
+            //     year: 1970,
+            //     month: 1,
+            //     day: 1,
+            //     hour: Number.parseInt(this.time24h.split(':')[0]),
+            //     minute: Number.parseInt(this.time24h.split(':')[1]),
+            //     zone: this.timezone,
+            // }).toUTC().toMillis();
 
             // Here is the little magic.
             // If the startTime falls outside 1/1/1970 UTC (due to startTimes in different UTC offsets),
@@ -301,13 +303,13 @@ export class Meeting extends Id implements IMeeting {
             // Note the opposite case for a TZ positive to UTC+0 is handled similarly by positive rotation
 
             // If this startTime happens in 1/2/1970 UTC+0, rotate it backward onDayMillis
-            if (this.startTime >= Meeting.oneDayMillis) this.startTime = this.startTime - Meeting.oneDayMillis;
+            // if (this.startTime >= Meeting.oneDayMillis) this.startTime = this.startTime - Meeting.oneDayMillis;
 
-            // If this startTime happens in 12/31/1969 UTC+0, rotate it forward onDayMillis
-            if (this.startTime < 0) this.startTime = this.startTime + Meeting.oneDayMillis;
+            // // If this startTime happens in 12/31/1969 UTC+0, rotate it forward onDayMillis
+            // if (this.startTime < 0) this.startTime = this.startTime + Meeting.oneDayMillis;
 
-            // set the endTime
-            this.endTime = this.startTime + (this.duration * 60 * 1000);
+            // // set the endTime
+            // this.endTime = this.startTime + (this.duration * 60 * 1000);
 
 
             // This is the big magic box of Time.
@@ -320,14 +322,14 @@ export class Meeting extends Id implements IMeeting {
             // 
             // Yes startDateTime does also encode the the same Time component as startTime,
             // however being NoSQL it makes for easier and more flexible queries to encode startTime separately
-            this.startDateTime = DateTime.fromObject({
-                year: 1970,
-                month: 1,
-                day: 1,
-                hour: Number.parseInt(this.time24h.split(':')[0]),
-                minute: Number.parseInt(this.time24h.split(':')[1]),
-                zone: this.timezone,
-            }).set({ weekday: Meeting.weekday2index(this.recurrence.weekly_day) }).toUTC().toMillis();
+            // this.startDateTime = DateTime.fromObject({
+            //     year: 1970,
+            //     month: 1,
+            //     day: 1,
+            //     hour: Number.parseInt(this.time24h.split(':')[0]),
+            //     minute: Number.parseInt(this.time24h.split(':')[1]),
+            //     zone: this.timezone,
+            // }).set({ weekday: Meeting.weekday2index(this.recurrence.weekly_day) }).toUTC().toMillis();
 
             // Here is the big magic.
             // The concept here is the same as the little magic
@@ -348,8 +350,11 @@ export class Meeting extends Id implements IMeeting {
             //
             // This or others similar helps https://codechi.com/dev-tools/date-to-millisecond-calculators/comment-page-3/#comments
 
-            if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
-            if (this.startDateTime < 0) this.startTime = this.startDateTime + Meeting.oneWeekMillis;
+            // if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
+            // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
+
+            this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
+            debugger;
 
         } catch (error) {
             console.error(error);
@@ -370,24 +375,37 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    makeThat70sTime(dateTime: DateTime): number {
-        // TODO rotate here too!
-
+    static makeThat70sTime(time24h: string, timezone: string): number {
         let startTime = DateTime.fromObject({
             year: 1970,
             month: 1,
             day: 1,
-            hour: dateTime.hour,
-            minute: dateTime.minute,
-            zone: dateTime.zone,
+            hour: Number.parseInt(time24h.split(':')[0]),
+            minute: Number.parseInt(time24h.split(':')[1]),
+            zone: timezone,
         }).toUTC().toMillis();
 
-        if (this.startTime >= Meeting.oneDayMillis) this.startTime = this.startTime - Meeting.oneDayMillis;
-
-        // If this startTime happens in 12/31/1969 UTC+0, rotate it forward onDayMillis
-        if (this.startTime < 0) this.startTime = this.startTime + Meeting.oneDayMillis;
+        if (startTime >= Meeting.oneDayMillis) startTime = startTime - Meeting.oneDayMillis;
+        if (startTime < 0) startTime = startTime + Meeting.oneDayMillis;
 
         return startTime;
+    }
+
+    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
+        const weekday_index = Meeting.weekday2index(weekday);
+        let startDateTime = DateTime.fromObject({
+            year: 1970,
+            month: 1,
+            day: 1,
+            hour: Number.parseInt(time24h.split(':')[0]),
+            minute: Number.parseInt(time24h.split(':')[1]),
+            zone: timezone,
+        }).set({ weekday: weekday_index }).toUTC().toMillis()
+
+        if (startDateTime >= Meeting.oneWeekMillis) startDateTime = startDateTime - Meeting.oneWeekMillis;
+        if (startDateTime < 0) startDateTime = startDateTime + Meeting.oneWeekMillis;
+
+        return startDateTime;
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
