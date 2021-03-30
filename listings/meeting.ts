@@ -177,7 +177,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get isLive(): boolean {
-        const now = this.makeThat70sTime(DateTime.local());
+        // const now = Meeting.makeThat70sTime(;
         return true; // TODO (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
     }
 
@@ -354,7 +354,7 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
             this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
-            debugger;
+            // debugger;
 
         } catch (error) {
             console.error(error);
