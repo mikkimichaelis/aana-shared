@@ -224,7 +224,7 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static oneDayMillis = 86400000 - 1;  // 24 * 60 * 60 * 1000 -1
+    static oneDayMillis = 86400000; // - 1;  // 24 * 60 * 60 * 1000 -1
     // Remove one because the last ms actually starts the next day
     // or think like this
     // Each day starts with 0ms
@@ -241,7 +241,7 @@ export class Meeting extends Id implements IMeeting {
     // but time is a zero based array of UoT and to adjust for this
     // we subtract 1 from the non zero based index.
 
-    static oneWeekMillis = (7 * (Meeting.oneDayMillis + 1)) - 1;  // add back in the 0th index, make a week unit of time
+    static oneWeekMillis = (7 * (Meeting.oneDayMillis));  // add back in the 0th index, make a week unit of time
     // the reason for the removal of 1ms is the same concept as the above oneDayMills
     // We still have a zero based array of Millis
     // so the last ms belongs -to the next week- ;-)
