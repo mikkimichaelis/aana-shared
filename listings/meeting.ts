@@ -354,8 +354,6 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
             this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
-            // debugger;
-
         } catch (error) {
             console.error(error);
             // TODO
@@ -381,7 +379,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sTime(time24h: string, timezone: string): number {
-        let startTime = DateTime.fromObject({
+        let time = DateTime.fromObject({
             year: 1970,
             month: 1,
             day: 1,
@@ -390,10 +388,10 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).toUTC().toMillis();
 
-        if (startTime >= Meeting.oneDayMillis) startTime = startTime - Meeting.oneDayMillis;
-        if (startTime < 0) startTime = startTime + Meeting.oneDayMillis;
+        if (time >= Meeting.oneDayMillis) time = time - Meeting.oneDayMillis;
+        if (time < 0) time = time + Meeting.oneDayMillis;
 
-        return startTime;
+        return time;
     }
 
     static makeThat70sDateTimeFromISO(iso_dateTime: string) {
@@ -403,7 +401,7 @@ export class Meeting extends Id implements IMeeting {
 
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
         const weekday_index = Meeting.weekday2index(weekday);
-        let startDateTime = DateTime.fromObject({
+        let dateTime = DateTime.fromObject({
             year: 1970,
             month: 1,
             day: 1,
@@ -412,10 +410,10 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).set({ weekday: weekday_index }).toUTC().toMillis()
 
-        if (startDateTime >= Meeting.oneWeekMillis) startDateTime = startDateTime - Meeting.oneWeekMillis;
-        if (startDateTime < 0) startDateTime = startDateTime + Meeting.oneWeekMillis;
+        if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
+        if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
 
-        return startDateTime;
+        return dateTime;
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
