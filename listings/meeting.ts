@@ -50,6 +50,7 @@ export interface IMeeting extends IId {
     duration: number;
 
     // Meeting window of time on 1/2/1970 00:00Z - 24:00Z
+    index: number;
     startTime: number;      // that70sTime
     endTime: number;        // start + duration
 
@@ -111,6 +112,7 @@ export class Meeting extends Id implements IMeeting {
     time24h: string = "00:00";
     duration: number = 60;
 
+    index: number = 0;
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
     // this is used to search where byDay is any
     startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
@@ -381,6 +383,17 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.makeThat70sTime(`${time.hour}:${time.minute}`, time.zoneName);
     }
 
+    static makeThat70sIndex(time24h: string, timezone: string): number {
+        let time = DateTime.fromObject({
+            year: 1970,
+            month: 1,
+            day: 1,
+            hour: Number.parseInt(time24h.split(':')[0]),
+            minute: Number.parseInt(time24h.split(':')[1]),
+            zone: timezone,
+        }).toUTC().toMillis();
+    }
+
     static makeThat70sTime(time24h: string, timezone: string): number {
         let time = DateTime.fromObject({
             year: 1970,
@@ -398,7 +411,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sDateTimeFromISO(iso_dateTime: string) {
-        let dateTime = DateTime.fromISO(iso_dateTime);
+        let dateTime = _.isNil(iso_dateTime) ? DateTime.now() : DateTime.fromISO(iso_dateTime);
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
