@@ -54,6 +54,7 @@ export interface IMeeting extends IId {
     endTime: number;        // start + duration
 
     startDateTime: number;
+    endDateTime: number;
 
     buymeacoffee: string;
 
@@ -118,7 +119,8 @@ export class Meeting extends Id implements IMeeting {
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
     // this is used to search for meetings withing a specific day
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
-
+    endDateTime: number = Meeting.oneWeekMillis;
+    
     recurrence: IRecurrence = new Recurrence();
 
     buymeacoffee: string = '';
@@ -255,6 +257,7 @@ export class Meeting extends Id implements IMeeting {
         if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
             this.recurrence.weekly_days = Meeting.weekdays;
+            this.startTime
         }
 
         try {
