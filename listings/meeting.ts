@@ -411,7 +411,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sDateTimeFromISO(iso_dateTime: string) {
-        let dateTime = _.isNil(iso_dateTime) ? DateTime.now() : DateTime.fromISO(iso_dateTime);
+        let dateTime = _.isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(iso_dateTime);
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
