@@ -384,7 +384,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sIndex(time24h: string, timezone: string): number {
-        let time = DateTime.fromObject({
+        return DateTime.fromObject({
             year: 1970,
             month: 1,
             day: 1,
