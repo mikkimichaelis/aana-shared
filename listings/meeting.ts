@@ -401,26 +401,18 @@ export class Meeting extends Id implements IMeeting {
 
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
         let weekday_index = Meeting.weekday2index(weekday);
-        let day = weekday_index;
-        if (weekday_index < 4) {
-            // day = weekday_index - (4 - weekday_index);
-            day = weekday_index + (7 - weekday_index);
-        } else {
-            day = weekday_index - (7 - weekday_index);
-        }
-
         let dateTime = DateTime.fromObject({
             year: 1970,
             month: 1,
-            day: day,
+            day: 1,
             hour: Number.parseInt(time24h.split(':')[0]),
             minute: Number.parseInt(time24h.split(':')[1]),
             zone: timezone,
-        }).toUTC().toMillis()   // .set({ weekday: weekday_index })
+        }).set({ weekday: weekday_index }).toUTC().toMillis()
 
         if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
         if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
-
+        
         return dateTime;
     }
 
