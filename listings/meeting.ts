@@ -183,8 +183,8 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get isLive(): boolean {
-        // const now = Meeting.makeThat70sTime(;
-        return false; // TODO (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
+        const now = Meeting.makeThat70sDateTimeFromISO();
+        return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
     }
 
     get meetingTypesString(): string {
@@ -404,7 +404,7 @@ export class Meeting extends Id implements IMeeting {
         return time;
     }
 
-    static makeThat70sDateTimeFromISO(iso_dateTime: string) {
+    static makeThat70sDateTimeFromISO(iso_dateTime?: string) {
         let dateTime = _.isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(iso_dateTime);
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
