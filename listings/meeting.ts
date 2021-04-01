@@ -263,7 +263,7 @@ export class Meeting extends Id implements IMeeting {
         }
 
         try {
-
+            this.index = Meeting.makeThat70sIndex(this.time24h, this.timezone);
             this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
 
             // This is the little magic box of Time.
@@ -404,8 +404,8 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).toUTC().toMillis();
 
-        if (time >= Meeting.oneDayMillis) time = time - Meeting.oneDayMillis;
-        if (time < 0) time = time + Meeting.oneDayMillis;
+        // if (time >= Meeting.oneDayMillis) time = time - Meeting.oneDayMillis;
+        // if (time < 0) time = time + Meeting.oneDayMillis;
 
         return time;
     }
@@ -426,8 +426,8 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).set({ weekday: weekday_index }).toUTC().toMillis()
 
-        if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
-        if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
+        // if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
+        // if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
         
         return dateTime;
     }
