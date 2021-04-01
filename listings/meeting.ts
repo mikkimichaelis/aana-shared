@@ -124,7 +124,7 @@ export class Meeting extends Id implements IMeeting {
     // this is used to search for meetings withing a specific day
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
     endDateTime: number = Meeting.oneWeekMillis;
-    
+
     recurrence: IRecurrence = new Recurrence();
 
     buymeacoffee: string = '';
@@ -410,23 +410,33 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string, index?: boolean): number {
-        let weekday_index = Meeting.weekday2index(weekday);
-        let dateTime = DateTime.fromObject({
-            year: 1970,
-            month: 1,
-            day: 1,
-            hour: Number.parseInt(time24h.split(':')[0]),
-            minute: Number.parseInt(time24h.split(':')[1]),
-            zone: timezone,
-        }).set({ weekday: weekday_index }).toUTC().toMillis()
+        try {
+            let weekday_index = Meeting.weekday2index(weekday);
+            let dateTime = DateTime.fromObject({
+                year: 1970,
+                month: 1,
+                day: 1,
+                hour: Number.parseInt(time24h.split(':')[0]),
+                minute: Number.parseInt(time24h.split(':')[1]),
+                zone: timezone,
+            }).set({ weekday: weekday_index }).toUTC().toMillis()
 
-        // if index is not passed or if it is and we are not creating an index
-        if (_.isNil(index) || (!_.isNil(index) && !index)) {
-            if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
-            if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
+            // if index is not passed or if it is and we are not creating an index
+            if (_.isNil(index) || (!_.isNil(index) && !index)) {
+                if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
+                if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
+            }
+
+            return dateTime;
+        } catch (error) {
+            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            console.log(JSON.stringify({
+                'time24h': time24h,
+                'timezone': timezone,
+                'weekday': weekday,
+                'index': !_.isNil(index) ? index : null
+            }))
         }
-        
-        return dateTime;
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
