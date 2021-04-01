@@ -50,7 +50,8 @@ export interface IMeeting extends IId {
     duration: number;
 
     // Meeting window of time on 1/2/1970 00:00Z - 24:00Z
-    index: number;
+    indexTime: number;
+    indexDateTime: number;
     startTime: number;      // that70sTime
     endTime: number;        // start + duration
 
@@ -112,7 +113,8 @@ export class Meeting extends Id implements IMeeting {
     time24h: string = "00:00";
     duration: number = 60;
 
-    index: number = 0;
+    indexTime: number;
+    indexDateTime: number;
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
     // this is used to search where byDay is any
     startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
@@ -263,9 +265,6 @@ export class Meeting extends Id implements IMeeting {
         }
 
         try {
-            this.index = Meeting.makeThat70sIndex(this.time24h, this.timezone);
-            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
-
             // This is the little magic box of Time.
             // All meeting's startTime(s) are set to occur on 1/1/1970 in UTC ms.
             // This creates a 24h box of time in which all startTimes exist.
@@ -358,7 +357,10 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
+            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
+            this.indexTime = Meeting.makeThat70sTime(this.time24h, this.timezone, true);
             this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
+            this.indexDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day, true);
         } catch (error) {
             console.error(error);
             // TODO
@@ -383,18 +385,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.makeThat70sTime(`${time.hour}:${time.minute}`, time.zoneName);
     }
 
-    static makeThat70sIndex(time24h: string, timezone: string): number {
-        return DateTime.fromObject({
-            year: 1970,
-            month: 1,
-            day: 1,
-            hour: Number.parseInt(time24h.split(':')[0]),
-            minute: Number.parseInt(time24h.split(':')[1]),
-            zone: timezone,
-        }).toUTC().toMillis();
-    }
-
-    static makeThat70sTime(time24h: string, timezone: string): number {
+    static makeThat70sTime(time24h: string, timezone: string, index?: boolean): number {
         let time = DateTime.fromObject({
             year: 1970,
             month: 1,
@@ -404,8 +395,11 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).toUTC().toMillis();
 
-        // if (time >= Meeting.oneDayMillis) time = time - Meeting.oneDayMillis;
-        // if (time < 0) time = time + Meeting.oneDayMillis;
+        // if index is not passed or if it is and we are not creating an index
+        if (_.isNil(index) || (!_.isNil(index) && !index)) {
+            if (time >= Meeting.oneDayMillis) time = time - Meeting.oneDayMillis;
+            if (time < 0) time = time + Meeting.oneDayMillis;
+        }
 
         return time;
     }
@@ -415,7 +409,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
-    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
+    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string, index?: boolean): number {
         let weekday_index = Meeting.weekday2index(weekday);
         let dateTime = DateTime.fromObject({
             year: 1970,
@@ -426,8 +420,11 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).set({ weekday: weekday_index }).toUTC().toMillis()
 
-        // if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
-        // if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
+        // if index is not passed or if it is and we are not creating an index
+        if (_.isNil(index) || (!_.isNil(index) && !index)) {
+            if (dateTime >= Meeting.oneWeekMillis) dateTime = dateTime - Meeting.oneWeekMillis;
+            if (dateTime < 0) dateTime = dateTime + Meeting.oneWeekMillis;
+        }
         
         return dateTime;
     }
