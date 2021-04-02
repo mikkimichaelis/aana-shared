@@ -9,6 +9,7 @@ import { IRecurrence, Recurrence } from './recurrence';
 export interface IMeeting extends IId {
 
     uid: string;
+    iid: string;    // import id
 
     active: boolean;
     verified: boolean;
@@ -72,6 +73,7 @@ export interface IMeeting extends IId {
 export class Meeting extends Id implements IMeeting {
 
     uid: string = '';
+    iid: string = '';
     active: boolean = true;
     verified: boolean = true;
     authorized: boolean = true;  // TODO is owner paid?
