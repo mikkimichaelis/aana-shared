@@ -31,7 +31,6 @@ export interface IMeeting extends IId {
     homeUrl: string;
     sourceUrl: string;
 
-
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
     _group: string; // group.toLowercase()
     name: string;
@@ -39,6 +38,7 @@ export interface IMeeting extends IId {
 
     groupType: string;
     meetingTypes: string[];
+
     description: string;
     tags: string[];
 
@@ -62,7 +62,6 @@ export interface IMeeting extends IId {
 
     // Non serialized getter properties
     tagsString: string;
-    meetingTypesString: string;
     weekday: number;
     isLive: boolean;
     startTimeFormatLocal: DateTime;
@@ -104,7 +103,7 @@ export class Meeting extends Id implements IMeeting {
     description: string = '';
     closed: boolean = false;
 
-    groupType: string;
+    groupType: string = '';
     meetingTypes: string[] = [];
     tags: string[] = [];
 
