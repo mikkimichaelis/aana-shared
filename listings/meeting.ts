@@ -214,7 +214,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static first_weekdays = ['Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
-    static first_weekday2index(weekday: string) {
+    static makeThat70sWeekday2day(weekday: string) {
         try {
             return this.first_weekdays.indexOf(weekday) + 1;
         } catch {
@@ -412,15 +412,15 @@ export class Meeting extends Id implements IMeeting {
 
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string, index?: boolean): number {
         try {
-            let weekday_index = Meeting.weekday2index(weekday);
+            let day = Meeting.makeThat70sWeekday2day(weekday);
             let dateTime = DateTime.fromObject({
                 year: 1970,
                 month: 1,
-                day: 1,
+                day: day,
                 hour: Number.parseInt(time24h.split(':')[0]),
                 minute: Number.parseInt(time24h.split(':')[1]),
                 zone: timezone,
-            }).set({ weekday: weekday_index }).toUTC().toMillis()
+            }).toUTC().toMillis()
 
             // if index is not passed or if it is and we are not creating an index
             if (_.isNil(index) || (!_.isNil(index) && !index)) {
