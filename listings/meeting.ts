@@ -393,8 +393,8 @@ export class Meeting extends Id implements IMeeting {
             day: 1,
             hour: Number.parseInt(time24h.split(':')[0]),
             minute: Number.parseInt(time24h.split(':')[1]),
-            zone: timezone,
-        }).toUTC().toMillis();
+            zone: 'utc',
+        }).toMillis();
 
         // if index is not passed or if it is and we are not creating an index
         if (_.isNil(index) || (!_.isNil(index) && !index)) {
@@ -419,8 +419,8 @@ export class Meeting extends Id implements IMeeting {
                 day: day,
                 hour: Number.parseInt(time24h.split(':')[0]),
                 minute: Number.parseInt(time24h.split(':')[1]),
-                zone: timezone,
-            }).toUTC().toMillis()
+                zone: 'utc',
+            }).toMillis()
 
             // if index is not passed or if it is and we are not creating an index
             if (_.isNil(index) || (!_.isNil(index) && !index)) {
