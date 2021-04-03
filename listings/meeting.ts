@@ -413,14 +413,16 @@ export class Meeting extends Id implements IMeeting {
     static makeThat70sDateTime(time24h: string, timezone: string, weekday: string, index?: boolean): number {
         try {
             let weekday_index = Meeting.weekday2index(weekday);
-            let dateTime = DateTime.fromObject({
+            let dateTime: any = DateTime.fromObject({
                 year: 1970,
                 month: 1,
                 day: 1,
                 hour: Number.parseInt(time24h.split(':')[0]),
                 minute: Number.parseInt(time24h.split(':')[1]),
                 zone: timezone,
-            }).set({ weekday: weekday_index }).toUTC().toMillis()
+            }).toUTC(); // .set({ weekday: weekday_index }); // .toMillis()
+
+            dateTime = dateTime.toMillis();
 
             // if index is not passed or if it is and we are not creating an index
             if (_.isNil(index) || (!_.isNil(index) && !index)) {
