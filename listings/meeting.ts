@@ -231,7 +231,7 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000 -1
+    static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     // Remove one because the last ms actually starts the next day
     // or think like this
     // Each day starts with 0ms
