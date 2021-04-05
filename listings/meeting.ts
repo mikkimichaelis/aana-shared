@@ -355,9 +355,9 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
             this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
-            this.endTime = this.startTime + this.duration * 1000;
+            this.endTime = this.startTime + this.duration * 60 * 1000;
             this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
-            this.endDateTime = this.startDateTime + this.duration * 1000;
+            this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
         } catch (error) {
             console.error(error);
             // TODO
