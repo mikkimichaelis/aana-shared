@@ -98,7 +98,7 @@ export class Meeting extends Id implements IMeeting {
     get _name(): string {
         return this.name.toLowerCase();
     }
-    language: string = 'en-us';
+    language: string = 'en';
 
     description: string = '';
     closed: boolean = false;
