@@ -2,6 +2,13 @@
     "source": "http://www.rhodeisland-aa.org/meetings/meeting-types",
     "types": [
         {
+            "valid": false,
+            "tx": null,
+            "code": "VO",
+            "type": "",
+            "desc": ""
+        },
+        {
             "valid": true,
             "tx": null,
             "code": "AB",
