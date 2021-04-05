@@ -421,6 +421,8 @@ export class Meeting extends Id implements IMeeting {
                 zone: timezone,
             }).toMillis()
 
+            return dateTime;
+
             // if index is not passed or if it is and we are not creating an index
             // if (_.isNil(index) || (!_.isNil(index) && !index)) {
             //     if (dateTime >= Meeting.oneWeekMillis) {
@@ -430,8 +432,7 @@ export class Meeting extends Id implements IMeeting {
             //         dateTime = dateTime + Meeting.oneWeekMillis;
             //     }
             // }
-
-            return dateTime;
+            
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             console.log(JSON.stringify({
