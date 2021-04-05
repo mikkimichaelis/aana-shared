@@ -1,0 +1,474 @@
+{
+    "source": "http://www.rhodeisland-aa.org/meetings/meeting-types",
+    "types": [
+        {
+            "valid": true,
+            "tx": null,
+            "code": "AB",
+            "type": "Ask-It-Basket",
+            "desc": "A topic is chosen from suggestions placed into a basket."
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": "B",
+            "type": "Beginners",
+            "desc": "This meeting is focused on the needs of new members of NA."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BK",
+            "type": "Book Study",
+            "desc": "Approved N.A. Books"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "BL",
+            "type": "Bi-Lingual",
+            "desc": "This Meeting can be attended by speakers of English and another language."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BT",
+            "type": "Basic Text",
+            "desc": "This meeting is focused on discussion of the Basic Text of Narcotics Anonymous."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "C",
+            "type": "Closed",
+            "desc": "This meeting is closed to non-addicts. You should attend only if you believe that you may have a problem with substance abuse."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CH",
+            "type": "Closed Holidays",
+            "desc": "This meeting gathers in a facility that is usually closed on holidays."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CL",
+            "type": "Candlelight",
+            "desc": "This meeting is held by candlelight."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CP",
+            "type": "Concepts",
+            "desc": "This meeting is focused on discussion of the twelve concepts of NA."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "CS",
+            "type": "Children under Supervision",
+            "desc": "Well-behaved, supervised children are welcome."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "CW",
+            "type": "Children Welcome",
+            "desc": "Children are welcome at this meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "D",
+            "type": "Discussion",
+            "desc": "This meeting invites participation by all attendees."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ENG",
+            "type": "English speaking",
+            "desc": "This Meeting can be attended by speakers of English."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ES",
+            "type": "Espanol",
+            "desc": "This meeting is conducted in Spanish."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "FD",
+            "type": "Five and Dime",
+            "desc": "Discussion of the Fifth Step and the Tenth Step"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "GL",
+            "type": "Gay/Lesbian/Transgender",
+            "desc": "This meeting is focused on the needs of gay, lesbian and transgender members of NA."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "HY",
+            "type": "Hybrid Meeting",
+            "desc": "Meets Virtually and In-person"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ID",
+            "type": "ID Required to Enter",
+            "desc": "This meeting is held in a facility that requires visitors to provide ID to enter."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IL",
+            "type": "Illness",
+            "desc": "This meeting is focused on the needs of NA members with chronic illness."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IP",
+            "type": "Informational Pamphlet",
+            "desc": "This meeting is focused on discussion of one or more Informational Pamphlets."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IW",
+            "type": "It Works - How and Why",
+            "desc": "This meeting is focused on discussion of the It Works -How and Why text."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "JT",
+            "type": "Just for Today",
+            "desc": "This meeting is focused on discussion of the Just For Today text."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "L/R",
+            "type": "Lithuanian/Russian",
+            "desc": "Lithuanian/Russian Speaking Meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LC",
+            "type": "Living Clean",
+            "desc": "This is a discussion of the NA book Living Clean -The Journey Continues."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "M",
+            "type": "Men",
+            "desc": "This meeting is focused on topics encountered by men in NA."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ME",
+            "type": "Meditation",
+            "desc": "This meeting encourages its participants to engage in quiet meditation."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "NC",
+            "type": "No Children",
+            "desc": "Please do not bring children to this meeting."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "NS",
+            "type": "No Smoking",
+            "desc": "Smoking is not allowed at this meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "O",
+            "type": "Open",
+            "desc": "This meeting is open to addicts and non-addicts alike. All are welcome."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "OE",
+            "type": "Open-Ended",
+            "desc": "No fixed duration. The meeting continues until everyone present has had a chance to share."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "PER",
+            "type": "Persian",
+            "desc": "Persian speaking meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "Pi",
+            "type": "Pitch",
+            "desc": "This meeting has a format that consists of each person who shares picking the next person."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "QA",
+            "type": "Question and Answer",
+            "desc": "Attendees may ask questions and expect answers from Group members."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "RA",
+            "type": "Restricted Attendance",
+            "desc": "This facility places restrictions on attendees."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "RF",
+            "type": "Rotating Format",
+            "desc": "This meeting has a format that changes for each meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "Rr",
+            "type": "Round Robin",
+            "desc": "This meeting has a fixed sharing order (usually a circle.)"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "SC",
+            "type": "Surveillance Cameras",
+            "desc": "This meeting is held in a facility that has surveillance cameras."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SD",
+            "type": "Speaker/Discussion",
+            "desc": "This meeting is lead by a speaker, then opened for participation by attendees."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SG",
+            "type": "Step Working Guide",
+            "desc": "This meeting is focused on discussion of the Step Working Guide text."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SL",
+            "type": "ASL",
+            "desc": "This meeting provides an American Sign Language (ASL) interpreter for the deaf."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "So",
+            "type": "Speaker Only",
+            "desc": "This meeting is a speaker-only meeting. Other attendees do not participate in the discussion."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "St",
+            "type": "Step",
+            "desc": "This meeting is focused on discussion of the Twelve Steps of NA."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "TC",
+            "type": "Temporarily Closed",
+            "desc": "Facility is Temporarily Closed"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "Ti",
+            "type": "Timer",
+            "desc": "This meeting has sharing time limited by a timer."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "To",
+            "type": "Topic",
+            "desc": "This meeting is based upon a topic chosen by a speaker or by group conscience."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "Tr",
+            "type": "Tradition",
+            "desc": "This meeting is focused on discussion of the Twelve Traditions of NA."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TW",
+            "type": "Traditions Workshop",
+            "desc": "This meeting engages in detailed discussion of one or more of the Twelve Traditions of N.A."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "VM",
+            "type": "Virtual Meeting",
+            "desc": "Meets Virtually"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "W",
+            "type": "Women",
+            "desc": "This meeting is focused on topics encountered by women in NA."
+        },
+    {
+            "valid": false,
+            "tx": null,
+            "code": "WC",
+            "type": "Wheelchair",
+            "desc": "This meeting is wheelchair accessible."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "WEB",
+            "type": "Online Meeting",
+            "desc": "This is a meeting that gathers on the Internet."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "YP",
+            "type": "Young People",
+            "desc": "This meeting is focused on the needs of younger members of NA."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ZL",
+            "type": "Zoom Login Required to Enter",
+            "desc": "This meeting is held in a facility that requires visitors to provide ID to enter."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BB",
+            "type": "Big Book",
+            "desc": "The book Alcoholic Anonymous (the Big Book) is the text for these meetings. When the focus is on a specific text, usually the group supplies copies of the book for attendees. If you would like to make notations in the text, obtaining a personal copy is useful. In the case of Big Books, a number of meetings in the area give new members a copy to keep for their own use. Ask around for these meetings."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BS",
+            "type": "Big Book Step Study",
+            "desc": "This type of meeting focuses on specific material from the Big Book and the book Twelve Steps and Twelve Traditions (12 & 12). Again texts are usually supplied for attendees, but individual copies are available from Central Service."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "D",
+            "type": "Discussion",
+            "desc": "A chairperson is designated for a meeting; the chairperson speaks briefly about their 'experience, strength and hope'. Following this the chairperson may suggest a topic for sharing by other attendees."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "GV",
+            "type": "Grapevine",
+            "desc": "These are chairperson led meetings focusing on the monthly publication of the Grapevine."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LS",
+            "type": "Living Sober",
+            "desc": "A chairperson leads the meeting in a discussion of material drawn from the AA publication Living Sober."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "P",
+            "type": "Promises",
+            "desc": "The Promises of Alcoholics Anonymous are on pages 82 and 83 of the Big Book. These are the focus of a chairperson led discussion."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "R",
+            "type": "Reflections",
+            "desc": "A recent addition to the AA library, Reflections provides daily material for meditation and prayer. Meetings of this type focus on this daily practice."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "S",
+            "type": "Step",
+            "desc": "Using the book Twelve Steps and Twelve Traditions (12 & 12) the meeting focuses on the Steps. Depending on group conscience, a new step is read and discussed each week. Alternately, participants read and discuss individual paragraphs with each week building on the prior weeks work."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SBS",
+            "type": "Big Book Enhanced 12 & 12 Step",
+            "desc": "The key here is the word 'enhanced'. The group's conscience mandates a specific and detailed approach to the Big Book and the 12 & 12."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "SD",
+            "type": "Speaker / Discussion",
+            "desc": "Initial speakers kick off the group's discussion of matters brought up by the speakers."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ST",
+            "type": "Step / Tradition",
+            "desc": "The meeting focuses on both the 12 Steps and the 12 Traditions. The formats of these meetings vary. Please investigate on your own."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "T",
+            "type": "Tradition",
+            "desc": "The second half of the 12 and 12 are the focus of these meetings."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TP",
+            "type": "Tradition Promise",
+            "desc": "These meetings are a combination of the Traditions and the Promises."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BG",
+            "type": "Beginner",
+            "desc": "Any of the above meetings may, by group conscience, be designated as a Beginner meeting. These meetings are usually led by more experienced group members with the primary focus on introducing new members to the tools available for the maintenance of sobriety. Beginners are not restricted to meetings of this type; they are welcomed at all 12 Step meetings. A benefit of a 'beginner' meeting is the opportunity to meet other peers as they start their sober lives."
+        }
+    ]
+}
