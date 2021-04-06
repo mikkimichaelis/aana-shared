@@ -33,9 +33,9 @@ export interface IMeeting extends IId {
     sourceUrl: string;
 
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
-    _group: string; // group.toLowercase()
+    group_: string; // group.toLowercase()
     name: string;
-    _name: string;  // name.toLowercase()
+    name_: string;  // name.toLowercase()
 
     groupType: string;
     meetingTypes: string[];
@@ -91,13 +91,9 @@ export class Meeting extends Id implements IMeeting {
     location: string = '';
     postal: string = '';
     group: string = '';
-    get _group(): string {
-        return this.group.toLowerCase();
-    }
+    group_: string = '';
     name: string = '';
-    get _name(): string {
-        return this.name.toLowerCase();
-    }
+    name_: string = '';
     language: string = 'en';
 
     description: string = '';
