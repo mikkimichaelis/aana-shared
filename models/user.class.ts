@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as geofirex from 'geofirex';
+// import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 
 import { IUserBase, UserBase } from './userBase.class';
@@ -101,7 +101,7 @@ export class User extends UserBase implements IUser {
         return super.toObject(['isOnline','daysSinceBday'])
     }
 
-    toGeoObject(geo?: geofirex.GeoFireClient): IUser {
+    toGeoObject(geo?: any): IUser {
         const activity = this.activity;
         const obj = super.toGeoObject(geo);
         obj.activity = activity.toGeoObject(geo);

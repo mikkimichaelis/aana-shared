@@ -1,4 +1,4 @@
-import * as geofirex from 'geofirex';
+// import * as geofirex from 'geofirex';
 import * as _ from "lodash";
 import { DateTime } from 'luxon';
 import { IAddress } from "./address";
@@ -60,7 +60,7 @@ export interface IGroup {
   location: ILocation;
   zoneIANA: string;
 
-  point: geofirex.FirePoint;
+  point: any; // .FirePoint;
   boundingbox: IBoundingBox;
 
   members: IUserMember[];
@@ -88,7 +88,7 @@ export class Group extends Id implements IGroup {
   location: ILocation = <any>null;
   zoneIANA: string = '';
 
-  point: geofirex.FirePoint = <any>null;
+  point: any = <any>null;
   boundingbox: IBoundingBox = <any>null;
 
   members: IUserMember[] = [];
@@ -157,7 +157,7 @@ export class Group extends Id implements IGroup {
     });
   }
 
-  toGeoObject(geo?: geofirex.GeoFireClient): IGroup {
+  toGeoObject(geo?: any): IGroup {
     const members = this.members;
     const obj = super.toGeoObject(geo, ['schedules']);
     obj.members = members.map(member => member.toGeoObject(geo))

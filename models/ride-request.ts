@@ -1,4 +1,4 @@
-import { FirePoint } from 'geofirex';
+// import { FirePoint } from 'geofirex';
 
 export interface IRideRequest {
     gid: string;    // group id
@@ -8,6 +8,6 @@ export interface IRideRequest {
     puid: string;   // providing user id
     date: string;
     phone: string;
-    point: FirePoint;
+    point: any; // FirePoint;
     providedDate: string;
 }
