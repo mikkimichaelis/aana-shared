@@ -409,7 +409,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
-    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): number {
+    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): any {
         try {
             let day = Meeting.makeThat70sWeekday2day(weekday);
             let dateTime = DateTime.fromObject({
@@ -439,6 +439,7 @@ export class Meeting extends Id implements IMeeting {
                 'timezone': timezone,
                 'weekday': weekday
             }))
+            return null;
         }
     }
 
