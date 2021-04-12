@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { DateTime } from 'luxon';
 import { User } from '../models';
@@ -33,9 +33,9 @@ export interface IMeeting extends IId {
     sourceUrl: string;
 
     group: string;  // 12 Step clubhouse name (ie 'Westside Club')
-    _group: string; // group.toLowercase()
+    group_: string; // group.toLowercase()
     name: string;
-    _name: string;  // name.toLowercase()
+    name_: string;  // name.toLowercase()
 
     groupType: string;
     meetingTypes: string[];
@@ -91,14 +91,10 @@ export class Meeting extends Id implements IMeeting {
     location: string = '';
     postal: string = '';
     group: string = '';
-    get _group(): string {
-        return this.group.toLowerCase();
-    }
+    group_: string = '';
     name: string = '';
-    get _name(): string {
-        return this.name.toLowerCase();
-    }
-    language: string = 'en-us';
+    name_: string = '';
+    language: string = 'en';
 
     description: string = '';
     closed: boolean = false;
@@ -355,9 +351,9 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
             this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
-            this.endTime = this.startTime + this.duration * 1000;
+            this.endTime = this.startTime + this.duration * 60 * 1000;
             this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
-            this.endDateTime = this.startDateTime + this.duration * 1000;
+            this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
         } catch (error) {
             console.error(error);
             // TODO
@@ -421,6 +417,8 @@ export class Meeting extends Id implements IMeeting {
                 zone: timezone,
             }).toMillis()
 
+            return dateTime;
+
             // if index is not passed or if it is and we are not creating an index
             // if (_.isNil(index) || (!_.isNil(index) && !index)) {
             //     if (dateTime >= Meeting.oneWeekMillis) {
@@ -430,8 +428,7 @@ export class Meeting extends Id implements IMeeting {
             //         dateTime = dateTime + Meeting.oneWeekMillis;
             //     }
             // }
-
-            return dateTime;
+            
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             console.log(JSON.stringify({

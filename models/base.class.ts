@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
-import * as geofirex from 'geofirex';
+import * as _ from 'lodash-es';
+// import * as geofirex from 'geofirex';
 
 export interface IBase {
     toObject(exclude?: string[]): any;
-    toGeoObject(geo?: geofirex.GeoFireClient, exclude?: string[]): any;
+    toGeoObject(geo?: any, exclude?: string[]): any;
 }
 
 export class Base implements IBase {
@@ -57,7 +57,7 @@ export class Base implements IBase {
         return JSON.parse(JSON.stringify(this.deepCopy({}, this, exclude)));
     }
 
-    public toGeoObject(geo?: geofirex.GeoFireClient, exclude?: string[]) {
+    public toGeoObject(geo?: any, exclude?: string[]) {
         const obj = this.toObject(exclude);
         if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
         return obj;

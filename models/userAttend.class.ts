@@ -1,4 +1,4 @@
-import { FirePoint } from "geofirex";
+// import { FirePoint } from "geofirex";
 import { IUserBase } from './userBase.class';
 import { IId } from "./id.class";
 
@@ -10,9 +10,9 @@ export interface IUserAttend {
     meeting: {
         mid: string;
         start: string;
-        pointStart: FirePoint;
+        pointStart: any;    // FirePoint;
         end: string;
-        pointEnd: FirePoint;
+        pointEnd: any;      // FirePoint;
     };
     zoom: {
         mid: string;

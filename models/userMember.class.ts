@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
