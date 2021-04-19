@@ -165,11 +165,11 @@ export class Group extends Id implements IGroup {
   }
 
   isHomeGroup(iuser: User): boolean {
-    return iuser.isHomeGroup(this);
+    return false; // iuser.isHomeGroup(this);
   }
 
   isFavorite(iuser: User): boolean {
-    return iuser.isFavorite(this);
+    return false; // iuser.isFavorite(this);
   }
 
 
