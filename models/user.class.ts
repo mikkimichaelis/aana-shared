@@ -108,24 +108,43 @@ export class User extends UserBase implements IUser {
         return obj;
     }
 
-    public isHomeGroup(group: IGroup): boolean {
-        return group.id === _.get(this, 'homeGroup.id', false);
+    public get isHomeMeeting(): boolean {
+        return this.id === this.homeMeeting;
     }
 
-    public isFavorite(group: IGroup): boolean {
-        const rv = -1 !== _.findIndex( this.favGroups, (fg => {
-            return (fg.gid === group.id) // TODO add schedule logic && (!_.has(fg, 'sid') || fg.sid === data.sid)
-        }))
+    // public get isHomeGroup(): boolean {
+    //     return this.id === _.get(this, 'homeGroup.id', false);
+    // }
 
-        return rv;
-    }
+    // public isFavorite(group: IGroup): boolean {
+    //     const rv = -1 !== _.findIndex( this.favGroups, (fg => {
+    //         return (fg.gid === group.id) // TODO add schedule logic && (!_.has(fg, 'sid') || fg.sid === data.sid)
+    //     }))
+
+    //     return rv;
+    // }
 
     public isFavoriteMeeting(meeting: IMeeting): boolean {
-        const rv = -1 !== _.findIndex( this.favMeetings, (fmid => {
-            return (fmid === meeting.id);
+        const rv = -1 !== _.findIndex( this.favMeetings, (id => {
+            return (id === meeting.id);
         }))
-
         return rv;
+    }
+
+    public addFavoriteMeeting(meeting: IMeeting): boolean {
+        if (!this.isFavoriteMeeting(meeting)) {
+            this.favMeetings.push(meeting.id);
+        }
+        return true;
+    }
+
+    public removeFavoriteMeeting(meeting: IMeeting): boolean {
+        if (this.isFavoriteMeeting(meeting)) {
+            _.remove(this.favMeetings, (value: any, index: number, array: any) => {
+                return value === meeting.id;
+              });
+        }
+        return true;
     }
 
     public setUserAuthNames(displayName?: string): boolean {

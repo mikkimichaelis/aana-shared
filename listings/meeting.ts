@@ -66,6 +66,8 @@ export interface IMeeting extends IId {
     startTimeFormatLocal: DateTime;
     startTimeFormat: string;
     nextTime: DateTime;
+    meetingTypesString: string;
+    meetingSub: string;
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -186,6 +188,10 @@ export class Meeting extends Id implements IMeeting {
 
     get tagsString(): string {
         return _.join(this.tags, ',').toLowerCase();
+    }
+
+    get meetingSub(): string {
+        return `${this.location} ${this.description}`;
     }
 
     // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
