@@ -53,6 +53,9 @@ export interface IUser extends IUserBase {
     
     chatUser: any;
     created: string;
+
+    addFavoriteMeeting(IMeeting);
+    removeFavoriteMeeting(IMeeting);
 }
 
 declare const ONLINE_ACTIVITY = 15;
