@@ -260,7 +260,7 @@ export class Meeting extends Id implements IMeeting {
         if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
             this.recurrence.weekly_days = Meeting.weekdays;
-            this.startTime
+            // this.startTime   // TODO WTF? review, probably needs deleting...but was not causing compile error
         }
 
         try {

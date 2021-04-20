@@ -1,5 +1,5 @@
 // import * as geofirex from 'geofirex';
-import * as _ from "lodash";
+import * as _ from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IAddress } from "./address";
 
