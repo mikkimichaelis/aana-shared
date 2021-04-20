@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 
 import { DateTime } from 'luxon';
-import { User } from '../models';
+import { IUser, User } from '../models';
 
 import { Id, IId } from "../models/id.class";
 import { IRecurrence, Recurrence } from './recurrence';
@@ -68,6 +68,9 @@ export interface IMeeting extends IId {
     nextTime: DateTime;
     meetingTypesString: string;
     meetingSub: string;
+
+    nextDateTime: DateTime;
+    isHome(IUser): boolean;
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -251,7 +254,7 @@ export class Meeting extends Id implements IMeeting {
     // We still have a zero based array of Millis
     // so the last ms belongs -to the next week- ;-)
 
-    isHome(user: User): boolean {
+    isHome(user: IUser): boolean {
         return user.homeMeeting === this.id;
     }
 
@@ -332,7 +335,7 @@ export class Meeting extends Id implements IMeeting {
             //     hour: Number.parseInt(this.time24h.split(':')[0]),
             //     minute: Number.parseInt(this.time24h.split(':')[1]),
             //     zone: this.timezone,
-            // }).set({ weekday: Meeting.weekday2index(this.recurrence.weekly_day) }).toUTC().toMillis();
+            // }).set({ weekday: IMeeting.weekday2index(this.recurrence.weekly_day) }).toUTC().toMillis();
 
             // Here is the big magic.
             // The concept here is the same as the little magic
