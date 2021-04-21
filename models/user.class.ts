@@ -151,6 +151,7 @@ export class User extends UserBase implements IUser {
     }
 
     public setUserAuthNames(displayName?: string): boolean {
+        const random_li = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
         if (this.profile.anonymous
             // || TODO displayName is all whitespace
             || _.isNil(displayName)
@@ -158,14 +159,14 @@ export class User extends UserBase implements IUser {
             || displayName.length < 3
             || displayName.split(' ').length < 2) {
             this.profile.firstName = 'Anonymous';
-            this.profile.lastInitial = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+            this.profile.lastInitial = random_li;
         } else {
             const names = displayName.split(' ');
-            this.profile.firstName = names[0];
-            this.profile.lastInitial = names[1][0].toUpperCase();
+            this.profile.firstName = (names.length === 0) ? 'Anonymous' : names[0];
+            this.profile.lastInitial = (names.length === 1) ? random_li
+                : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
         }
-        this.name = `${this.profile.firstName} ${this.profile.lastInitial}.`;
-        return true;
+        return this.setUserNames(this.profile.firstName, this.profile.lastInitial);
     }
 
     public setUserNames(firstName: string, lastInitial: string): boolean {
