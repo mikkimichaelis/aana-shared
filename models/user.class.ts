@@ -54,8 +54,8 @@ export interface IUser extends IUserBase {
     chatUser: any;
     created: string;
 
-    addFavoriteMeeting(IMeeting);
-    removeFavoriteMeeting(IMeeting);
+    addFavoriteMeeting(meeting: IMeeting): boolean;
+    removeFavoriteMeeting(meeting: IMeeting): boolean;
 }
 
 declare const ONLINE_ACTIVITY = 15;
@@ -94,8 +94,29 @@ export class User extends UserBase implements IUser {
         this.initialize(this, user);
         
         // Create Custom Object Properties
-        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) this.profile = new UserProfile(user.profile);
-        if (_.has(user, 'activity') && !_.isEmpty(user.activity)) this.activity = new UserActivity(user.activity);
+        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) { 
+            this.profile = new UserProfile(user.profile);
+        } else {
+            user.profile = new UserProfile(
+                _.merge(user, {
+                    anonymous: false,
+                    avatar: this.avatar
+                }));
+
+            user.setUserAuthNames(user.name);
+        }
+        if (_.has(user, 'activity') && !_.isEmpty(user.activity)) {
+            this.activity = new UserActivity(user.activity);
+        } else {
+            user.activity = new UserActivity({
+                id: this.id,
+                name: this.profile.name,
+                avatar: this.avatar,
+                lastLogon: DateTime.utc().toISO(),
+                lastTime: DateTime.utc().toISO(),
+                point: null,
+            });
+        }
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
         if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);    
     }
