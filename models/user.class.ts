@@ -30,10 +30,10 @@ export class UserProfile extends Base implements IUserProfile {
     // ignore provided values that don't exist on object
     // overwrite defaults with provided values
 
-    constructor(user?: any) {
+    constructor(profile?: any) {
         super();
 
-        this.initialize(this, user)
+        this.initialize(this, profile)
     }
 }
 
@@ -56,6 +56,9 @@ export interface IUser extends IUserBase {
 
     addFavoriteMeeting(meeting: IMeeting): boolean;
     removeFavoriteMeeting(meeting: IMeeting): boolean;
+
+    setUserAuthNames(displayName?: string): boolean;
+    setUserNames(firstName: string, lastInitial: string): boolean;
 }
 
 declare const ONLINE_ACTIVITY = 15;
@@ -97,13 +100,13 @@ export class User extends UserBase implements IUser {
         if (_.has(user, 'profile') && !_.isEmpty(user.profile)) { 
             this.profile = new UserProfile(user.profile);
         } else {
-            user.profile = new UserProfile(
+            this.profile = new UserProfile(
                 _.merge(user, {
                     anonymous: false,
                     avatar: this.avatar
                 }));
 
-            user.setUserAuthNames(user.name);
+            this.setUserAuthNames(user.name);
         }
         if (_.has(user, 'activity') && !_.isEmpty(user.activity)) {
             this.activity = new UserActivity(user.activity);

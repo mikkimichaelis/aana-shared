@@ -1,21 +1,28 @@
 // import { FirePoint } from 'geofirex';
 import * as _ from 'lodash-es';
+import { DateTime } from 'luxon';
 
 import { IUserBase, UserBase } from './userBase.class';
 
 export interface IUserActivity extends IUserBase {
+    id: string,
+    name: string,
+    avatar: string,
     lastLogon: string;
     lastTime: string;
     point: any; // FirePoint;
 }
 
 export class UserActivity extends UserBase implements IUserActivity {
+    id: string          = '';
+    name: string        = '';
+    avatar: string      = '';
     lastLogon: string   = '';
-    lastTime: string    = '';
-    point: any    = <any>null;
+    lastTime: string    = DateTime.utc().toISO();
+    point: any          = <any>null;
 
-    constructor(userActivity?: any) {
+    constructor(activity?: any) {
         super();
-        this.initialize(this, userActivity);
+        this.initialize(this, activity);
     }
 }
