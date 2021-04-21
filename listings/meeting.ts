@@ -1,10 +1,10 @@
 import * as _ from 'lodash-es';
-
 import { DateTime } from 'luxon';
-import { IUser, User } from '../models';
-
+import { IUser } from '../models';
 import { Id, IId } from "../models/id.class";
 import { IRecurrence, Recurrence } from './recurrence';
+
+
 
 export interface IMeeting extends IId {
 
@@ -70,7 +70,7 @@ export interface IMeeting extends IId {
     meetingSub: string;
 
     nextDateTime: DateTime;
-    isHome(IUser): boolean;
+    isHome(user: IUser): boolean;
 }
 
 export class Meeting extends Id implements IMeeting {
