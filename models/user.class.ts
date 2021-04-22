@@ -50,7 +50,7 @@ export interface IUser extends IUserBase {
     favMeetings: string[];
     blkMeetings: string[];
     friends: IUserFriend[];
-    
+
     chatUser: any;
     created: string;
 
@@ -63,20 +63,20 @@ export interface IUser extends IUserBase {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    email: string               = '';
-    emailVerified: boolean      = false;
-    zoomUser: boolean           = false;
-    profile: IUserProfile       = <any>null;
-    activity: IUserActivity     = <any>null;
-    member: IUserMember         = <any>null;    // TODO ???
-    homeMeeting: string         = <any>null;
-    homeGroup: IHomeGroup       = <any>null;
-    favGroups: IUserFavorite[]  = [];
-    favMeetings: any[]          = [];
-    blkMeetings: any[]          = [];
-    friends: IUserFriend[]      = [];
-    chatUser: any               = null;
-    created: string             = DateTime.utc().toISO();
+    email: string = '';
+    emailVerified: boolean = false;
+    zoomUser: boolean = false;
+    profile: IUserProfile = <any>null;
+    activity: IUserActivity = <any>null;
+    member: IUserMember = <any>null;    // TODO ???
+    homeMeeting: string = <any>null;
+    homeGroup: IHomeGroup = <any>null;
+    favGroups: IUserFavorite[] = [];
+    favMeetings: any[] = [];
+    blkMeetings: any[] = [];
+    friends: IUserFriend[] = [];
+    chatUser: any = null;
+    created: string = DateTime.utc().toISO();
 
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
@@ -95,9 +95,9 @@ export class User extends UserBase implements IUser {
         // parm1: subclass instance (this)
         // parm2: constructor parameters
         this.initialize(this, user);
-        
+
         // Create Custom Object Properties
-        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) { 
+        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) {
             this.profile = new UserProfile(user.profile);
         } else {
             this.profile = new UserProfile(
@@ -121,11 +121,11 @@ export class User extends UserBase implements IUser {
             });
         }
         if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
-        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);    
+        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     toObject(): IUser {
-        return super.toObject(['isOnline','daysSinceBday'])
+        return super.toObject(['isOnline', 'daysSinceBday'])
     }
 
     toGeoObject(geo?: any): IUser {
@@ -152,7 +152,7 @@ export class User extends UserBase implements IUser {
     // }
 
     public isFavoriteMeeting(meeting: IMeeting): boolean {
-        const rv = -1 !== _.findIndex( this.favMeetings, (id => {
+        const rv = -1 !== _.findIndex(this.favMeetings, (id => {
             return (id === meeting.id);
         }))
         return rv;
@@ -169,26 +169,17 @@ export class User extends UserBase implements IUser {
         if (this.isFavoriteMeeting(meeting)) {
             _.remove(this.favMeetings, (value: any, index: number, array: any) => {
                 return value === meeting.id;
-              });
+            });
         }
         return true;
     }
 
     public setUserAuthNames(name?: string): boolean {
         const random_li = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-        if (this.profile.anonymous
-            // || TODO displayName is all whitespace
-            || _.isNil(name)
-            || !name.includes(' ')
-            || name.length < 3) {
-            this.profile.firstName = 'Anonymous';
-            this.profile.lastInitial = random_li;
-        } else {
-            const names = name.split(' ');
-            this.profile.firstName = names[0];
-            this.profile.lastInitial = (names.length === 1) ? random_li
-                : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
-        }
+        const names = <string []>name?.split(' ');
+        this.profile.firstName = names[0];
+        this.profile.lastInitial = (names.length === 1) ? random_li
+            : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
         return this.setUserNames(this.profile.firstName, this.profile.lastInitial);
     }
 
