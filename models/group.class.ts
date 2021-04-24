@@ -1,5 +1,5 @@
 // import * as geofirex from 'geofirex';
-import * as _ from 'lodash-es';
+import { has, isArray, map, remove, sum } from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IAddress } from "./address";
 import { Base, IBase } from './base.class';
@@ -117,11 +117,11 @@ export class Group extends Id implements IGroup {
   public get yearsSobriety(): string {
     if (Array.isArray(this.members)) {
       // TODO check algorithm
-      const years = _.sum(_.map(this.members, (member: UserMember) => {
+      const years = sum(map(this.members, (member: UserMember) => {
         return member.daysSinceBday;
       })) / 365;
 
-      if (_.isNaN(years)) {
+      if (isNaN(years)) {
         return '0.0';
       } else {
         return years.toLocaleString(
@@ -140,7 +140,7 @@ export class Group extends Id implements IGroup {
   public get membersOnline(): number {
     if (Array.isArray(this.members)) {
       // TODO check algorithm
-      return _.sum(_.map(this.members, (member: UserMember) => {
+      return sum(map(this.members, (member: UserMember) => {
         return member.isOnline ? 1 : 0;
       }));
     } else {
@@ -152,7 +152,7 @@ export class Group extends Id implements IGroup {
     super(group)
     this.initialize(this, group);
     // Create Custom Object Properties
-    if (_.has(group, 'members') && _.isArray(group.members)) this.members = group.members.map((um: IUserMember) => {
+    if (has(group, 'members') && isArray(group.members)) this.members = group.members.map((um: IUserMember) => {
       return new UserMember(um);
     });
   }
@@ -228,7 +228,7 @@ export class Group extends Id implements IGroup {
   }
 
   public removeMember(user: IUser) {
-    _.remove(this.members, (value: any, index: number, array: any) => {
+    remove(this.members, (value: any, index: number, array: any) => {
       return value.id === user.id;
     })
   }

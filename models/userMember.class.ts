@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { get, isEmpty } from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';
@@ -24,7 +24,7 @@ export class UserMember extends UserBase implements IUserMember {
     public get daysSinceBday() {
         const bday:DateTime = DateTime.fromISO(this.bday);
         const days = DateTime.utc().diff(bday).days;
-        if( _.isNaN(days) ) {
+        if( isNaN(days) ) {
             return 0;
         } else {
             return days;
@@ -36,9 +36,9 @@ export class UserMember extends UserBase implements IUserMember {
         this.initialize(this, member);
 
         // Overwrite custom member paths if passed IUser
-        this.bday = _.get(member, 'profile.bday', this.bday);   // TODO bday is null?
-        this.activity = _.get(member, 'activity', this.activity);
+        this.bday = get(member, 'profile.bday', this.bday);   // TODO bday is null?
+        this.activity = get(member, 'activity', this.activity);
 
-        if(!_.isEmpty(this.activity)) this.activity = new UserActivity(this.activity);
+        if(!isEmpty(this.activity)) this.activity = new UserActivity(this.activity);
     }
 }

@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { findIndex, has, isEmpty, merge, remove } from 'lodash-es';
 // import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 
@@ -97,18 +97,18 @@ export class User extends UserBase implements IUser {
         this.initialize(this, user);
 
         // Create Custom Object Properties
-        if (_.has(user, 'profile') && !_.isEmpty(user.profile)) {
+        if (has(user, 'profile') && !isEmpty(user.profile)) {
             this.profile = new UserProfile(user.profile);
         } else {
             this.profile = new UserProfile(
-                _.merge(user, {
+                merge(user, {
                     anonymous: false,
                     avatar: this.avatar
                 }));
 
             this.setUserAuthNames(user.name);
         }
-        if (_.has(user, 'activity') && !_.isEmpty(user.activity)) {
+        if (has(user, 'activity') && !isEmpty(user.activity)) {
             this.activity = new UserActivity(user.activity);
         } else {
             user.activity = new UserActivity({
@@ -120,8 +120,8 @@ export class User extends UserBase implements IUser {
                 point: null,
             });
         }
-        if (_.has(user, 'member') && !_.isEmpty(user.member)) this.member = new UserMember(user.member);
-        if (_.has(user, 'homeGroup') && !_.isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
+        if (has(user, 'member') && !isEmpty(user.member)) this.member = new UserMember(user.member);
+        if (has(user, 'homeGroup') && !isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     toObject(): IUser {
@@ -140,19 +140,19 @@ export class User extends UserBase implements IUser {
     }
 
     // public get isHomeGroup(): boolean {
-    //     return this.id === _.get(this, 'homeGroup.id', false);
+    //     return this.id === get(this, 'homeGroup.id', false);
     // }
 
     // public isFavorite(group: IGroup): boolean {
-    //     const rv = -1 !== _.findIndex( this.favGroups, (fg => {
-    //         return (fg.gid === group.id) // TODO add schedule logic && (!_.has(fg, 'sid') || fg.sid === data.sid)
+    //     const rv = -1 !== findIndex( this.favGroups, (fg => {
+    //         return (fg.gid === group.id) // TODO add schedule logic && (!has(fg, 'sid') || fg.sid === data.sid)
     //     }))
 
     //     return rv;
     // }
 
     public isFavoriteMeeting(meeting: IMeeting): boolean {
-        const rv = -1 !== _.findIndex(this.favMeetings, (id => {
+        const rv = -1 !== findIndex(this.favMeetings, (id => {
             return (id === meeting.id);
         }))
         return rv;
@@ -167,7 +167,7 @@ export class User extends UserBase implements IUser {
 
     public removeFavoriteMeeting(meeting: IMeeting): boolean {
         if (this.isFavoriteMeeting(meeting)) {
-            _.remove(this.favMeetings, (value: any, index: number, array: any) => {
+            remove(this.favMeetings, (value: any, index: number, array: any) => {
                 return value === meeting.id;
             });
         }

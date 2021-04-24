@@ -1,5 +1,5 @@
 
-import * as _ from 'lodash-es';
+import { merge } from 'lodash-es';
 import { Id } from "./id.class";
 import { DateTime } from 'luxon';
 
@@ -46,17 +46,7 @@ export class Schedule extends Id implements ISchedule {
     lastUpdate: string = DateTime.utc().toISO();
 
     constructor(schedule?: any) {
-        super(_.merge({
-            gid: '',
-            zoom: false,
-            day: '',
-            time: '',
-            duration: 0,
-            recurring: true,
-            active: true,
-            notes: '',
-            millis: 0,
-        }, schedule));
+        super(schedule);
 
         if (this.millis === 0) {
             // TODO i18n this

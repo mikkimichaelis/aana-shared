@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { isNil, join } from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IUser } from '../models';
 import { Id, IId } from "../models/id.class";
@@ -184,11 +184,11 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get meetingTypesString(): string {
-        return _.join(this.meetingTypes, ',').toUpperCase();
+        return join(this.meetingTypes, ',').toUpperCase();
     }
 
     get tagsString(): string {
-        return _.join(this.tags, ',').toLowerCase();
+        return join(this.tags, ',').toLowerCase();
     }
 
     get meetingSub(): string {
@@ -381,7 +381,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sTimeFromISO(iso_time: string) {
-        let time = _.isNil(iso_time) ? DateTime.local() : DateTime.fromISO(iso_time);
+        let time = isNil(iso_time) ? DateTime.local() : DateTime.fromISO(iso_time);
         return Meeting.makeThat70sTime(`${time.hour}:${time.minute}`, time.zoneName);
     }
 
@@ -395,7 +395,7 @@ export class Meeting extends Id implements IMeeting {
             zone: timezone,
         }).toMillis();
 
-        // if (_.isNil(index) || (!_.isNil(index) && !index)) {
+        // if (isNil(index) || (!isNil(index) && !index)) {
         //     if (time >= Meeting.oneDayMillis) {
         //         time = time - Meeting.oneDayMillis;
         //     }
@@ -408,7 +408,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sDateTimeFromISO(iso_dateTime?: string) {
-        let dateTime = _.isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(iso_dateTime);
+        let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(iso_dateTime);
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
@@ -427,7 +427,7 @@ export class Meeting extends Id implements IMeeting {
             return dateTime;
 
             // if index is not passed or if it is and we are not creating an index
-            // if (_.isNil(index) || (!_.isNil(index) && !index)) {
+            // if (isNil(index) || (!isNil(index) && !index)) {
             //     if (dateTime >= Meeting.oneWeekMillis) {
             //         dateTime = dateTime - Meeting.oneWeekMillis;
             //     }

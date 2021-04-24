@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 import { Base, IBase } from './base.class';
 export interface IId extends IBase {

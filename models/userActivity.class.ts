@@ -1,5 +1,4 @@
 // import { FirePoint } from 'geofirex';
-import * as _ from 'lodash-es';
 import { DateTime } from 'luxon';
 
 import { IUserBase, UserBase } from './userBase.class';

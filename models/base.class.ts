@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { has, indexOf, isEmpty } from 'lodash-es';
 // import * as geofirex from 'geofirex';
 
 export interface IBase {
@@ -23,16 +23,16 @@ export class Base implements IBase {
         if (source) {
             for (const key in source) {
                 // not doing an existing property copy or we are and the destination has an existing dest property
-                if (!existing || _.has(destination, key)) {
+                if (!existing || has(destination, key)) {
                     // are we specifically excluding this key?
-                    if (_.indexOf(exclude, key) === -1) {
+                    if (indexOf(exclude, key) === -1) {
                         // if not an object, perform simple assignment
                         if (typeof source[key] !== "object") {
                             destination[key] = source[key];
                         } else {
                             // if is an array, deepCopy the array non existing 
                             if (Array.isArray(source[key])) {
-                                //destination[key] = _.cloneDeep(source[key]);
+                                //destination[key] = cloneDeep(source[key]);
                                 destination[key] = [];
                                 this.deepCopy(destination[key], source[key], exclude, false);
                             } else {
@@ -59,7 +59,7 @@ export class Base implements IBase {
 
     public toGeoObject(geo?: any, exclude?: string[]) {
         const obj = this.toObject(exclude);
-        if (geo && _.has(obj, 'point') && !_.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
+        if (geo && has(obj, 'point') && !isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
         return obj;
     }
 }
