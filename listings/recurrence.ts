@@ -1,5 +1,3 @@
-import * as _  from 'lodash-es';
-
 export interface IRecurrence {
     type:               string;     
     repeat_interval:    number;
