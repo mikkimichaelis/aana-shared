@@ -36,10 +36,9 @@ export interface IMeeting extends IId {
     name_: string;  // name.toLowercase()
 
     groupType: string;
-    meetingTypes: string[];
-
+    
     description: string;
-    tags: string[];
+    tags: string[];     // +meetingTypes: string[];
 
     continuous: boolean;
     recurrence: IRecurrence;
@@ -103,7 +102,6 @@ export class Meeting extends Id implements IMeeting {
     closed: boolean = false;
 
     groupType: string = '';
-    meetingTypes: string[] = [];
     tags: string[] = [];
 
     continuous: boolean = false;
@@ -184,7 +182,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get meetingTypesString(): string {
-        return join(this.meetingTypes, ',').toUpperCase();
+        return 'TODO'; // join(this.meetingTypes, ',').toUpperCase();
     }
 
     get tagsString(): string {
