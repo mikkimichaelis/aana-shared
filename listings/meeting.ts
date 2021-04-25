@@ -1,8 +1,8 @@
 import { isNil, join } from 'lodash-es';
 import { DateTime } from 'luxon';
-import { IUser } from '../models';
-import { Id, IId } from "../models/id.class";
-import { IRecurrence, Recurrence } from './recurrence';
+import { IUser } from '../models/user.class.js';
+import { Id, IId } from "../models/id.class.js";
+import { IRecurrence, Recurrence } from './recurrence.js';
 
 export interface IMeeting extends IId {
 

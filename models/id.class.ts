@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Base, IBase } from './base.class';
+import { Base, IBase } from './base.class.js';
 export interface IId extends IBase {
     id: string;
 

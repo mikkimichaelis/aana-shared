@@ -1,4 +1,4 @@
-import { IAddress } from ".";
+import { IAddress } from "./address.js";
 
 export interface ILocation extends IAddress {
     name: string;

@@ -1,4 +1,4 @@
-import { UserBase } from './userBase.class';
+import { UserBase } from './userBase.class.js';
 
 export interface IUserBadge {
     gid: string;

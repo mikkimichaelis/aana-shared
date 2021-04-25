@@ -1,6 +1,6 @@
 
 import { merge } from 'lodash-es';
-import { Id } from "./id.class";
+import { Id } from "./id.class.js";
 import { DateTime } from 'luxon';
 
 export interface IZoomSchedule extends ISchedule {

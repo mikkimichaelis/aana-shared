@@ -1,6 +1,6 @@
 // import { FirePoint } from "geofirex";
-import { IUserBase } from './userBase.class';
-import { IId } from "./id.class";
+import { IUserBase } from './userBase.class.js';
+import { IId } from "./id.class.js";
 
 
 export interface IUserAttend {
