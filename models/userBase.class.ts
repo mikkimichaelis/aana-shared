@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash-es';
 import { Md5 } from 'ts-md5/dist/md5';
-import { Id, IId } from './id.class.js';
+import { Id, IId } from './id.class';
 
 export interface IUserBase extends IId {
     name: string;

@@ -2,11 +2,11 @@
 import { has, isArray, map, remove, sum } from 'lodash-es';
 import { DateTime } from 'luxon';
 import { IAddress } from "./address.js";
-import { Base, IBase } from './base.class.js';
+import { Base, IBase } from './base.class';
 import { IBoundingBox } from "./bounding-box";
 import { Id } from "./id.class.js";
 import { ILocation } from "./location.js";
-import { ISchedule } from './schedule.class.js';
+import { ISchedule } from './schedule.class';
 import { IUser } from "./user.class.js";
 import { IUserBadge } from "./userBadge.class.js";
 import { IUserMember, UserMember } from "./userMember.class.js";

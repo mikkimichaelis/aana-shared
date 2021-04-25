@@ -1,7 +1,7 @@
 import { get, isEmpty } from 'lodash-es';
 import { DateTime } from 'luxon';
-import { IUserActivity, UserActivity } from './userActivity.class.js';
-import { UserBase } from './userBase.class.js';
+import { IUserActivity, UserActivity } from './userActivity.class';
+import { UserBase } from './userBase.class';
 
 // Member of a homegroup
 export interface IUserMember extends UserBase {

@@ -2,13 +2,13 @@ import { findIndex, has, isEmpty, merge, remove } from 'lodash-es';
 // import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 
-import { IUserBase, UserBase } from './userBase.class.js';
-import { Base } from './base.class.js';
-import { IUserMember, UserMember } from './userMember.class.js';
-import { IUserFavorite } from './userFavorite.class.js';
-import { IUserFriend } from './userFriend.class.js';
-import { IUserActivity, UserActivity } from './userActivity.class.js';
-import { HomeGroup, IGroup, IHomeGroup } from './group.class.js';
+import { IUserBase, UserBase } from './userBase.class';
+import { Base } from './base.class';
+import { IUserMember, UserMember } from './userMember.class';
+import { IUserFavorite } from './userFavorite.class';
+import { IUserFriend } from './userFriend.class';
+import { IUserActivity, UserActivity } from './userActivity.class';
+import { HomeGroup, IGroup, IHomeGroup } from './group.class';
 import { IMeeting } from '.';
 
 // this data never goes to !uid

@@ -1,7 +1,7 @@
 // import { FirePoint } from 'geofirex';
 import { DateTime } from 'luxon';
 
-import { IUserBase, UserBase } from './userBase.class.js';
+import { IUserBase, UserBase } from './userBase.class';
 
 export interface IUserActivity extends IUserBase {
     id: string,

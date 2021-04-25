@@ -1,2 +1,2 @@
-export * from './recurrence.js';
-export * from './meeting.js';
+export * from './recurrence';
+export * from './meeting';
