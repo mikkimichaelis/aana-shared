@@ -20,7 +20,7 @@
             "tx": "BG",
             "code": "B",
             "type": "Beginners",
-            "desc": "This meeting is focused on the needs of new members of NA."
+            "desc": "This meeting is focused on the needs of new members"
         },
         {
             "valid": true,
@@ -30,7 +30,7 @@
             "desc": "Approved N.A. Books"
         },
         {
-            "valid": false,
+            "valid": true,
             "tx": null,
             "code": "BL",
             "type": "Bi-Lingual",
@@ -69,7 +69,7 @@
             "tx": null,
             "code": "CP",
             "type": "Concepts",
-            "desc": "This meeting is focused on discussion of the twelve concepts of NA."
+            "desc": "This meeting is focused on discussion of the twelve concepts"
         },
         {
             "valid": false,
@@ -118,7 +118,7 @@
             "tx": null,
             "code": "GL",
             "type": "Gay/Lesbian/Transgender",
-            "desc": "This meeting is focused on the needs of gay, lesbian and transgender members of NA."
+            "desc": "This meeting is focused on the needs of gay, lesbian and transgender members"
         },
         {
             "valid": true,
@@ -139,7 +139,7 @@
             "tx": null,
             "code": "IL",
             "type": "Illness",
-            "desc": "This meeting is focused on the needs of NA members with chronic illness."
+            "desc": "This meeting is focused on the needs of members with chronic illness."
         },
         {
             "valid": true,
@@ -181,7 +181,7 @@
             "tx": null,
             "code": "M",
             "type": "Men",
-            "desc": "This meeting is focused on topics encountered by men in NA."
+            "desc": "This meeting is focused on topics encountered by men in recovery."
         },
         {
             "valid": true,
@@ -300,7 +300,7 @@
             "tx": null,
             "code": "St",
             "type": "Step",
-            "desc": "This meeting is focused on discussion of the Twelve Steps of NA."
+            "desc": "This meeting is focused on discussion of the Twelve Steps."
         },
         {
             "valid": false,
@@ -328,17 +328,17 @@
             "tx": null,
             "code": "Tr",
             "type": "Tradition",
-            "desc": "This meeting is focused on discussion of the Twelve Traditions of NA."
+            "desc": "This meeting is focused on discussion of the Twelve Traditions."
         },
         {
             "valid": true,
             "tx": null,
             "code": "TW",
             "type": "Traditions Workshop",
-            "desc": "This meeting engages in detailed discussion of one or more of the Twelve Traditions of N.A."
+            "desc": "This meeting engages in detailed discussion of one or more of the Twelve Traditions."
         },
         {
-            "valid": false,
+            "valid": true,
             "tx": null,
             "code": "VM",
             "type": "Virtual Meeting",
@@ -349,7 +349,7 @@
             "tx": null,
             "code": "W",
             "type": "Women",
-            "desc": "This meeting is focused on topics encountered by women in NA."
+            "desc": "This meeting is focused on topics encountered by women in recovery."
         },
     {
             "valid": false,
@@ -359,8 +359,8 @@
             "desc": "This meeting is wheelchair accessible."
         },
         {
-            "valid": false,
-            "tx": null,
+            "valid": true,
+            "tx": "VM",
             "code": "WEB",
             "type": "Online Meeting",
             "desc": "This is a meeting that gathers on the Internet."
@@ -370,10 +370,10 @@
             "tx": null,
             "code": "YP",
             "type": "Young People",
-            "desc": "This meeting is focused on the needs of younger members of NA."
+            "desc": "This meeting is focused on the needs of younger members."
         },
         {
-            "valid": false,
+            "valid": true,
             "tx": null,
             "code": "ZL",
             "type": "Zoom Login Required to Enter",
@@ -392,13 +392,6 @@
             "code": "BS",
             "type": "Big Book Step Study",
             "desc": "This type of meeting focuses on specific material from the Big Book and the book Twelve Steps and Twelve Traditions (12 & 12). Again texts are usually supplied for attendees, but individual copies are available from Central Service."
-        },
-        {
-            "valid": false,
-            "tx": null,
-            "code": "D",
-            "type": "Discussion",
-            "desc": "A chairperson is designated for a meeting; the chairperson speaks briefly about their 'experience, strength and hope'. Following this the chairperson may suggest a topic for sharing by other attendees."
         },
         {
             "valid": true,
@@ -441,13 +434,6 @@
             "code": "SBS",
             "type": "Big Book Enhanced 12 & 12 Step",
             "desc": "The key here is the word 'enhanced'. The group's conscience mandates a specific and detailed approach to the Big Book and the 12 & 12."
-        },
-        {
-            "valid": false,
-            "tx": null,
-            "code": "SD",
-            "type": "Speaker / Discussion",
-            "desc": "Initial speakers kick off the group's discussion of matters brought up by the speakers."
         },
         {
             "valid": true,
