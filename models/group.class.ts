@@ -1,15 +1,15 @@
 // import * as geofirex from 'geofirex';
 import { has, isArray, map, remove, sum } from 'lodash-es';
 import { DateTime } from 'luxon';
-import { IAddress } from "./address.js";
+import { IAddress } from './address';
 import { Base, IBase } from './base.class';
-import { IBoundingBox } from "./bounding-box";
-import { Id } from "./id.class.js";
-import { ILocation } from "./location.js";
+import { IBoundingBox } from './bounding-box';
+import { Id } from './id.class';
+import { ILocation } from './location';
 import { ISchedule } from './schedule.class';
-import { IUser } from "./user.class.js";
-import { IUserBadge } from "./userBadge.class.js";
-import { IUserMember, UserMember } from "./userMember.class.js";
+import { IUser } from './user.class';
+import { IUserBadge } from './userBadge.class';
+import { IUserMember, UserMember } from './userMember.class';
 
 
 export interface IGroupPrivate extends IBase {
