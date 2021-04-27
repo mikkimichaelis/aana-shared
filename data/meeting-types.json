@@ -228,7 +228,7 @@
         {
             "valid": true,
             "tx": null,
-            "code": "Pi",
+            "code": "PI",
             "type": "Pitch",
             "desc": "This meeting has a format that consists of each person who shares picking the next person."
         },
@@ -291,16 +291,16 @@
         {
             "valid": true,
             "tx": null,
-            "code": "So",
+            "code": "SO",
             "type": "Speaker Only",
             "desc": "This meeting is a speaker-only meeting. Other attendees do not participate in the discussion."
         },
         {
-            "valid": true,
-            "tx": null,
-            "code": "St",
+            "valid": false,
+            "tx": "S",
+            "code": null,
             "type": "Step",
-            "desc": "This meeting is focused on discussion of the Twelve Steps."
+            "desc": null
         },
         {
             "valid": false,
@@ -312,21 +312,21 @@
         {
             "valid": true,
             "tx": null,
-            "code": "Ti",
+            "code": "TI",
             "type": "Timer",
             "desc": "This meeting has sharing time limited by a timer."
         },
         {
             "valid": true,
             "tx": null,
-            "code": "To",
+            "code": "TO",
             "type": "Topic",
             "desc": "This meeting is based upon a topic chosen by a speaker or by group conscience."
         },
         {
             "valid": true,
             "tx": null,
-            "code": "Tr",
+            "code": "TR",
             "type": "Tradition",
             "desc": "This meeting is focused on discussion of the Twelve Traditions."
         },
@@ -462,6 +462,133 @@
             "code": "BG",
             "type": "Beginner",
             "desc": "Any of the above meetings may, by group conscience, be designated as a Beginner meeting. These meetings are usually led by more experienced group members with the primary focus on introducing new members to the tools available for the maintenance of sobriety. Beginners are not restricted to meetings of this type; they are welcomed at all 12 Step meetings. A benefit of a 'beginner' meeting is the opportunity to meet other peers as they start their sober lives."
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "24/7",
+            "type": "24/7",
+            "desc": "Continuous 24/7 meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "ASLI",
+            "type": "ASL Interpreter",
+            "desc": "ASL Interpreter meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "ASL",
+            "type": "American Sign Language",
+            "desc": "American Sign Language meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "BVI",
+            "type": "Blind / Visually Impaired",
+            "desc": "Blind / Visually Impaired meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "DHH",
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "DHH",
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LGBTQ2+",
+            "type": "LGBTQ2+",
+            "desc": "LGBTQ2+ meeting"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "LGBT",
+            "type": "LGBT"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "LGBTQ",
+            "type": "LGBTQ"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "Gay",
+            "type": "Gay"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "Lesbian",
+            "type": "Lesbian"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LI",
+            "type": "Loners / Isolationists",
+            "desc": "Loners / Isolationists meeting"
+        },
+        {
+            "valid": false,
+            "tx": "B",
+            "code": "Newcomer",
+            "type": "Newcomer"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "RSL",
+            "type": "RSL",
+            "desc": "RSL meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SEC",
+            "type": "Secular",
+            "desc": "Secular meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SR",
+            "type": "Seniors",
+            "desc": "Seniors meeting"
+        },
+        {
+            "valid": false,
+            "tx": "SO",
+            "code": null,
+            "type": "Speaker",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "S/T",
+            "type": "Steps and Traditions",
+            "desc": "Steps and Traditions meeting"
         }
     ]
 }
