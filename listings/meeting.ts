@@ -68,6 +68,8 @@ export interface IMeeting extends IId {
 
     nextDateTime: DateTime;
     isHome(user: IUser): boolean;
+
+    meetingTypes: string[];
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -122,6 +124,13 @@ export class Meeting extends Id implements IMeeting {
     recurrence: IRecurrence = new Recurrence();
 
     buymeacoffee: string = '';
+
+    meetingTypes: string[] = [];
+
+    get meetingTypesString(): string {
+        return join(this.meetingTypes, ',').toUpperCase();
+    }
+
 
     get nextTime(): DateTime {
         return this.nextDateTime;
@@ -179,10 +188,6 @@ export class Meeting extends Id implements IMeeting {
     get isLive(): boolean {
         const now = Meeting.makeThat70sDateTimeFromISO();
         return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
-    }
-
-    get meetingTypesString(): string {
-        return 'TODO'; // join(this.meetingTypes, ',').toUpperCase();
     }
 
     get tagsString(): string {
@@ -406,7 +411,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sDateTimeFromISO(iso_dateTime?: string) {
-        let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(iso_dateTime);
+        let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
         return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
     }
 
