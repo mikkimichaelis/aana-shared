@@ -36,7 +36,7 @@ export interface IMeeting extends IId {
     name_: string;  // name.toLowercase()
 
     groupType: string;
-    
+
     description: string;
     tags: string[];     // +meetingTypes: string[];
 
@@ -438,7 +438,7 @@ export class Meeting extends Id implements IMeeting {
             //         dateTime = dateTime + Meeting.oneWeekMillis;
             //     }
             // }
-            
+
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             console.log(JSON.stringify({
@@ -462,4 +462,9 @@ export class Meeting extends Id implements IMeeting {
         }
         return t.join(''); // return adjusted time or original string
     }
+
+    public static startIndex: IMeeting = {
+        startDateTime: Meeting.oneWeekMillis * -1,
+        startTime: Meeting.oneDayMillis * -1
+    } as IMeeting;
 }
