@@ -1,5 +1,5 @@
 // import * as geofirex from 'geofirex';
-import { has, isArray, map, remove, sum } from 'lodash-es';
+import { has, isArray, map, remove, sum } from 'lodash';
 import { DateTime } from 'luxon';
 import { IAddress } from './address';
 import { Base, IBase } from './base.class';

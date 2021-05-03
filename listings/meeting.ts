@@ -1,8 +1,9 @@
-import { isNil, join } from 'lodash-es';
+import { isNil, join } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
+import { environment } from '../../environments/environment';;
 
 export interface IMeeting extends IId {
 
@@ -186,7 +187,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get isLive(): boolean {
-        const now = Meeting.makeThat70sDateTimeFromISO();
+        const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
         return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
     }
 
@@ -200,7 +201,7 @@ export class Meeting extends Id implements IMeeting {
 
     // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
     get weekday(): number {
-        return Meeting.weekday2index(this.recurrence.weekly_day);
+        return Meeting.iso_weekday_2_70s_dow[this.recurrence.weekly_day];
     }
 
     constructor(meeting?: IMeeting) {
@@ -215,45 +216,36 @@ export class Meeting extends Id implements IMeeting {
         return super.toObject(['nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
     }
 
-    static first_weekdays = ['Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
-    static makeThat70sWeekday2day(weekday: string) {
-        try {
-            return this.first_weekdays.indexOf(weekday) + 1;
-        } catch {
-            throw new Error(`Meeting.first_weekday2index(): ERROR invalid dow: ${weekday}`);
-        }
-    }
+    /////////////////////////////////////////////////////////////////////
+    // just having fun making structures instead of writing code...... //
+    /////////////////////////////////////////////////////////////////////
 
-    static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    static weekday2index(weekday: string) {
-        try {
-            return this.weekdays.indexOf(weekday) + 1;
-        } catch {
-            throw new Error(`Meeting.weekday2index(): ERROR invalid dow: ${weekday}`);
-        }
-    }
+    // ISO specifies the dow ordering and numbering as 
+    // see https://en.wikipedia.org/wiki/ISO_week_date
+    // Properties names are WeekdayLong or ISO numeric string index
+    // Property values are the corresponding 70's zero-based DayOfWeek
+    static iso_weekday_2_70s_dow = {
+        Monday: 5, 
+        '1': 5,
+        Tuesday: 6,
+        '2': 6,
+        Wednesday: 7,
+        '3': 7,
+        Thursday: 1,
+        '4': 1,
+        Friday: 2,
+        '5': 2,
+        Saturday: 3,
+        '6': 3,
+        Sunday: 4,
+        '7': 4,
+    };
 
+    // Monday = 1
+    static weekdays = ['offset', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    static iso_weekday_2_iso_index(weekday: any) { return this.weekdays.indexOf(weekday); }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
-    // Remove one because the last ms actually starts the next day
-    // or think like this
-    // Each day starts with 0ms
-    // Realize that that 0th ms did go by in Time.
-    // Just because the number value is 0 does not mean it did not exist.
-    // Then....
-    // The 1st ms goes by and we have past another Unit of Time
-    // and we are at the 1st ms of that day, 
-    // as we had previously existed in the 0th Unit of Time on that day.
-    //
-    // Essentially Time is a zero based array of Units of Time
-    //
-    // so 24 * 60 * 60 * 1000 is the number of ms in one day (non zero based index)
-    // but time is a zero based array of UoT and to adjust for this
-    // we subtract 1 from the non zero based index.
-
-    static oneWeekMillis = (7 * (Meeting.oneDayMillis));  // add back in the 0th index, make a week unit of time
-    // the reason for the removal of 1ms is the same concept as the above oneDayMills
-    // We still have a zero based array of Millis
-    // so the last ms belongs -to the next week- ;-)
+    static oneWeekMillis = (7 * (Meeting.oneDayMillis));
 
     isHome(user: IUser): boolean {
         return user.homeMeeting === this.id;
@@ -360,16 +352,13 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
-            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone);
-            this.endTime = this.startTime + this.duration * 60 * 1000;
-            this.startDateTime = Meeting.makeThat70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)
+            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
+            this.endTime = this.startTime + this.duration * 1000 * 60;  // TODO config
+            this.startDateTime = Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day).toMillis();
             this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
         } catch (error) {
             console.error(error);
-            // TODO
-            // return;
-
-            // TODO good idea
+            // TODO some random thought.....
             // map out function call branches and exception propagation
             // show graphically in cs code
             // allow selecting a function call and evaluating for error handling
@@ -385,69 +374,78 @@ export class Meeting extends Id implements IMeeting {
 
     static makeThat70sTimeFromISO(iso_time: string) {
         let time = isNil(iso_time) ? DateTime.local() : DateTime.fromISO(iso_time);
-        return Meeting.makeThat70sTime(`${time.hour}:${time.minute}`, time.zoneName);
+        return Meeting.makeThat70sTime(time);
     }
 
-    static makeThat70sTime(time24h: string, timezone: string): number {
-        let time = DateTime.fromObject({
-            year: 1970,
-            month: 1,
-            day: 1,
-            hour: Number.parseInt(time24h.split(':')[0]),
-            minute: Number.parseInt(time24h.split(':')[1]),
-            zone: timezone,
-        }).toMillis();
+    static makeThat70sTime(anyTime: any, timezone?: string): DateTime {
+        let time: DateTime = null;
+        switch(typeof anyTime) {
+            case 'string':
+                time = anyTime.length !== 5 ? DateTime.fromISO(anyTime)
+                                            : Meeting.makeFrom24h_That70sDateTime(
+                                                Number.parseInt(anyTime.split(':')[0]), 
+                                                Number.parseInt(anyTime.split(':')[1]), 
+                                                timezone, 'Thursday');
+                break;
+            case 'number':
+                time = Meeting.makeThat70sDateTime(DateTime.fromMillis(anyTime));
+                break;
+            case 'object':
+                time = anyTime;
+                break;
+            default:
+                debugger;
+        }
 
-        // if (isNil(index) || (!isNil(index) && !index)) {
-        //     if (time >= Meeting.oneDayMillis) {
-        //         time = time - Meeting.oneDayMillis;
-        //     }
-        //     if (time < 0) {
-        //         time = time + Meeting.oneDayMillis;
-        //     }
-        // }
-
-        return time;
+        // time only is always on 1/1/1970
+        return time?.set({year: 1970, month: 1, day: 1});
     }
 
-    static makeThat70sDateTimeFromISO(iso_dateTime?: string) {
+    static makeThat70sDateTimeFromISO(iso_dateTime?: string): DateTime {
         let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
-        return Meeting.makeThat70sDateTime(`${dateTime.hour}:${dateTime.minute}`, dateTime.zoneName, dateTime.weekdayLong);
+        return Meeting.makeThat70sDateTime(dateTime);
     }
 
-    static makeThat70sDateTime(time24h: string, timezone: string, weekday: string): any {
+    static makeThat70sDateTime(dateTime: DateTime, weekday?: any): DateTime {
         try {
-            let day = Meeting.makeThat70sWeekday2day(weekday);
-            let dateTime = DateTime.fromObject({
+            let day = isNil(weekday)    ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
+                                        : Meeting.iso_weekday_2_70s_dow[weekday];
+            return DateTime.fromObject({
                 year: 1970,
                 month: 1,
                 day: day,
-                hour: Number.parseInt(time24h.split(':')[0]),
-                minute: Number.parseInt(time24h.split(':')[1]),
-                zone: timezone,
-            }).toMillis()
-
-            return dateTime;
-
-            // if index is not passed or if it is and we are not creating an index
-            // if (isNil(index) || (!isNil(index) && !index)) {
-            //     if (dateTime >= Meeting.oneWeekMillis) {
-            //         dateTime = dateTime - Meeting.oneWeekMillis;
-            //     }
-            //     if (dateTime < 0) {
-            //         dateTime = dateTime + Meeting.oneWeekMillis;
-            //     }
-            // }
-
+                hour: dateTime.hour,
+                minute: dateTime.hour,
+                zone: dateTime.zoneName,
+            });
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
-            console.log(JSON.stringify({
-                'time24h': time24h,
-                'timezone': timezone,
-                'weekday': weekday
-            }))
             return null;
         }
+    }
+
+    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime {
+        try {
+            let day = Meeting.iso_weekday_2_70s_dow[weekday];
+            return DateTime.fromObject({
+                year: 1970,
+                month: 1,
+                day: day,
+                hour: hour,
+                minute: minute,
+                zone: timezone,
+            });
+        } catch (error) {
+            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            return null;
+        }
+    }
+
+    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime {
+        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h.split(':')[0]), 
+                                                Number.parseInt(time24h.split(':')[1]), 
+                                                timezone, 
+                                                weekday);
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011

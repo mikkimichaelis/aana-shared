@@ -1,4 +1,4 @@
-import { findIndex, has, isEmpty, merge, remove } from 'lodash-es';
+import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 // import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
 

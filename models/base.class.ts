@@ -1,4 +1,4 @@
-import { has, indexOf, isEmpty } from 'lodash-es';
+import { has, indexOf, isEmpty } from 'lodash';
 // import * as geofirex from 'geofirex';
 
 export interface IBase {

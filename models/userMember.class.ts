@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash-es';
+import { get, isEmpty } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { UserBase } from './userBase.class';

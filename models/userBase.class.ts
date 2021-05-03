@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash';
 import { Md5 } from 'ts-md5/dist/md5';
 import { Id, IId } from './id.class';
 
