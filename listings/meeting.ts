@@ -113,7 +113,7 @@ export class Meeting extends Id implements IMeeting {
     duration: number = 60;
 
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
-    // this is used to search where byDay is any
+    // this is used to search where specificDay is any
     startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
     endTime: number = 0;        // start + duration
 
@@ -242,7 +242,7 @@ export class Meeting extends Id implements IMeeting {
     };
 
     // Monday = 1
-    static weekdays = ['offset', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    static weekdays = [null, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     static iso_weekday_2_iso_index(weekday: any) { return this.weekdays.indexOf(weekday); }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
@@ -401,22 +401,29 @@ export class Meeting extends Id implements IMeeting {
         return time?.set({year: 1970, month: 1, day: 1});
     }
 
+    static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime} {
+        const diff = end.diff(start);   // save start-end diff so we know where to put end (if on a different day)
+        const _start: DateTime = start.set({day: Meeting.iso_weekday_2_70s_dow[weekday]});   // set new start weekday
+        const _end: DateTime = _start.plus({milliseconds: diff.milliseconds}); // adjust end to new start
+        return {start: _start, end: _end};
+    }
+
     static makeThat70sDateTimeFromISO(iso_dateTime?: string): DateTime {
         let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
         return Meeting.makeThat70sDateTime(dateTime);
     }
 
-    static makeThat70sDateTime(dateTime: DateTime, weekday?: any): DateTime {
+    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime {
         try {
-            let day = isNil(weekday)    ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
-                                        : Meeting.iso_weekday_2_70s_dow[weekday];
+            let day = isNil(iso_weekday)    ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
+                                            : Meeting.iso_weekday_2_70s_dow[iso_weekday];
             return DateTime.fromObject({
                 year: 1970,
                 month: 1,
                 day: day,
-                hour: dateTime.hour,
-                minute: dateTime.hour,
-                zone: dateTime.zoneName,
+                hour: dateTime?.hour ? dateTime.hour : 0,
+                minute: dateTime?.minute ? dateTime.minute : 0,
+                zone: dateTime?.zoneName ? dateTime.zoneName : 'local',
             });
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
