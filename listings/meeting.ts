@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { environment } from '../../environments/environment';;
+import { SpecificDay } from '../../app/models';
 
 export interface IMeeting extends IId {
 
@@ -225,7 +225,7 @@ export class Meeting extends Id implements IMeeting {
     // Properties names are WeekdayLong or ISO numeric string index
     // Property values are the corresponding 70's zero-based DayOfWeek
     static iso_weekday_2_70s_dow = {
-        Monday: 5, 
+        Monday: 5,
         '1': 5,
         Tuesday: 6,
         '2': 6,
@@ -242,6 +242,9 @@ export class Meeting extends Id implements IMeeting {
     };
 
     // Monday = 1
+    public static get today_weekdayLong(): string {
+        return Meeting.weekdays[DateTime.local().weekday]
+    }
     static weekdays = [null, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     static iso_weekday_2_iso_index(weekday: any) { return this.weekdays.indexOf(weekday); }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
@@ -372,51 +375,63 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static makeThat70sTimeFromISO(iso_time: string) {
+    // TODO consolidate these......
+    static makeThat70sDateTimeFromISO(iso_dateTime?: string): DateTime {
+        const dateTime: DateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
+        return Meeting.makeThat70sDateTime(dateTime);
+    }
+
+    static makeThat70sTimeFromISO(iso_time?: string) {
         let time = isNil(iso_time) ? DateTime.local() : DateTime.fromISO(iso_time);
         return Meeting.makeThat70sTime(time);
     }
 
-    static makeThat70sTime(anyTime: any, timezone?: string): DateTime {
-        let time: DateTime = null;
-        switch(typeof anyTime) {
-            case 'string':
-                time = anyTime.length !== 5 ? DateTime.fromISO(anyTime)
-                                            : Meeting.makeFrom24h_That70sDateTime(
-                                                Number.parseInt(anyTime.split(':')[0]), 
-                                                Number.parseInt(anyTime.split(':')[1]), 
-                                                timezone, 'Thursday');
-                break;
-            case 'number':
-                time = Meeting.makeThat70sDateTime(DateTime.fromMillis(anyTime));
-                break;
-            case 'object':
-                time = anyTime;
-                break;
-            default:
-                debugger;
+    static makeThat70sTime(anyTime?: any, timezone?: string): DateTime {
+        let time: DateTime = DateTime.local();
+        if (!isNil(anyTime)) {
+            switch (typeof anyTime) {
+                case 'string':
+                    time = anyTime.length !== 5 ? DateTime.fromISO(anyTime)
+                        : Meeting.makeFrom24h_That70sDateTime(
+                            Number.parseInt(anyTime.split(':')[0]),
+                            Number.parseInt(anyTime.split(':')[1]),
+                            timezone, 'Thursday');
+                    break;
+                case 'number':
+                    time = Meeting.makeThat70sDateTime(DateTime.fromMillis(anyTime));
+                    break;
+                case 'object':
+                    time = anyTime;
+                    break;
+                default:
+                    debugger;
+            }
         }
 
         // time only is always on 1/1/1970
-        return time?.set({year: 1970, month: 1, day: 1});
+        time = time.set({ year: 1970, month: 1, day: 1 });
+        return time;
     }
 
-    static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime} {
+    static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime } {
+        // get weekday to move this search to
+        weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
+
+        // align weekday into 70's
+        weekday = Meeting.iso_weekday_2_70s_dow[weekday];
+
+        // save original size of window
         const diff = end.diff(start);   // save start-end diff so we know where to put end (if on a different day)
-        const _start: DateTime = start.set({day: Meeting.iso_weekday_2_70s_dow[weekday]});   // set new start weekday
-        const _end: DateTime = _start.plus({milliseconds: diff.milliseconds}); // adjust end to new start
-        return {start: _start, end: _end};
-    }
 
-    static makeThat70sDateTimeFromISO(iso_dateTime?: string): DateTime {
-        let dateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
-        return Meeting.makeThat70sDateTime(dateTime);
+        const _start: DateTime = start.set({ day: weekday });                     // set new start weekday
+        const _end: DateTime = _start.plus({ milliseconds: diff.milliseconds }); // adjust end to new start
+        return { start: _start, end: _end };
     }
 
     static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime {
         try {
-            let day = isNil(iso_weekday)    ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
-                                            : Meeting.iso_weekday_2_70s_dow[iso_weekday];
+            let day = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
+                : Meeting.iso_weekday_2_70s_dow[iso_weekday];
             return DateTime.fromObject({
                 year: 1970,
                 month: 1,
@@ -449,10 +464,10 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime {
-        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h.split(':')[0]), 
-                                                Number.parseInt(time24h.split(':')[1]), 
-                                                timezone, 
-                                                weekday);
+        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h.split(':')[0]),
+            Number.parseInt(time24h.split(':')[1]),
+            timezone,
+            weekday);
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
