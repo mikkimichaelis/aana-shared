@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { SpecificDay } from '../../app/models';
+import { SpecificDay } from '../listings';
 
 export interface IMeeting extends IId {
 
@@ -417,7 +417,7 @@ export class Meeting extends Id implements IMeeting {
         // get weekday to move this search to
         weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
 
-        // align weekday into 70's
+        // align weekday into 70's dow
         weekday = Meeting.iso_weekday_2_70s_dow[weekday];
 
         // save original size of window
