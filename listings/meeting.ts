@@ -428,7 +428,7 @@ export class Meeting extends Id implements IMeeting {
         return { start: _start, end: _end };
     }
 
-    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime {
+    static makeThat70sDateTime(dateTime: DateTime, iso_weekday?: any): DateTime {
         try {
             let day = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
                 : Meeting.iso_weekday_2_70s_dow[iso_weekday];
@@ -436,9 +436,10 @@ export class Meeting extends Id implements IMeeting {
                 year: 1970,
                 month: 1,
                 day: day,
-                hour: dateTime?.hour ? dateTime.hour : 0,
-                minute: dateTime?.minute ? dateTime.minute : 0,
-                zone: dateTime?.zoneName ? dateTime.zoneName : 'local',
+                hour: dateTime.hour ? dateTime.hour : 0,
+                minute: dateTime.minute ? dateTime.minute : 0,
+                second: dateTime.second ? dateTime.second : 0,
+                zone: dateTime.zoneName ? dateTime.zoneName : 'local',
             });
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
