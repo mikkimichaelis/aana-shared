@@ -225,19 +225,19 @@ export class Meeting extends Id implements IMeeting {
     // Properties names are WeekdayLong or ISO numeric string index
     // Property values are the corresponding 70's zero-based DayOfWeek
     static iso_weekday_2_70s_dow = {
-        Monday: 5,
+        'Monday': 5,
         '1': 5,
-        Tuesday: 6,
+        'Tuesday': 6,
         '2': 6,
-        Wednesday: 7,
+        'Wednesday': 7,
         '3': 7,
-        Thursday: 1,
+        'Thursday': 1,
         '4': 1,
-        Friday: 2,
+        'Friday': 2,
         '5': 2,
-        Saturday: 3,
+        'Saturday': 3,
         '6': 3,
-        Sunday: 4,
+        'Sunday': 4,
         '7': 4,
     };
 
