@@ -40,22 +40,22 @@ export interface ISearchSettings {
 };
 
 export class SearchSettings implements ISearchSettings {
-	searchType: SearchType.search;
+	searchType = SearchType.search;
 
-	bySpecificDay: SpecificDay.today;
+	bySpecificDay = SpecificDay.today;
 	// bySpecificTime: any = null;
-	byRelativeTime: any = { early: 1, late: 0 };
-	bySpecificTimeRange: any = null;
+	byRelativeTime = { early: 1, late: 0 };
+	bySpecificTimeRange = null;
 	
-	live: boolean = true;
-	continuous: boolean = true;
+	live = true;
+	continuous = true;
 
-	id: string = null;
-	name: string = null;
-	zipcode: string = null;
-	language: string = null;
-	groupType: string = null;
-	meetingType: string = null;
+	id = <any>null;
+	name = <any>null;
+	zipcode = <any>null;
+	language = <any>null;
+	groupType = <any>null;
+	meetingType = <any>null;
 	tags: string[] = [];
 	tagsAny: boolean = false;
 

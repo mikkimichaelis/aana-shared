@@ -201,6 +201,7 @@ export class Meeting extends Id implements IMeeting {
 
     // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
     get weekday(): number {
+        // @ts-ignore
         return Meeting.iso_weekday_2_70s_dow[this.recurrence.weekly_day];
     }
 
@@ -243,6 +244,7 @@ export class Meeting extends Id implements IMeeting {
 
     // Monday = 1
     public static get today_weekdayLong(): string {
+        // @ts-ignore
         return Meeting.weekdays[DateTime.local().weekday]
     }
     static weekdays = [null, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -258,6 +260,7 @@ export class Meeting extends Id implements IMeeting {
 
         if (this.recurrence.type === 'Daily') {
             // If 'daily' meeting, set weekly_days to all days
+            // @ts-ignore
             this.recurrence.weekly_days = Meeting.weekdays;
             // this.startTime   // TODO WTF? review, probably needs deleting...but was not causing compile error
         }
@@ -357,6 +360,7 @@ export class Meeting extends Id implements IMeeting {
 
             this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
             this.endTime = this.startTime + this.duration * 1000 * 60;  // TODO config
+            // @ts-ignore
             this.startDateTime = Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day).toMillis();
             this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
         } catch (error) {
@@ -378,6 +382,7 @@ export class Meeting extends Id implements IMeeting {
     // TODO consolidate these......
     static makeThat70sDateTimeFromISO(iso_dateTime?: string): DateTime {
         const dateTime: DateTime = isNil(iso_dateTime) ? DateTime.local() : DateTime.fromISO(<any>iso_dateTime);
+        // @ts-ignore
         return Meeting.makeThat70sDateTime(dateTime);
     }
 
@@ -387,7 +392,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sTime(anyTime?: any, timezone?: string): DateTime {
-        let time: DateTime = DateTime.local();
+        let time: DateTime | null = DateTime.local();
         if (!isNil(anyTime)) {
             switch (typeof anyTime) {
                 case 'string':
@@ -395,6 +400,7 @@ export class Meeting extends Id implements IMeeting {
                         : Meeting.makeFrom24h_That70sDateTime(
                             Number.parseInt(anyTime.split(':')[0]),
                             Number.parseInt(anyTime.split(':')[1]),
+                            // @ts-ignore
                             timezone, 'Thursday');
                     break;
                 case 'number':
@@ -409,6 +415,7 @@ export class Meeting extends Id implements IMeeting {
         }
 
         // time only is always on 1/1/1970
+        // @ts-ignore
         time = time.set({ year: 1970, month: 1, day: 1 });
         return time;
     }
@@ -418,6 +425,7 @@ export class Meeting extends Id implements IMeeting {
         weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
 
         // align weekday into 70's dow
+        // @ts-ignore
         weekday = Meeting.iso_weekday_2_70s_dow[weekday];
 
         // save original size of window
@@ -428,10 +436,10 @@ export class Meeting extends Id implements IMeeting {
         return { start: _start, end: _end };
     }
 
-    static makeThat70sDateTime(dateTime: DateTime, iso_weekday?: any): DateTime {
+    static makeThat70sDateTime(dateTime: DateTime, iso_weekday?: any): DateTime | null {
         try {
-            let day = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong]
-                : Meeting.iso_weekday_2_70s_dow[iso_weekday];
+            // @ts-ignore
+            let day: any = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong] : Meeting.iso_weekday_2_70s_dow[iso_weekday]
             return DateTime.fromObject({
                 year: 1970,
                 month: 1,
@@ -447,9 +455,10 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime {
+    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime | null {
         try {
-            let day = Meeting.iso_weekday_2_70s_dow[weekday];
+            // @ts-ignore
+            let day: number = Meeting.iso_weekday_2_70s_dow[weekday];
             return DateTime.fromObject({
                 year: 1970,
                 month: 1,
@@ -464,7 +473,7 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime {
+    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime | null {
         return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h.split(':')[0]),
             Number.parseInt(time24h.split(':')[1]),
             timezone,
