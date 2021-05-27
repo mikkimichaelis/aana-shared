@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 
 // ordering here is important
 export enum SpecificDay {
-	'any',			// flag 0 any
+	'any' = 0,		// flag 0 any
 	'Monday',		// 1 ISO Monday
 	'Tuesday',
 	'Wednesday',
@@ -67,11 +67,11 @@ export class SearchSettings implements ISearchSettings {
 			if (environment.searchSettings.version > searchSettings.version) {
 				// old version searchSettings, use new searchSettings
 				// TODO add upgrade path of settings...
-				searchSettings = environment.searchSettings;
+				searchSettings = <any>environment.searchSettings;
 			}
 		} else {
 			// pre-version searchSettings, use new searchSettings
-			searchSettings = environment.searchSettings;
+			searchSettings = <any>environment.searchSettings;
 		}
 
 		_.merge(this, searchSettings);
