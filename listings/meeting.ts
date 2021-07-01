@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { SpecificDay } from '../listings';
+import { SpecificDay } from '../listings/search-settings';
 
 export interface IMeeting extends IId {
 
