@@ -244,7 +244,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get meetingTypesString(): string {
-        return join(this.meetingTypes, ',').toUpperCase();
+        return join(this.meetingTypes, ' ').toUpperCase();
     }
 
     get tagsString(): string {
