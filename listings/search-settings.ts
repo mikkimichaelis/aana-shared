@@ -1,6 +1,9 @@
-// ordering here is important!
+import _ from 'lodash';
+import { environment } from '../../environments/environment';
+
+// ordering here is important
 export enum SpecificDay {
-	'any',			// flag 0 any
+	'any' = 0,		// flag 0 any
 	'Monday',		// 1 ISO Monday
 	'Tuesday',
 	'Wednesday',
@@ -12,18 +15,18 @@ export enum SpecificDay {
 };
 
 export enum SearchType {
-	'search',
-	'live',
-	'owned',
-	'favorite'
+	'search' = 'search',
+	'live' = 'live',
+	'owned' = 'owned',
+	'favorite' = 'favorite'
 };
 
 export interface ISearchSettings {
+	version: number,			
 	searchType: SearchType,
 	
-	bySpecificDay: SpecificDay,
-	// bySpecificTime: any,        	// null || ISO DateTime String
-	byRelativeTime: any,        	// null || { start: string, end: string }
+	bySpecificDay: SpecificDay,		// null || SpecificDay.[any, Monday, ... today]
+	byCurrentTime: boolean,
 	bySpecificTimeRange: any,   	// null || { start: string, end: string }
 	
 	live: boolean,					// Include live meetings in search results
@@ -40,11 +43,11 @@ export interface ISearchSettings {
 };
 
 export class SearchSettings implements ISearchSettings {
-	searchType = SearchType.search;
+	version = null;
+	searchType = null;
 
-	bySpecificDay = SpecificDay.today;
-	// bySpecificTime: any = null;
-	byRelativeTime = { early: 1, late: 0 };
+	bySpecificDay = null;
+	byCurrentTime = true;
 	bySpecificTimeRange = null;
 	
 	live = true;
@@ -59,5 +62,18 @@ export class SearchSettings implements ISearchSettings {
 	tags: string[] = [];
 	tagsAny: boolean = false;
 
-	constructor() {}
+	constructor(searchSettings?: ISearchSettings) {
+		if (!_.isNil(searchSettings) && searchSettings.version !== undefined) {
+			if (environment.searchSettings.version > searchSettings.version) {
+				// old version searchSettings, use new searchSettings
+				// TODO add upgrade path of settings...
+				searchSettings = <any>environment.searchSettings;
+			}
+		} else {
+			// pre-version searchSettings, use new searchSettings
+			searchSettings = <any>environment.searchSettings;
+		}
+
+		_.merge(this, searchSettings);
+	}
 };
