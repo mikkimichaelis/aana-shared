@@ -497,7 +497,7 @@ export class Meeting extends Id implements IMeeting {
         try {
             // @ts-ignore
             let day: any = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong] : Meeting.iso_weekday_2_70s_dow[iso_weekday]
-            return DateTime.fromObject({
+            const dt = DateTime.fromObject({
                 year: 1970,
                 month: 1,
                 day: day,
@@ -506,6 +506,8 @@ export class Meeting extends Id implements IMeeting {
                 second: dateTime.second ? dateTime.second : 0,
                 zone: dateTime.zoneName ? dateTime.zoneName : 'local',
             });
+            // console.log(dt.toISO());
+            return dt;
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
