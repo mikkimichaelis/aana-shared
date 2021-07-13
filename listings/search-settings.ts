@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { environment } from '../../environments/environment';
+import * as _ from 'lodash';
+// import { environment } from '../../environments/environment';
 
 // ordering here is important
 export enum SpecificDay {
@@ -43,10 +43,10 @@ export interface ISearchSettings {
 };
 
 export class SearchSettings implements ISearchSettings {
-	version = null;
-	searchType = null;
+	version = 0;
+	searchType = SearchType.search;
 
-	bySpecificDay = null;
+	bySpecificDay = SpecificDay.today;
 	byCurrentTime = true;
 	bySpecificTimeRange = null;
 	
@@ -63,17 +63,17 @@ export class SearchSettings implements ISearchSettings {
 	tagsAny: boolean = false;
 
 	constructor(searchSettings?: ISearchSettings) {
-		if (!_.isNil(searchSettings) && searchSettings.version !== undefined) {
-			if (environment.searchSettings.version > searchSettings.version) {
-				// old version searchSettings, use new searchSettings
-				// TODO add upgrade path of settings...
-				searchSettings = <any>environment.searchSettings;
-			}
-		} else {
+		// if (!_.isNil(searchSettings) && searchSettings.version !== undefined) {
+		// 	if (environment.searchSettings.version > searchSettings.version) {
+		// 		// old version searchSettings, use new searchSettings
+		// 		// TODO add upgrade path of settings...
+		// 		searchSettings = <any>environment.searchSettings;
+		// 	}
+		// } else {
 			// pre-version searchSettings, use new searchSettings
-			searchSettings = <any>environment.searchSettings;
-		}
+			// searchSettings = <any>environment.searchSettings;
+		// }
 
-		_.merge(this, searchSettings);
+		// _.merge(this, searchSettings);
 	}
 };

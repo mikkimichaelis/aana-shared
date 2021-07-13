@@ -175,7 +175,7 @@ export class User extends UserBase implements IUser {
     }
 
     public setUserAuthNames(name?: string): boolean {
-        const random_li = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+        const random_li = ''; // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
         const names = <string []>name?.split(' ');
         this.profile.firstName = names[0];
         this.profile.lastInitial = (names.length === 1) ? random_li
