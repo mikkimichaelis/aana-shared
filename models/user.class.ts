@@ -187,12 +187,12 @@ export class User extends UserBase implements IUser {
         if (!firstName
             || !lastInitial
             || firstName.length > 25
-            || lastInitial.length !== 1) {
+            || lastInitial.length > 25) {
             return false;
         }
         this.profile.firstName = firstName;
         this.profile.lastInitial = lastInitial;
-        this.profile.name = `${firstName} ${lastInitial}.`;
+        this.profile.name = `${firstName} ${lastInitial}` + (lastInitial.length === 1 ? '.' : '');
         this.name = this.profile.name;
         return true;
     }
