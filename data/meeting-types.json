@@ -181,7 +181,8 @@
             "tx": null,
             "code": "M",
             "type": "Men",
-            "desc": "This meeting is focused on topics encountered by men in recovery."
+            "desc": "This meeting is focused on topics encountered by men in recovery.",
+            "restricted": true
         },
         {
             "valid": true,
@@ -284,6 +285,13 @@
         {
             "valid": true,
             "tx": null,
+            "code": "ASL",
+            "type": "ASL",
+            "desc": "This meeting provides an American Sign Language (ASL) interpreter for the deaf."
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
             "code": "SL",
             "type": "ASL",
             "desc": "This meeting provides an American Sign Language (ASL) interpreter for the deaf."
@@ -349,7 +357,8 @@
             "tx": null,
             "code": "W",
             "type": "Women",
-            "desc": "This meeting is focused on topics encountered by women in recovery."
+            "desc": "This meeting is focused on topics encountered by women in recovery.",
+            "restricted": true
         },
     {
             "valid": false,
@@ -589,6 +598,304 @@
             "code": "S/T",
             "type": "Steps and Traditions",
             "desc": "Steps and Traditions meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "24/7",
+            "type": "24/7",
+            "desc": "24/7",
+            "continuous": true
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": "ASL",
+            "type": "ASL",
+            "desc": "ASL Interpreter"
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "ASL Interpreter",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "American Sign Language",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": null,
+            "type": "Beginner",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BB",
+            "code": null,
+            "type": "Big Book",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BVI",
+            "type": "Blind / Visually Impaired",
+            "desc": "Blind / Visually Impaired"
+        },
+        {
+            "valid": false,
+            "tx": "C",
+            "code": null,
+            "type": "Closed",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "da",
+            "lang": true,
+            "code": null,
+            "type": "Danish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing"
+        },
+        {
+            "valid": false,
+            "tx": "D",
+            "code": null,
+            "type": "Discussion",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "en",
+            "lang": true,
+            "code": null,
+            "type": "English",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fa",
+            "lang": true,
+            "code": null,
+            "type": "Farsi",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fr",
+            "lang": true,
+            "code": null,
+            "type": "French",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "de",
+            "lang": true,
+            "code": null,
+            "type": "German",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "el",
+            "lang": true,
+            "code": null,
+            "type": "Greek",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "hi",
+            "lang": true,
+            "code": null,
+            "type": "Hindi",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "hu",
+            "lang": true,
+            "code": null,
+            "type": "Hungarian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "it",
+            "lang": true,
+            "code": null,
+            "type": "Italian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ja",
+            "lang": true,
+            "code": null,
+            "type": "Japanese",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": null,
+            "type": "LGBT",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "LI",
+            "code": null,
+            "type": "Loners / Isolationists",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ME",
+            "code": null,
+            "type": "Meditation",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "M",
+            "code": null,
+            "type": "Men",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": null,
+            "type": "Newcomer",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "O",
+            "code": null,
+            "type": "Open",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fa",
+            "lang": true,
+            "code": null,
+            "type": "Persian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "pl",
+            "lang": true,
+            "code": null,
+            "type": "Polish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "pt",
+            "lang": true,
+            "code": null,
+            "type": "Portuguese",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "RSL",
+            "code": null,
+            "type": "RSL",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ru",
+            "lang": true,
+            "code": null,
+            "type": "Russian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SEC",
+            "code": null,
+            "type": "Secular",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SR",
+            "code": null,
+            "type": "Seniors",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "sk",
+            "lang": true,
+            "code": null,
+            "type": "Slovak",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "es",
+            "lang": true,
+            "code": null,
+            "type": "Spanish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SO",
+            "code": null,
+            "type": "Speaker",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": "ST",
+            "code": null,
+            "type": "Steps and Traditions",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "sv",
+            "lang": true,
+            "code": null,
+            "type": "Swedish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "W",
+            "code": null,
+            "type": "Women",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "YP",
+            "code": null,
+            "type": "Young People",
+            "desc": null
         }
     ]
 }

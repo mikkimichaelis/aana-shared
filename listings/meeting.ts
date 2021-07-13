@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { SpecificDay } from '../listings';
+import { SpecificDay } from '../listings/search-settings';
 
 export interface IMeeting extends IId {
 
@@ -67,7 +67,7 @@ export interface IMeeting extends IId {
     meetingTypesString: string;
     meetingSub: string;
 
-    nextDateTime: DateTime;
+    // nextDateTime: DateTime;
     isHome(user: IUser): boolean;
 
     meetingTypes: string[];
@@ -128,47 +128,104 @@ export class Meeting extends Id implements IMeeting {
 
     meetingTypes: string[] = [];
 
-    get meetingTypesString(): string {
-        return join(this.meetingTypes, ',').toUpperCase();
+    get isLive(): boolean {
+        const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
+        return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
     }
 
-
+    // Determine the next DateTime that this meeting occurs
+    // returned DateTime will be in local timezone
     get nextTime(): DateTime {
-        return this.nextDateTime;
+        
+        if (this.recurrence.type === 'Daily') {
+            // Daily meetings use startTime to compare with now time
+            const now = Meeting.makeThat70sTime();
+            const startTime = DateTime.fromMillis(this.startTime).toLocal();
+            if (startTime > now) {
+                // this meeting happens later today, adjust now to forthcoming hh:mm
+                const next = DateTime.now().set( {
+                    hour: startTime.hour,
+                    minute: startTime.minute
+                });
+                return next;
+            } else {
+                // this meeting occurred earlier today, move now to tomorrow at adjusted schedule hh:mm
+                const next = DateTime.now().set( {
+                    hour: startTime.hour,
+                    minute: startTime.minute
+                }).plus({days: 1});
+                return next;
+            }
+        } else {
+            // Weekly meetings use startDateTime to compare with now
+            const now = Meeting.makeThat70sDateTimeFromISO();
+            const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
+            if (startDateTime > now) {
+                // this meeting happens later this week
+                const next = DateTime.now().set( {
+                    hour: startDateTime.hour,
+                    minute: startDateTime.minute,
+                    weekday: startDateTime.weekday
+                });
+                return next;
+            } else {
+                const next = DateTime.now().set( {
+                    hour: startDateTime.hour,
+                    minute: startDateTime.minute,
+                    weekday: startDateTime.weekday
+                }).plus({weeks: 1});
+                return next;
+                // // this meeting happened previously
+                // let adjusted = DateTime.fromMillis(this.startDateTime).toLocal();
+                // adjusted = this.recurrence.type === 'Daily' ? adjusted.plus({
+                //     days: 1     // meeting is every day, move to next day
+                // }) :
+                //     adjusted.plus({
+                //         days: 7 // meeting is weekly, move to next week
+                //     });
+
+                // // adjusted is the next meeting start date/time in 70's time
+                // let next = DateTime.local().set({
+                //     hour: adjusted.hour,
+                //     minute: adjusted.minute,
+                //     weekday: adjusted.weekday
+                // });
+                // return next;
+            }
+        }
     }
 
     get startTimeFormat(): string {
         return this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
     }
 
-    get nextDateTime(): DateTime {
-        let now = DateTime.local().setZone(this.timezone);
-        if (this.continuous) {
-            return now.toLocal();
-        } else {
+    // get nextDateTime(): DateTime {
+    //     if (this.continuous) {
+    //         return DateTime.local();
+    //     } else {
+    //         let now = DateTime.local().setZone(this.timezone);
+    //         // get next occurrence of meeting this week
+    //         let next = now.set({
+    //             // TODO is this in 24h?
+    //             hour: Number.parseInt(this.time24h.split(':')[0]),
+    //             minute: Number.parseInt(this.time24h.split(':')[1]),
+    //             weekday: this.recurrence.type === 'Daily' ? now.weekday : this.weekday,
+    //         });
 
-            // get next recurrence of meeting this week
-            let next = now.set({
-                // TODO is this in 24h?
-                hour: Number.parseInt(this.time24h.split(':')[0]),
-                minute: Number.parseInt(this.time24h.split(':')[1]),
-                weekday: this.recurrence.type === 'Daily' ? now.weekday : this.weekday,
-            });
-
-            if (next < now) {
-                // meeting has past, move to next day meeting occurs on
-                next = this.recurrence.type === 'Daily' ? next.plus({
-                    days: 1 // meeting is every day, move to tomorrow
-                }) :
-                    next.plus({
-                        days: 7 // meeting is weekly, move to next weekday of recurrence
-                    });
-            } else {
-                // meeting is later today, do nothing
-            }
-            return next.toLocal();
-        }
-    }
+    //         if (next < now) {
+    //             // meeting has past, move to next day meeting occurs on
+    //             next = this.recurrence.type === 'Daily' ? next.plus({
+    //                 days: 1 // meeting is every day, move to tomorrow
+    //             }) :
+    //                 next.plus({
+    //                     days: 7 // meeting is weekly, move to next weekday of recurrence
+    //                 });
+    //         } else {
+    //             // meeting is later today, do nothing
+    //         }
+    //         return next.toLocal();
+    //     }
+    // }
 
     get startTimeFormatLocal(): DateTime {
         try {
@@ -186,9 +243,8 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    get isLive(): boolean {
-        const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
-        return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+    get meetingTypesString(): string {
+        return join(this.meetingTypes, ' ').toUpperCase();
     }
 
     get tagsString(): string {
@@ -401,7 +457,8 @@ export class Meeting extends Id implements IMeeting {
                             Number.parseInt(anyTime.split(':')[0]),
                             Number.parseInt(anyTime.split(':')[1]),
                             // @ts-ignore
-                            timezone, 'Thursday');
+                            timezone, 
+                            'Thursday');
                     break;
                 case 'number':
                     time = Meeting.makeThat70sDateTime(DateTime.fromMillis(anyTime));
@@ -440,7 +497,7 @@ export class Meeting extends Id implements IMeeting {
         try {
             // @ts-ignore
             let day: any = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dateTime.weekdayLong] : Meeting.iso_weekday_2_70s_dow[iso_weekday]
-            return DateTime.fromObject({
+            const dt = DateTime.fromObject({
                 year: 1970,
                 month: 1,
                 day: day,
@@ -449,6 +506,8 @@ export class Meeting extends Id implements IMeeting {
                 second: dateTime.second ? dateTime.second : 0,
                 zone: dateTime.zoneName ? dateTime.zoneName : 'local',
             });
+            // console.log(dt.toISO());
+            return dt;
         } catch (error) {
             console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
