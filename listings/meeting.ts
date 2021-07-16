@@ -71,6 +71,8 @@ export interface IMeeting extends IId {
     isHome(user: IUser): boolean;
 
     meetingTypes: string[];
+
+    startTimeString: string;
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -133,27 +135,73 @@ export class Meeting extends Id implements IMeeting {
         return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
     }
 
+    get startTimeString(): string {
+        if (this.isLive) return 'Live';
+
+        let timeString = `${this.nextTime.toFormat("h")}`;
+        timeString = timeString + (this.nextTime.minute === 0 ? ' - ' : `:${this.nextTime.toFormat("mm")} - `);
+        timeString = timeString + `${this.nextTimeEnd.toFormat('h')} `;
+        timeString = timeString + this.nextTime.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
+
+        return timeString;
+    }
+
+    get daytimeString(): string {
+        const nowMeridiem = DateTime.now().toFormat('a');
+        const past = DateTime.now() > this.nextTimeEnd;
+
+        if (past) {
+            switch (this.nextTime.toFormat('a')) {
+                case 'AM':
+                    if (nowMeridiem === 'PM') return 'Tomorrow'
+                    else return 'Tonight'
+                    break;
+                case 'PM':
+                    if (nowMeridiem === 'PM') return 'Tonight'
+                    else return 'Tomorrow'
+                    break;
+            }
+            return 'Tonight'
+        } else {
+            switch (this.nextTime.toFormat('a')) {
+                case 'AM':
+                    if (nowMeridiem === 'PM') return 'Tomorrow'
+                    else return 'Tonight'
+                    break;
+                case 'PM':
+                    if (nowMeridiem === 'PM') return 'Tonight'
+                    else return 'Tomorrow'
+                    break;
+            }
+            return 'Tonight'
+        }
+    }
+
+    get nextTimeEnd(): DateTime {
+        return this.nextTime.plus({ minutes: this.duration });
+    }
+
     // Determine the next DateTime that this meeting occurs
     // returned DateTime will be in local timezone
     get nextTime(): DateTime {
-        
+
         if (this.recurrence.type === 'Daily') {
             // Daily meetings use startTime to compare with now time
             const now = Meeting.makeThat70sTime();
             const startTime = DateTime.fromMillis(this.startTime).toLocal();
             if (startTime > now) {
                 // this meeting happens later today, adjust now to forthcoming hh:mm
-                const next = DateTime.now().set( {
+                const next = DateTime.now().set({
                     hour: startTime.hour,
                     minute: startTime.minute
                 });
                 return next;
             } else {
                 // this meeting occurred earlier today, move now to tomorrow at adjusted schedule hh:mm
-                const next = DateTime.now().set( {
+                const next = DateTime.now().set({
                     hour: startTime.hour,
                     minute: startTime.minute
-                }).plus({days: 1});
+                }).plus({ days: 1 });
                 return next;
             }
         } else {
@@ -162,18 +210,18 @@ export class Meeting extends Id implements IMeeting {
             const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
             if (startDateTime > now) {
                 // this meeting happens later this week
-                const next = DateTime.now().set( {
+                const next = DateTime.now().set({
                     hour: startDateTime.hour,
                     minute: startDateTime.minute,
                     weekday: startDateTime.weekday
                 });
                 return next;
             } else {
-                const next = DateTime.now().set( {
+                const next = DateTime.now().set({
                     hour: startDateTime.hour,
                     minute: startDateTime.minute,
                     weekday: startDateTime.weekday
-                }).plus({weeks: 1});
+                }).plus({ weeks: 1 });
                 return next;
                 // // this meeting happened previously
                 // let adjusted = DateTime.fromMillis(this.startDateTime).toLocal();
@@ -457,7 +505,7 @@ export class Meeting extends Id implements IMeeting {
                             Number.parseInt(anyTime.split(':')[0]),
                             Number.parseInt(anyTime.split(':')[1]),
                             // @ts-ignore
-                            timezone, 
+                            timezone,
                             'Thursday');
                     break;
                 case 'number':
