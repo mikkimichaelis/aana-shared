@@ -43,7 +43,7 @@ export interface ISearchSettings {
 };
 
 export class SearchSettings implements ISearchSettings {
-	version = 0;
+	version = 1;
 	searchType = SearchType.search;
 
 	bySpecificDay = SpecificDay.today;
@@ -51,7 +51,7 @@ export class SearchSettings implements ISearchSettings {
 	bySpecificTimeRange = null;
 	
 	live = true;
-	continuous = true;
+	continuous = false;
 
 	id = <any>null;
 	name = <any>null;
@@ -62,18 +62,16 @@ export class SearchSettings implements ISearchSettings {
 	tags: string[] = [];
 	tagsAny: boolean = false;
 
-	constructor(searchSettings?: ISearchSettings) {
-		// if (!_.isNil(searchSettings) && searchSettings.version !== undefined) {
-		// 	if (environment.searchSettings.version > searchSettings.version) {
-		// 		// old version searchSettings, use new searchSettings
-		// 		// TODO add upgrade path of settings...
-		// 		searchSettings = <any>environment.searchSettings;
-		// 	}
-		// } else {
-			// pre-version searchSettings, use new searchSettings
-			// searchSettings = <any>environment.searchSettings;
-		// }
-
-		// _.merge(this, searchSettings);
+	constructor(searchSettings?: ISearchSettings, latestDefault?: ISearchSettings) {
+		if (searchSettings) {
+			if (searchSettings.version !== latestDefault?.version) {
+				// TODO add upgrade path of settings...
+				_.merge(this, latestDefault);
+			} else {
+				_.merge(this, searchSettings);
+			}
+		} else if (latestDefault) {
+			_.merge(this, latestDefault);
+		}
 	}
 };
