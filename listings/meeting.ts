@@ -49,15 +49,15 @@ export class Meeting extends Id implements IMeeting {
 
     tags_description_: string[] = [];
     tags_name_: string[] = [];            // toLower()
-    tags_location_: string[];
+    tags_location_: string[] = [];
     tags_custom_: string[] = [];         // +meetingTypes: string[];
     tags: string[] = [];          
 
-    continuous: boolean = false;
     recurrence: IRecurrence = new Recurrence();
     timezone: string = "America/New_York";
     time24h: string = "00:00";
     duration: number = 60;
+    continuous: boolean = false;
 
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
     // this is used to search where specificDay is any
@@ -260,6 +260,24 @@ export class Meeting extends Id implements IMeeting {
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
         return super.toObject(['nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd']);
+    }
+
+    setFeedback(feedback: any) {
+        if (feedback.success) {
+            this.verified_count++;
+        } else if (feedback.nothing) {
+            this.nothing_count++;
+            this.verified = false;
+            this.active = false;
+        } else if (feedback.waiting) {
+            this.waiting_count++;
+            this.verified = false;
+            this.active = false;
+        } else if (feedback.password) {
+            this.password_count++;
+            this.verified = false;
+            this.active = false;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////

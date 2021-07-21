@@ -84,4 +84,5 @@ export interface IMeeting extends IId {
     weekday: number;
     
     isHome(user: IUser): boolean;       // TODO remove
+    setFeedback(feedback: any): void;
 }
