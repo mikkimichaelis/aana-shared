@@ -1,115 +1,60 @@
 import { isNil, join } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
-import { Id, IId } from '../models/id.class';
+import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
 import { SpecificDay } from '../listings/search-settings';
-
-export interface IMeeting extends IId {
-
-    uid: string;
-    iid: string;    // import id
-
-    active: boolean;
-    verified: boolean;
-    authorized: boolean;
-
-    zid: string;
-    password: string;
-
-    isZoomOwner: boolean;
-    requiresLogin: boolean;
-    closed: boolean;
-    restricted: boolean;
-    restrictedDescription: string;
-
-    language: string;
-    postal: string;
-    location: string;
-
-    meetingUrl: string;
-    homeUrl: string;
-    sourceUrl: string;
-
-    group: string;  // 12 Step clubhouse name (ie 'Westside Club')
-    group_: string; // group.toLowercase()
-    name: string;
-    name_: string;  // name.toLowercase()
-
-    groupType: string;
-
-    description: string;
-    tags: string[];     // +meetingTypes: string[];
-
-    continuous: boolean;
-    recurrence: IRecurrence;
-
-    timezone: string;
-    time24h: string;  // HH:MM    // startTime
-    duration: number;
-
-    // Meeting window of time on 1/2/1970 00:00Z - 24:00Z
-    startTime: number;      // that70sTime
-    endTime: number;        // start + duration
-
-    startDateTime: number;
-    endDateTime: number;
-
-    buymeacoffee: string;
-
-    // Non serialized getter properties
-    tagsString: string;
-    weekday: number;
-    isLive: boolean;
-    startTimeFormatLocal: DateTime;
-    startTimeFormat: string;
-    nextTime: DateTime;
-    meetingTypesString: string;
-    meetingSub: string;
-
-    // nextDateTime: DateTime;
-    isHome(user: IUser): boolean;
-
-    meetingTypes: string[];
-
-    startTimeString: string;
-}
-
+import { IMeeting } from './imeeting';
 export class Meeting extends Id implements IMeeting {
 
-    uid: string = '';
     iid: string = '';
+
+    uid: string = '';
+    isZoomOwner: boolean = false;
+    
     active: boolean = true;
     verified: boolean = true;
-    authorized: boolean = true;  // TODO is owner paid?
-    // private
+    authorized: boolean = true;
 
-    zid: string = '';
-    isZoomOwner: boolean = false;
-    requiresLogin: boolean = false;
-    password: string = '';
-    restricted: boolean = false;
-    restrictedDescription: string = '';
+    verified_count: number = 0;
+    password_count: number = 0;
+    waiting_count: number = 0;
+    nothing_count: number= 0;
 
     meetingUrl: string = '';
     homeUrl: string = '';
     sourceUrl: string = '';
 
-    location: string = '';
-    postal: string = '';
-    group: string = '';
-    group_: string = '';
-    name: string = '';
-    name_: string = '';
+    zid: string = '';
+    password: string = '';
+    requiresLogin: boolean = false;
+    closed: boolean = false;
+    restricted: boolean = false;
+    restrictedDescription: string = '';
+
     language: string = 'en';
+    postal: string = '';
+    location: string = '';
+    
+    group: string = '';
+    name: string = '';
+    
+    groupType: string = '';
+    meetingTypes: string[] = [];
 
     description: string = '';
-    closed: boolean = false;
+    description_links: string[] = [];
 
-    groupType: string = '';
-    tags: string[] = [];
+    tags_custom: string[] = [];
+
+    tags_description_: string[] = [];
+    tags_name_: string[] = [];            // toLower()
+    tags_location_: string[];
+    tags_custom_: string[] = [];         // +meetingTypes: string[];
+    tags: string[] = [];          
 
     continuous: boolean = false;
+    recurrence: IRecurrence = new Recurrence();
     timezone: string = "America/New_York";
     time24h: string = "00:00";
     duration: number = 60;
@@ -124,11 +69,7 @@ export class Meeting extends Id implements IMeeting {
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
     endDateTime: number = Meeting.oneWeekMillis;
 
-    recurrence: IRecurrence = new Recurrence();
-
     buymeacoffee: string = '';
-
-    meetingTypes: string[] = [];
 
     get isLive(): boolean {
         const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
@@ -318,7 +259,7 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        return super.toObject(['nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime']);
+        return super.toObject(['nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd']);
     }
 
     /////////////////////////////////////////////////////////////////////
