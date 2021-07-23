@@ -354,7 +354,7 @@ export class Meeting extends Id implements IMeeting {
         // TODO improve this filtering
         // TODO add curse word filtering
         const filter = t => {
-            return !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet'].includes(t))
+            return t.length > 3 && !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'in', 'from', 'are', 'we', 'by', 'no'].includes(t))
         };
 
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
