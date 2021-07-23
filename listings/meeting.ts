@@ -40,17 +40,17 @@ export class Meeting extends Id implements IMeeting {
     name: string = '';
 
     groupType: string = '';
-    meetingTypes: string[] = [];
+    meetingTypes: string[] = [];        // add to tags
 
     description: string = '';
     description_links: string[] = [];
 
     tags_custom: string[] = [];
 
+    // trailing _ indicates toLower()
     tags_description_: string[] = [];
-    tags_name_: string[] = [];            // toLower()
     tags_location_: string[] = [];
-    tags_custom_: string[] = [];         // +meetingTypes: string[];
+    tags_custom_: string[] = [];        // Secretary added tags
     tags: string[] = [];
 
     recurrence: IRecurrence = new Recurrence();
