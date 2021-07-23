@@ -329,13 +329,36 @@ export class Meeting extends Id implements IMeeting {
 
 // TODO correct use of toLocaleLowerCase search/replace
 
+    public update(): Meeting {
+        this.updateProperties();
+        this.updateTags();
+        this.updateDayTime();
+
+        return this;
+    }
+
+    public updateProperties() {
+        if (this.meetingTypes.find(mt => mt === '24/7')) this.continuous = true;
+        if (this.meetingTypes.find(mt => mt === 'C')) this.closed = true;
+
+        if (this.meetingTypes.find(mt => mt === 'MO')) {
+            this.restricted = true;
+            this.restrictedDescription = "Male Gender Only";
+        }
+
+        if (this.meetingTypes.find(mt => mt === 'WO')) {
+            this.restricted = true;
+            this.restrictedDescription = "Female Gender Only";
+        }
+    }
+
     public updateTags() {
         this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
 
         // TODO improve this filtering
         // TODO add curse word filtering
         const filter = t => {
-            return !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet'].includes(t))
+            return t.length > 3 && !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'in', 'from', 'are', 'we', 'by', 'no'].includes(t))
         };
 
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
