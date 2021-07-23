@@ -321,7 +321,7 @@ export class Meeting extends Id implements IMeeting {
         return user.homeMeeting === this.id;
     }
 
-    updateDayTime() {
+    public updateDayTime() {
 
         try {
             if (this.recurrence.type === 'Daily') {
