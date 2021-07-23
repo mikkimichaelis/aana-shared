@@ -51,8 +51,8 @@ export class Meeting extends Id implements IMeeting {
     tags_description_: string[] = [];
     tags_location_: string[] = [];
     tags_custom_: string[] = [];        // Secretary added tags
-    tags_name_: string[];
-    tags: string[] = [];
+    tags_name_: string[] = [];
+    tags_: string[] = [];
 
     recurrence: IRecurrence = new Recurrence();
     timezone: string = "America/New_York";
@@ -240,7 +240,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get tagsString(): string {
-        return join(this.tags, ',').toLowerCase();
+        return join(this.tags_, ',').toLowerCase();
     }
 
     get meetingSub(): string {
@@ -331,12 +331,14 @@ export class Meeting extends Id implements IMeeting {
         // TODO improve this filtering
         // TODO add curse word filtering
         const filter = t => {
-            return !(['&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet'].includes(t))
+            return !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet'].includes(t))
         };
 
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
         this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
         this.tags_location_ = concat(split(this.location, ', ')).map(t => t.toLowerCase()).filter(filter);
+
+        this.tags_ = concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_);
 
         // this.description_links= [];
     }

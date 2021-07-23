@@ -50,7 +50,7 @@ export interface IMeeting extends IId {
     tags_name_: string[];           // toLower()
     tags_location_: string[];
     
-    tags: string[];                 // meetingTypes + tags_description_ + tags_name_ + tags_custom_
+    tags_: string[];                // meetingTypes + tags_description_ + tags_name_ + tags_custom_ + tags_location_
 
     continuous: boolean;
     recurrence: IRecurrence;
