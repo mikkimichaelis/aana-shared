@@ -1,4 +1,4 @@
-import { concat, isNil, join, split } from 'lodash';
+import { concat, isEmpty, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id } from '../models/id.class';
@@ -323,8 +323,6 @@ export class Meeting extends Id implements IMeeting {
         return user.homeMeeting === this.id;
     }
 
-// TODO correct use of toLocaleLowerCase search/replace
-
     public update(): Meeting {
         this.updateProperties();
         this.updateTags();
@@ -351,10 +349,9 @@ export class Meeting extends Id implements IMeeting {
     public updateTags() {
         this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
 
-        // TODO improve this filtering
-        // TODO add curse word filtering
+        // TODO improve this filtering with word filtering
         const filter = t => {
-            return t.length > 3 && !([null, '', ' ', '  ', 'Temp', '&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'at', 'in', 'from', 'are', 'we', 'by', 'no'].includes(t))
+            return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
         };
 
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
