@@ -74,6 +74,10 @@ export class Meeting extends Id implements IMeeting {
 
     buymeacoffee: string = '';
 
+    get tags(): string[] {
+        return this.tags_;
+    }
+
     get isLive(): boolean {
         const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
         return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
