@@ -11,7 +11,7 @@ export class Meeting extends Id implements IMeeting {
 
     uid: string = '';
     isZoomOwner: boolean = false;
-    
+
     active: boolean = true;
     verified: boolean = true;
     authorized: boolean = true;
@@ -19,7 +19,7 @@ export class Meeting extends Id implements IMeeting {
     verified_count: number = 0;
     password_count: number = 0;
     waiting_count: number = 0;
-    nothing_count: number= 0;
+    nothing_count: number = 0;
 
     meetingUrl: string = '';
     homeUrl: string = '';
@@ -35,10 +35,10 @@ export class Meeting extends Id implements IMeeting {
     language: string = 'en';
     postal: string = '';
     location: string = '';
-    
+
     group: string = '';
     name: string = '';
-    
+
     groupType: string = '';
     meetingTypes: string[] = [];
 
@@ -51,7 +51,7 @@ export class Meeting extends Id implements IMeeting {
     tags_name_: string[] = [];            // toLower()
     tags_location_: string[] = [];
     tags_custom_: string[] = [];         // +meetingTypes: string[];
-    tags: string[] = [];          
+    tags: string[] = [];
 
     recurrence: IRecurrence = new Recurrence();
     timezone: string = "America/New_York";
@@ -59,13 +59,15 @@ export class Meeting extends Id implements IMeeting {
     duration: number = 60;
     continuous: boolean = false;
 
-    // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
-    // this is used to search where specificDay is any
+    // these fields should only be populated by Daily meetings
+    // startTime/endTime creates a window of time which can be searched for containing a specific point in time on any day 
+    // this is used to search where meetings are at a specific time on any day
     startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
-    endTime: number = 0;        // start + duration
+    endTime: number = 0;        // startTime + duration
 
+    // these fields should only be populated by Weekly meetings
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
-    // this is used to search for meetings withing a specific day
+    // this is used to search for meetings within a specific day
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
     endDateTime: number = Meeting.oneWeekMillis;
 
@@ -321,14 +323,28 @@ export class Meeting extends Id implements IMeeting {
 
     updateDayTime() {
 
-        if (this.recurrence.type === 'Daily') {
-            // If 'daily' meeting, set weekly_days to all days
-            // @ts-ignore
-            this.recurrence.weekly_days = Meeting.weekdays;
-            // this.startTime   // TODO WTF? review, probably needs deleting...but was not causing compile error
-        }
-
         try {
+            if (this.recurrence.type === 'Daily') {
+                // If 'daily' meeting, set weekly_days to all days
+                // @ts-ignore
+                this.recurrence.weekly_day = '';
+                this.recurrence.weekly_days = Meeting.weekdays; // TODO for future possible use Zoom api?
+                this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
+                this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
+                this.startDateTime = 0;
+                this.endDateTime = 0;
+            } else {
+                // @ts-ignore
+                if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
+                this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
+                this.startDateTime = Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day).toMillis();
+                this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
+                this.startTime = 0;
+                this.endTime = 0;
+            }
+
+            // old development comments....
+            //
             // This is the little magic box of Time.
             // All meeting's startTime(s) are set to occur on 1/1/1970 in UTC ms.
             // This creates a 24h box of time in which all startTimes exist.
@@ -421,11 +437,6 @@ export class Meeting extends Id implements IMeeting {
             // if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
             // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
-            this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
-            this.endTime = this.startTime + this.duration * 1000 * 60;  // TODO config
-            // @ts-ignore
-            this.startDateTime = Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day).toMillis();
-            this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
         } catch (error) {
             console.error(error);
             // TODO some random thought.....

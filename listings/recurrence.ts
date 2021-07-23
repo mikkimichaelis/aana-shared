@@ -11,9 +11,9 @@ export interface IRecurrence {
 } 
 
 export class Recurrence implements IRecurrence {
-    type:               string  = 'Daily';
+    type:               string  = '';
     
-    weekly_day:         string  = 'Sunday';
+    weekly_day:         string  = '';
     weekly_days:        string[] = [];
 
     // TODO Unused
