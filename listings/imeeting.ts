@@ -82,6 +82,7 @@ export interface IMeeting extends IId {
     tagsString: string;
     meetingSub: string;
     weekday: number;
+    tags: string[];
     
     updateDayTime();
     updateTags();
