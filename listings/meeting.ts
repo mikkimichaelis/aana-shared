@@ -1,4 +1,4 @@
-import { isNil, join } from 'lodash';
+import { concat, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUser } from '../models/user.class';
 import { Id } from '../models/id.class';
@@ -51,6 +51,7 @@ export class Meeting extends Id implements IMeeting {
     tags_description_: string[] = [];
     tags_location_: string[] = [];
     tags_custom_: string[] = [];        // Secretary added tags
+    tags_name_: string[];
     tags: string[] = [];
 
     recurrence: IRecurrence = new Recurrence();
@@ -257,6 +258,7 @@ export class Meeting extends Id implements IMeeting {
         this.initialize(this, meeting);
 
         this.updateDayTime();
+        this.updateTags();
     }
 
     toObject(): IMeeting {
@@ -319,6 +321,24 @@ export class Meeting extends Id implements IMeeting {
 
     isHome(user: IUser): boolean {
         return user.homeMeeting === this.id;
+    }
+
+// TODO correct use of toLocaleLowerCase search/replace
+
+    public updateTags() {
+        this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
+
+        // TODO improve this filtering
+        // TODO add curse word filtering
+        const filter = t => {
+            return !(['&', '-', 'not', 'to', 'of', 'it', 'the', 'a', 'and', 'but', 'for', 'nor', 'or', 'so', 'yet'].includes(t))
+        };
+
+        this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
+        this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
+        this.tags_location_ = concat(split(this.location, ', ')).map(t => t.toLowerCase()).filter(filter);
+
+        // this.description_links= [];
     }
 
     public updateDayTime() {
