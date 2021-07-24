@@ -171,22 +171,6 @@ export class Meeting extends Id implements IMeeting {
                     weekday: startDateTime.weekday
                 }).plus({ weeks: 1 });
                 return next;
-                // // this meeting happened previously
-                // let adjusted = DateTime.fromMillis(this.startDateTime).toLocal();
-                // adjusted = this.recurrence.type === 'Daily' ? adjusted.plus({
-                //     days: 1     // meeting is every day, move to next day
-                // }) :
-                //     adjusted.plus({
-                //         days: 7 // meeting is weekly, move to next week
-                //     });
-
-                // // adjusted is the next meeting start date/time in 70's time
-                // let next = DateTime.local().set({
-                //     hour: adjusted.hour,
-                //     minute: adjusted.minute,
-                //     weekday: adjusted.weekday
-                // });
-                // return next;
             }
         }
     }
@@ -194,34 +178,6 @@ export class Meeting extends Id implements IMeeting {
     get startTimeFormat(): string {
         return this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
     }
-
-    // get nextDateTime(): DateTime {
-    //     if (this.continuous) {
-    //         return DateTime.local();
-    //     } else {
-    //         let now = DateTime.local().setZone(this.timezone);
-    //         // get next occurrence of meeting this week
-    //         let next = now.set({
-    //             // TODO is this in 24h?
-    //             hour: Number.parseInt(this.time24h.split(':')[0]),
-    //             minute: Number.parseInt(this.time24h.split(':')[1]),
-    //             weekday: this.recurrence.type === 'Daily' ? now.weekday : this.weekday,
-    //         });
-
-    //         if (next < now) {
-    //             // meeting has past, move to next day meeting occurs on
-    //             next = this.recurrence.type === 'Daily' ? next.plus({
-    //                 days: 1 // meeting is every day, move to tomorrow
-    //             }) :
-    //                 next.plus({
-    //                     days: 7 // meeting is weekly, move to next weekday of recurrence
-    //                 });
-    //         } else {
-    //             // meeting is later today, do nothing
-    //         }
-    //         return next.toLocal();
-    //     }
-    // }
 
     get startTimeFormatLocal(): DateTime {
         try {
