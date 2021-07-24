@@ -371,7 +371,14 @@ export class Meeting extends Id implements IMeeting {
     public updateDayTime() {
 
         try {
-            if (this.recurrence.type === 'Daily') {
+            if (this.recurrence.type === 'Continuous') {
+                this.recurrence.weekly_day = '';
+                this.recurrence.weekly_days = [];
+                this.startTime = 0;
+                this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
+                this.startDateTime = 0;
+                this.endDateTime = 0;
+            } else if (this.recurrence.type === 'Daily') {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
                 this.recurrence.weekly_day = '';
