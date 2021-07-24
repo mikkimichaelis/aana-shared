@@ -80,7 +80,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _isLive?: boolean = null;
     get isLive(): boolean {
-        if (!this._isLive) {
+        if (isNil(this._isLive)) {
             const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
             this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
         }
@@ -104,7 +104,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _startTimeString?: string = null;
     get startTimeString(): string {
-        if (!this._startTimeString) {
+        if (isNil(this._startTimeString)) {
             if (this.isLive) return 'Live';
 
             let timeString = `${this.nextTime.toFormat("h")}`;
@@ -118,7 +118,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _daytimeString?: string = null;
     get daytimeString(): string {
-        if (!this._daytimeString) {
+        if (isNil(this._daytimeString)) {
             const nowMeridiem = DateTime.now().toFormat('a');
             const past = DateTime.now() > this.nextTimeEnd;
 
@@ -154,7 +154,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _nextTimeEnd?: DateTime = null;
     get nextTimeEnd(): DateTime {
-        if (!this._nextTimeEnd) {
+        if (isNil(this._nextTimeEnd)) {
             this._nextTimeEnd = this.nextTime.plus({ minutes: this.duration });
         }
         return this._nextTimeEnd;
@@ -164,7 +164,7 @@ export class Meeting extends Id implements IMeeting {
     // returned DateTime will be in local timezone
     private _nextTime?: DateTime = null;
     get nextTime(): DateTime {
-        if (!this._nextTime) {
+        if (isNil(this._nextTime)) {
             if (this.recurrence.type === 'Daily') {
                 // Daily meetings use startTime to compare with now time
                 const now = Meeting.makeThat70sTime();
@@ -212,7 +212,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _startTimeFormat?: string = null;
     get startTimeFormat(): string {
-        if (!this._startTimeFormat) {
+        if (isNil(this._startTimeFormat)) {
             this._startTimeFormat = this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
         }
         return this._startTimeFormat;
@@ -220,7 +220,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _startTimeFormatLocal?: DateTime = null;
     get startTimeFormatLocal(): DateTime {
-        if (!this._startTimeFormatLocal) {
+        if (isNil(this._startTimeFormatLocal)) {
             try {
                 const start = DateTime.fromObject({
                     hour: Number.parseInt(this.time24h.split(':')[0]),
