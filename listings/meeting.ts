@@ -314,6 +314,7 @@ export class Meeting extends Id implements IMeeting {
             return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
         };
 
+        this.continuous = this.meetingTypes.find(mt => mt === '24/7') === undefined ? false : true;
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
         this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
         this.tags_location_ = concat(split(this.location, ', ')).map(t => t.toLowerCase()).filter(filter);
