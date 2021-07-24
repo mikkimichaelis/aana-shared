@@ -83,6 +83,17 @@ export class Meeting extends Id implements IMeeting {
         return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
     }
 
+    // returns a DateTime of this meetings local start time
+    get startTimeLocal(): DateTime {
+        // if this meeting is Weekly (specific dow)
+        return DateTime.fromMillis(this.startDateTime).toLocal().set({
+            day: 0,
+        })
+        // if this meeting is 
+        // if this meetings start time is < 12 hours past 
+        
+    }
+
     get startTimeString(): string {
         if (this.isLive) return 'Live';
 
@@ -461,6 +472,10 @@ export class Meeting extends Id implements IMeeting {
             // monitorService watches for frequent network errors and begins bandwidth and latency tests and loggs
             // jsmapService uses bundled debug map files to generate file and line code
         }
+    }
+
+    get makeLocalStartDateTime(): DateTime {
+        return DateTime.local();
     }
 
     // TODO consolidate these......

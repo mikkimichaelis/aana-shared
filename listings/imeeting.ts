@@ -83,6 +83,7 @@ export interface IMeeting extends IId {
     meetingSub: string;
     weekday: number;
     tags: string[];
+    makeLocalStartDateTime: DateTime;
     
     updateDayTime();
     updateTags();
