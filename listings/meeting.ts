@@ -78,132 +78,164 @@ export class Meeting extends Id implements IMeeting {
         return this.tags_;
     }
 
+    private _isLive?: boolean = null;
     get isLive(): boolean {
-        const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
-        return (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+        if (!this._isLive) {
+            const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
+            this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+        }
+        return this._isLive;
     }
+
+    // get makeLocalStartDateTime(): DateTime {
+    //     return DateTime.local();
+    // }
 
     // returns a DateTime of this meetings local start time
-    get startTimeLocal(): DateTime {
-        // if this meeting is Weekly (specific dow)
-        return DateTime.fromMillis(this.startDateTime).toLocal().set({
-            day: 0,
-        })
-        // if this meeting is 
-        // if this meetings start time is < 12 hours past 
-        
-    }
+    // get startTimeLocal(): DateTime {
+    //     // if this meeting is Weekly (specific dow)
+    //     return DateTime.fromMillis(this.startDateTime).toLocal().set({
+    //         day: 0,
+    //     })
+    //     // if this meeting is 
+    //     // if this meetings start time is < 12 hours past 
 
+    // }
+
+    private _startTimeString?: string = null;
     get startTimeString(): string {
-        if (this.isLive) return 'Live';
+        if (!this._startTimeString) {
+            if (this.isLive) return 'Live';
 
-        let timeString = `${this.nextTime.toFormat("h")}`;
-        timeString = timeString + (this.nextTime.minute === 0 ? ' - ' : `:${this.nextTime.toFormat("mm")} - `);
-        timeString = timeString + `${this.nextTimeEnd.toFormat('h')} `;
-        timeString = timeString + this.nextTime.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
-
-        return timeString;
-    }
-
-    get daytimeString(): string {
-        const nowMeridiem = DateTime.now().toFormat('a');
-        const past = DateTime.now() > this.nextTimeEnd;
-
-        if (past) {
-            switch (this.nextTime.toFormat('a')) {
-                case 'AM':
-                    if (nowMeridiem === 'PM') return 'Tomorrow'
-                    else return 'Tonight'
-                    break;
-                case 'PM':
-                    if (nowMeridiem === 'PM') return 'Tonight'
-                    else return 'Tomorrow'
-                    break;
-            }
-            return 'Tonight'
-        } else {
-            switch (this.nextTime.toFormat('a')) {
-                case 'AM':
-                    if (nowMeridiem === 'PM') return 'Tomorrow'
-                    else return 'Tonight'
-                    break;
-                case 'PM':
-                    if (nowMeridiem === 'PM') return 'Tonight'
-                    else return 'Tomorrow'
-                    break;
-            }
-            return 'Tonight'
+            let timeString = `${this.nextTime.toFormat("h")}`;
+            timeString = timeString + (this.nextTime.minute === 0 ? ' - ' : `:${this.nextTime.toFormat("mm")} - `);
+            timeString = timeString + `${this.nextTimeEnd.toFormat('h')} `;
+            timeString = timeString + this.nextTime.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
+            this._startTimeString = timeString;
         }
+        return this._startTimeString;
     }
 
+    private _daytimeString?: string = null;
+    get daytimeString(): string {
+        if (!this._daytimeString) {
+            const nowMeridiem = DateTime.now().toFormat('a');
+            const past = DateTime.now() > this.nextTimeEnd;
+
+            if (past) {
+                switch (this.nextTime.toFormat('a')) {
+                    case 'AM':
+                        if (nowMeridiem === 'PM') return 'Tomorrow'
+                        else this._daytimeString = 'Tonight'
+                        break;
+                    case 'PM':
+                        if (nowMeridiem === 'PM') return 'Tonight'
+                        else this._daytimeString = 'Tomorrow'
+                        break;
+                }
+                this._daytimeString = 'Tonight'
+            } else {
+                switch (this.nextTime.toFormat('a')) {
+                    case 'AM':
+                        if (nowMeridiem === 'PM') return 'Tomorrow'
+                        else this._daytimeString = 'Tonight'
+                        break;
+                    case 'PM':
+                        if (nowMeridiem === 'PM') return 'Tonight'
+                        else this._daytimeString = 'Tomorrow'
+                        break;
+                }
+                this._daytimeString = 'Tonight'
+            }
+        }
+
+        return this._daytimeString;
+    }
+
+    private _nextTimeEnd?: DateTime = null;
     get nextTimeEnd(): DateTime {
-        return this.nextTime.plus({ minutes: this.duration });
+        if (!this._nextTimeEnd) {
+            this._nextTimeEnd = this.nextTime.plus({ minutes: this.duration });
+        }
+        return this._nextTimeEnd;
     }
 
     // Determine the next DateTime that this meeting occurs
     // returned DateTime will be in local timezone
+    private _nextTime?: DateTime = null;
     get nextTime(): DateTime {
-
-        if (this.recurrence.type === 'Daily') {
-            // Daily meetings use startTime to compare with now time
-            const now = Meeting.makeThat70sTime();
-            const startTime = DateTime.fromMillis(this.startTime).toLocal();
-            if (startTime > now) {
-                // this meeting happens later today, adjust now to forthcoming hh:mm
-                const next = DateTime.now().set({
-                    hour: startTime.hour,
-                    minute: startTime.minute
-                });
-                return next;
+        if (!this._nextTime) {
+            if (this.recurrence.type === 'Daily') {
+                // Daily meetings use startTime to compare with now time
+                const now = Meeting.makeThat70sTime();
+                const startTime = DateTime.fromMillis(this.startTime).toLocal();
+                if (startTime > now) {
+                    // this meeting happens later today, adjust now to forthcoming hh:mm
+                    const next = DateTime.now().set({
+                        hour: startTime.hour,
+                        minute: startTime.minute
+                    });
+                    this._nextTime = next;
+                } else {
+                    // this meeting occurred earlier today, move now to tomorrow at adjusted schedule hh:mm
+                    const next = DateTime.now().set({
+                        hour: startTime.hour,
+                        minute: startTime.minute
+                    }).plus({ days: 1 });
+                    this._nextTime = next;
+                }
             } else {
-                // this meeting occurred earlier today, move now to tomorrow at adjusted schedule hh:mm
-                const next = DateTime.now().set({
-                    hour: startTime.hour,
-                    minute: startTime.minute
-                }).plus({ days: 1 });
-                return next;
-            }
-        } else {
-            // Weekly meetings use startDateTime to compare with now
-            const now = Meeting.makeThat70sDateTimeFromISO();
-            const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
-            if (startDateTime > now) {
-                // this meeting happens later this week
-                const next = DateTime.now().set({
-                    hour: startDateTime.hour,
-                    minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
-                });
-                return next;
-            } else {
-                const next = DateTime.now().set({
-                    hour: startDateTime.hour,
-                    minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
-                }).plus({ weeks: 1 });
-                return next;
+                // Weekly meetings use startDateTime to compare with now
+                const now = Meeting.makeThat70sDateTimeFromISO();
+                const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
+                if (startDateTime > now) {
+                    // this meeting happens later this week
+                    const next = DateTime.now().set({
+                        hour: startDateTime.hour,
+                        minute: startDateTime.minute,
+                        weekday: startDateTime.weekday
+                    });
+                    this._nextTime = next;
+                } else {
+                    const next = DateTime.now().set({
+                        hour: startDateTime.hour,
+                        minute: startDateTime.minute,
+                        weekday: startDateTime.weekday
+                    }).plus({ weeks: 1 });
+                    this._nextTime = next;
+                }
             }
         }
+
+        return this._nextTime;
     }
 
+    private _startTimeFormat?: string = null;
     get startTimeFormat(): string {
-        return this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
+        if (!this._startTimeFormat) {
+            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
+        }
+        return this._startTimeFormat;
     }
 
+    private _startTimeFormatLocal?: DateTime = null;
     get startTimeFormatLocal(): DateTime {
-        try {
-            const start = DateTime.fromObject({
-                hour: Number.parseInt(this.time24h.split(':')[0]),
-                minute: Number.parseInt(this.time24h.split(':')[1]),
-                zone: this.timezone,
-            }).setZone('local');
-            return start;
-        } catch (error) {
-            console.error(error);
-            // TODO
-            // return;
-            return <any>null;
+        if (!this._startTimeFormatLocal) {
+            try {
+                const start = DateTime.fromObject({
+                    hour: Number.parseInt(this.time24h.split(':')[0]),
+                    minute: Number.parseInt(this.time24h.split(':')[1]),
+                    zone: this.timezone,
+                }).setZone('local');
+                this._startTimeFormatLocal = start;
+            } catch (error) {
+                console.error(error);
+                // TODO
+                // return;
+                this._startTimeFormatLocal = <any>null;
+            }
         }
+        return this._startTimeFormatLocal;
     }
 
     get meetingTypesString(): string {
@@ -228,8 +260,13 @@ export class Meeting extends Id implements IMeeting {
         super(meeting);
         this.initialize(this, meeting);
 
-        this.updateDayTime();
-        this.updateTags();
+        // this.updateDayTime();
+        // this.updateTags();
+
+        // this._isLive = this.isLive;
+        // this._nextTime = this.nextTime;
+        // this._startTimeString = this.startTimeString;
+        // this._startTimeFormatLocal = this.startTimeFormatLocal;
     }
 
     toObject(): IMeeting {
@@ -472,10 +509,6 @@ export class Meeting extends Id implements IMeeting {
             // monitorService watches for frequent network errors and begins bandwidth and latency tests and loggs
             // jsmapService uses bundled debug map files to generate file and line code
         }
-    }
-
-    get makeLocalStartDateTime(): DateTime {
-        return DateTime.local();
     }
 
     // TODO consolidate these......
