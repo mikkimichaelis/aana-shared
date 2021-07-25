@@ -1,6 +1,6 @@
 import { concat, isEmpty, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
-import { IUser } from '../models/user.class';
+import { IUser, User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
 import { SpecificDay } from '../listings/search-settings';
@@ -333,7 +333,7 @@ export class Meeting extends Id implements IMeeting {
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
 
-    isHome(user: IUser): boolean {
+    isHome(user: User): boolean {
         return user.homeMeeting === this.id;
     }
 
@@ -634,7 +634,7 @@ export class Meeting extends Id implements IMeeting {
         return t.join(''); // return adjusted time or original string
     }
 
-    public static startIndex: IMeeting = {
+    public static startIndex: IMeeting = <any> {
         startDateTime: Meeting.oneWeekMillis * -1,
         startTime: Meeting.oneDayMillis * -1
     } as IMeeting;

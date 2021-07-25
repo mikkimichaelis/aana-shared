@@ -9,7 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
-import { IMeeting } from '.';
+import { IMeeting, Meeting } from '.';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -54,8 +54,8 @@ export interface IUser extends IUserBase {
     chatUser: any;
     created: string;
 
-    addFavoriteMeeting(meeting: IMeeting): boolean;
-    removeFavoriteMeeting(meeting: IMeeting): boolean;
+    addFavoriteMeeting(meeting: Meeting): boolean;
+    removeFavoriteMeeting(meeting: Meeting): boolean;
 
     setUserAuthNames(displayName?: string): boolean;
     setUserNames(firstName: string, lastInitial: string): boolean;
@@ -151,21 +151,21 @@ export class User extends UserBase implements IUser {
     //     return rv;
     // }
 
-    public isFavoriteMeeting(meeting: IMeeting): boolean {
+    public isFavoriteMeeting(meeting: Meeting): boolean {
         const rv = -1 !== findIndex(this.favMeetings, (id => {
             return (id === meeting.id);
         }))
         return rv;
     }
 
-    public addFavoriteMeeting(meeting: IMeeting): boolean {
+    public addFavoriteMeeting(meeting: Meeting): boolean {
         if (!this.isFavoriteMeeting(meeting)) {
             this.favMeetings.push(meeting.id);
         }
         return true;
     }
 
-    public removeFavoriteMeeting(meeting: IMeeting): boolean {
+    public removeFavoriteMeeting(meeting: Meeting): boolean {
         if (this.isFavoriteMeeting(meeting)) {
             remove(this.favMeetings, (value: any, index: number, array: any) => {
                 return value === meeting.id;
