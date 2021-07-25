@@ -353,12 +353,12 @@ export class Meeting extends Id implements IMeeting {
 
         if (this.meetingTypes.find(mt => mt === 'MO')) {
             this.restricted = true;
-            this.restrictedDescription = "Male Gender Only";
+            this.restrictedDescription = "Male Only";
         }
 
         if (this.meetingTypes.find(mt => mt === 'WO')) {
             this.restricted = true;
-            this.restrictedDescription = "Female Gender Only";
+            this.restrictedDescription = "Female Only";
         }
     }
 
