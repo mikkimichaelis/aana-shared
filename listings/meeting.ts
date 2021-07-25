@@ -271,7 +271,9 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        return super.toObject(['nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd']);
+        const exclude = [   'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 
+                            'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
+        return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
     setFeedback(feedback: any) {
