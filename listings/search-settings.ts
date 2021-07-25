@@ -32,7 +32,7 @@ export interface ISearchSettings {
 	live: boolean,					// Include live meetings in search results
 	continuous: boolean,			// Include continuous meetings in search results
 
-	id: string,						// TODO change to zid
+	zid: string,						// TODO change to zid
 	name: string,					// TODO expand to name_word[] matching
 	zipcode: string,				// TODO
 	language: string,
@@ -43,7 +43,7 @@ export interface ISearchSettings {
 };
 
 export class SearchSettings implements ISearchSettings {
-	version = 1;
+	version = 0;
 	searchType = SearchType.search;
 
 	bySpecificDay = SpecificDay.today;
@@ -53,7 +53,7 @@ export class SearchSettings implements ISearchSettings {
 	live = true;
 	continuous = false;
 
-	id = <any>null;
+	zid = <any>null;
 	name = <any>null;
 	zipcode = <any>null;
 	language = <any>null;

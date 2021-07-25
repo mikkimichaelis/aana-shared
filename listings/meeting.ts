@@ -81,8 +81,14 @@ export class Meeting extends Id implements IMeeting {
     private _isLive?: boolean = null;
     get isLive(): boolean {
         if (isNil(this._isLive)) {
-            const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
-            this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+            if (this.recurrence.type === 'Daily') {
+                const now = Meeting.makeThat70sTimeFromISO().toMillis();
+                this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
+            } else {
+                const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
+                this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+            }
+            
         }
         return this._isLive;
     }
