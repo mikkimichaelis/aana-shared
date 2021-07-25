@@ -7,7 +7,7 @@ import { IBoundingBox } from './bounding-box';
 import { Id } from './id.class';
 import { ILocation } from './location';
 import { ISchedule } from './schedule.class';
-import { IUser } from './user.class';
+import { IUser, User } from './user.class';
 import { IUserBadge } from './userBadge.class';
 import { IUserMember, UserMember } from './userMember.class';
 
@@ -164,11 +164,11 @@ export class Group extends Id implements IGroup {
     return obj;
   }
 
-  isHomeGroup(iuser: IUser): boolean {
+  isHomeGroup(iuser: User): boolean {
     return false; // iuser.isHomeGroup(this);
   }
 
-  isFavorite(iuser: IUser): boolean {
+  isFavorite(iuser: User): boolean {
     return false; // iuser.isFavorite(this);
   }
 
@@ -220,25 +220,25 @@ export class Group extends Id implements IGroup {
     return rv;
   }
 
-  public addMember(user: IUser) {
+  public addMember(user: User) {
     // TODO error check not duplicate add
     if (!this.members) this.members = [];
     const userMember = new UserMember(user);
     this.members.push(userMember);
   }
 
-  public removeMember(user: IUser) {
+  public removeMember(user: User) {
     remove(this.members, (value: any, index: number, array: any) => {
       return value.id === user.id;
     })
   }
 
-  public updateMember(user: IUser) {
+  public updateMember(user: User) {
     this.removeMember(user);
     this.addMember(user);
   }
 
-  public isMember(user: IUser) {
+  public isMember(user: User) {
     return this.members.findIndex(m => {
       return m.id === user.id;
     });

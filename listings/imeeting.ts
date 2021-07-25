@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { IId } from "../models/id.class";
-import { IUser } from "../models/user.class";
+import { IUser, User } from "../models/user.class";
 import { IRecurrence } from "./recurrence";
 
 export interface IMeeting extends IId {
@@ -88,6 +88,6 @@ export interface IMeeting extends IId {
     updateDayTime();
     updateTags();
 
-    isHome(user: IUser): boolean;       // TODO remove
+    isHome(user: User): boolean;       // TODO remove
     setFeedback(feedback: any): void;
 }
