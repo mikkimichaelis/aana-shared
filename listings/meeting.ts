@@ -265,7 +265,7 @@ export class Meeting extends Id implements IMeeting {
             const randomMillis = Math.floor((Math.random() * (environment.meetingBackgroundUpdateMax - 0) + 0) * 1000);
             const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
             setTimeout(() => {
-                // clear cached property values
+                // clear cached property
                 this._isLive = null;
                 this._nextTime = null;
                 this._nextTimeEnd = null;
@@ -285,6 +285,24 @@ export class Meeting extends Id implements IMeeting {
         const exclude = ['tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive',
             'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
+    }
+
+    setFeedback(feedback: any) {
+        if (feedback.success) {
+            this.verified_count++;
+        } else if (feedback.nothing) {
+            this.nothing_count++;
+            this.verified = false;
+            this.active = false;
+        } else if (feedback.waiting) {
+            this.waiting_count++;
+            this.verified = false;
+            this.active = false;
+        } else if (feedback.password) {
+            this.password_count++;
+            this.verified = false;
+            this.active = false;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////
