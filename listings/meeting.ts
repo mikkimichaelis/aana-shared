@@ -273,6 +273,8 @@ export class Meeting extends Id implements IMeeting {
                 this._startTimeFormatLocal = null;
                 this._startTimeString = null;
                 this._daytimeString = null;
+
+                this.updateCounters();
                 console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
 
                 this.backgroundUpdate()
@@ -345,6 +347,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     public update(): Meeting {
+        this.updateCounters();
         this.updateProperties();
         this.updateTags();
         this.updateDayTime();
@@ -352,9 +355,11 @@ export class Meeting extends Id implements IMeeting {
         return this;
     }
 
-    public updateProperties() {
+    public updateCounters() {
         this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
+    }
 
+    public updateProperties() {
         if (this.meetingTypes.find(mt => mt === '24/7')) this.continuous = true;
         if (this.meetingTypes.find(mt => mt === 'C')) this.closed = true;
 
