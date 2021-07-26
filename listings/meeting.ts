@@ -88,7 +88,7 @@ export class Meeting extends Id implements IMeeting {
                 const now = Meeting.makeThat70sDateTimeFromISO().toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
-            
+
         }
         return this._isLive;
     }
@@ -266,19 +266,29 @@ export class Meeting extends Id implements IMeeting {
         super(meeting);
         this.initialize(this, meeting);
 
-        // this.updateDayTime();
-        // this.updateTags();
+        this.backgroundUpdate();
+    }
 
-        // this._isLive = this.isLive;
-        // this._nextTime = this.nextTime;
-        // this._startTimeString = this.startTimeString;
-        // this._startTimeFormatLocal = this.startTimeFormatLocal;
+    backgroundUpdate() {
+        
+        setTimeout(() => {
+            this._isLive = null;
+            this._nextTime = null;
+            this._nextTimeEnd = null;
+            this._startTimeFormat = null;
+            this._startTimeFormatLocal = null;
+            this._startTimeString = null;
+            this._daytimeString = null;
+            console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime.toISOTime()}`);
+            
+            this.backgroundUpdate()
+        }, 1000 * 60);
     }
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = [   'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive', 
-                            'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
+        const exclude = ['tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive',
+            'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
@@ -637,15 +647,15 @@ export class Meeting extends Id implements IMeeting {
     }
 
     public static startIndex: any = {
-        startTime: { 
+        startTime: {
             ood: false,
-            startAfter: Meeting.oneDayMillis * -1, 
-            id: null 
+            startAfter: Meeting.oneDayMillis * -1,
+            id: null
         },
-        startDateTime: { 
+        startDateTime: {
             ood: false,
-            startAfter: Meeting.oneWeekMillis * -1, 
-            id: null 
+            startAfter: Meeting.oneWeekMillis * -1,
+            id: null
         }
     };
 }
