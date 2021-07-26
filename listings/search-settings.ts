@@ -23,6 +23,8 @@ export enum SearchType {
 
 export interface ISearchSettings {
 	version: number,			
+
+	resetIndex: boolean,
 	searchType: SearchType,
 	
 	bySpecificDay: SpecificDay,		// null || SpecificDay.[any, Monday, ... today]
@@ -44,6 +46,7 @@ export interface ISearchSettings {
 
 export class SearchSettings implements ISearchSettings {
 	version = 0;
+	resetIndex = false;
 	searchType = SearchType.search;
 
 	bySpecificDay = SpecificDay.today;
