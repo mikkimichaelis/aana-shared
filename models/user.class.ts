@@ -9,7 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
-import { IMeeting, Meeting } from '.';
+import { Meeting } from '.';
 
 // this data never goes to !uid
 export interface IUserProfile {

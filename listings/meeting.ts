@@ -1,11 +1,11 @@
-import { concat, isEmpty, isNil, join, random, split } from 'lodash';
+import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
-import { IUser, User } from '../models/user.class';
+import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
 import { SpecificDay } from '../listings/search-settings';
 import { IMeeting } from './imeeting';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 export class Meeting extends Id implements IMeeting {
 
     iid: string = '';
@@ -81,8 +81,8 @@ export class Meeting extends Id implements IMeeting {
         return this.tags_;
     }
 
-    private _isLive?: boolean = null;
-    get isLive(): boolean {
+    private _isLive?: boolean | null = null;
+    get isLive(): boolean | null {
         if (isNil(this._isLive)) {
             if (this.recurrence.type === 'Daily') {
                 const now = Meeting.makeThat70sTimeFromISO().toMillis();
@@ -96,28 +96,28 @@ export class Meeting extends Id implements IMeeting {
         return this._isLive;
     }
 
-    private _startTimeString?: string = null;
-    get startTimeString(): string {
+    private _startTimeString?: string | null = null;
+    get startTimeString(): string | null {
         if (isNil(this._startTimeString)) {
             // if (this.isLive) return 'Live';
 
-            let timeString = `${this.nextTime.toFormat("h")}`;
-            timeString = timeString + (this.nextTime.minute === 0 ? ' - ' : `:${this.nextTime.toFormat("mm")} - `);
-            timeString = timeString + `${this.nextTimeEnd.toFormat('h')}` + (this.nextTimeEnd.minute === 0 ? ' ' : `:${this.nextTimeEnd.toFormat("mm")} `);
-            timeString = timeString + this.nextTime.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
+            let timeString = `${this.nextTime?.toFormat("h")}`;
+            timeString = timeString + (this.nextTime?.minute === 0 ? ' - ' : `:${this.nextTime?.toFormat("mm")} - `);
+            timeString = timeString + `${this.nextTimeEnd?.toFormat('h')}` + (this.nextTimeEnd?.minute === 0 ? ' ' : `:${this.nextTimeEnd?.toFormat("mm")} `);
+            timeString = timeString + this.nextTime?.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
             this._startTimeString = timeString;
         }
         return this._startTimeString;
     }
 
-    private _daytimeString?: string = null;
-    get daytimeString(): string {
+    private _daytimeString?: string | null = null;
+    get daytimeString(): string | null {
         if (isNil(this._daytimeString)) {
             const nowMeridiem = DateTime.now().toFormat('a');
-            const past = DateTime.now() > this.nextTimeEnd;
+            const past = DateTime.now() > <any>this.nextTimeEnd;
 
             if (past) {
-                switch (this.nextTime.toFormat('a')) {
+                switch (this.nextTime?.toFormat('a')) {
                     case 'AM':
                         if (nowMeridiem === 'PM') return 'Tomorrow'
                         else this._daytimeString = 'Tonight'
@@ -129,7 +129,7 @@ export class Meeting extends Id implements IMeeting {
                 }
                 this._daytimeString = 'Tonight'
             } else {
-                switch (this.nextTime.toFormat('a')) {
+                switch (this.nextTime?.toFormat('a')) {
                     case 'AM':
                         if (nowMeridiem === 'PM') return 'Tomorrow'
                         else this._daytimeString = 'Tonight'
@@ -146,18 +146,18 @@ export class Meeting extends Id implements IMeeting {
         return this._daytimeString;
     }
 
-    private _nextTimeEnd?: DateTime = null;
-    get nextTimeEnd(): DateTime {
+    private _nextTimeEnd: DateTime | null = null;
+    get nextTimeEnd(): DateTime | null {
         if (isNil(this._nextTimeEnd)) {
-            this._nextTimeEnd = this.nextTime.plus({ minutes: this.duration });
+            this._nextTimeEnd = <any>this.nextTime?.plus({ minutes: this.duration });
         }
         return this._nextTimeEnd;
     }
 
     // Determine the next DateTime that this meeting occurs
     // returned DateTime will be in local timezone
-    private _nextTime?: DateTime = null;
-    get nextTime(): DateTime {
+    private _nextTime: DateTime | null = null;
+    get nextTime(): DateTime | null {
         if (isNil(this._nextTime)) {
             if (this.recurrence.type === 'Daily') {
                 // Daily meetings use startTime to compare with now time
@@ -204,16 +204,16 @@ export class Meeting extends Id implements IMeeting {
         return this._nextTime;
     }
 
-    private _startTimeFormat?: string = null;
-    get startTimeFormat(): string {
+    private _startTimeFormat?: string | null = null;
+    get startTimeFormat(): string | null {
         if (isNil(this._startTimeFormat)) {
-            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal.toFormat("HH:MM a"));
+            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:MM a"));
         }
-        return this._startTimeFormat;
+        return <any>this._startTimeFormat;
     }
 
-    private _startTimeFormatLocal?: DateTime = null;
-    get startTimeFormatLocal(): DateTime {
+    private _startTimeFormatLocal?: DateTime | null = null;
+    get startTimeFormatLocal(): DateTime | null {
         if (isNil(this._startTimeFormatLocal)) {
             try {
                 const start = DateTime.fromObject({
@@ -229,7 +229,7 @@ export class Meeting extends Id implements IMeeting {
                 this._startTimeFormatLocal = <any>null;
             }
         }
-        return this._startTimeFormatLocal;
+        return <any>this._startTimeFormatLocal;
     }
 
     get meetingTypesString(): string {
@@ -262,7 +262,7 @@ export class Meeting extends Id implements IMeeting {
         if (!this.backgroundUpdateEnabled) {
             const now = DateTime.local();
             const nextMinuteMillis = now.endOf('minute').toMillis();
-            const randomMillis = Math.floor((Math.random() * (environment.meetingBackgroundUpdateMax - 0) + 0) * 1000);
+            const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
             const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
             setTimeout(() => {
                 // clear cached property
@@ -273,7 +273,7 @@ export class Meeting extends Id implements IMeeting {
                 this._startTimeFormatLocal = null;
                 this._startTimeString = null;
                 this._daytimeString = null;
-                console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime.toISOTime()}`);
+                console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
 
                 this.backgroundUpdate()
             }, timeoutMillis);
@@ -335,8 +335,8 @@ export class Meeting extends Id implements IMeeting {
         // @ts-ignore
         return Meeting.weekdays[DateTime.local().weekday]
     }
-    static weekdays = [null, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    static iso_weekday_2_iso_index(weekday: any) { return this.weekdays.indexOf(weekday); }
+    static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
 
@@ -348,16 +348,13 @@ export class Meeting extends Id implements IMeeting {
         this.updateProperties();
         this.updateTags();
         this.updateDayTime();
-        this.updateCounterProperties();
 
         return this;
     }
 
-    public updateCounterProperties(): void {
-        this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
-    }
-
     public updateProperties() {
+        this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
+
         if (this.meetingTypes.find(mt => mt === '24/7')) this.continuous = true;
         if (this.meetingTypes.find(mt => mt === 'C')) this.closed = true;
 
@@ -376,7 +373,7 @@ export class Meeting extends Id implements IMeeting {
         this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
 
         // TODO improve this filtering with word filtering
-        const filter = t => {
+        const filter = (t:string) => {
             return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
         };
 
@@ -404,7 +401,7 @@ export class Meeting extends Id implements IMeeting {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
                 this.recurrence.weekly_day = '';
-                this.recurrence.weekly_days = Meeting.weekdays; // TODO for future possible use Zoom api?
+                this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = 0;
@@ -413,7 +410,7 @@ export class Meeting extends Id implements IMeeting {
                 // @ts-ignore
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
                 this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
-                this.startDateTime = Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day).toMillis();
+                this.startDateTime = <any>Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = 0;
                 this.endTime = 0;

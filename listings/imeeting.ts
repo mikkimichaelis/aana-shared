@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
+import { User } from "../models";
 import { IId } from "../models/id.class";
-import { IUser, User } from "../models/user.class";
 import { IRecurrence } from "./recurrence";
 
 export interface IMeeting extends IId {
@@ -73,13 +73,13 @@ export interface IMeeting extends IId {
     buymeacoffee: string;
 
     // Non serialized getter properties
-    isLive: boolean;
-    startTimeString: string;
-    daytimeString: string;
-    nextTimeEnd: DateTime;
-    nextTime: DateTime;
-    startTimeFormat: string;
-    startTimeFormatLocal: DateTime;
+    isLive: boolean | null;
+    startTimeString: string | null;
+    daytimeString: string | null;
+    nextTimeEnd: DateTime | null;
+    nextTime: DateTime | null;
+    startTimeFormat: string | null;
+    startTimeFormatLocal: DateTime | null;
     meetingTypesString: string;
     tagsString: string;
     meetingSub: string;
@@ -87,8 +87,8 @@ export interface IMeeting extends IId {
     tags: string[];
     // makeLocalStartDateTime: DateTime;
     
-    updateDayTime();
-    updateTags();
+    updateDayTime(): void;
+    updateTags(): void;
 
     isHome(user: User): boolean;       // TODO remove
 }
