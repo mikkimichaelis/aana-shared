@@ -88,7 +88,7 @@ export class Meeting extends Id implements IMeeting {
                 const now = Meeting.makeThat70sTime().toMillis();
                 this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
             } else {
-                const now = Meeting.makeThat70sDateTime().toMillis();
+                const now = <any>Meeting.makeThat70sDateTime()?.toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
 
@@ -180,7 +180,7 @@ export class Meeting extends Id implements IMeeting {
                 }
             } else {
                 // Weekly meetings use startDateTime to compare with now
-                const now = Meeting.makeThat70sDateTime();
+                const now = <any>Meeting.makeThat70sDateTime();
                 const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
                 if (startDateTime > now) {
                     // this meeting happens later this week
@@ -292,18 +292,15 @@ export class Meeting extends Id implements IMeeting {
     setFeedback(feedback: any) {
         if (feedback.success) {
             this.verified_count++;
+
+            // TODO add logic to set verified taking into account bogus 'nothing' reports
+            this.verified = true;   
         } else if (feedback.nothing) {
+            // TODO this can happen if user tries to join at very end of meeting already ended
             this.nothing_count++;
             this.verified = false;
-            this.active = false;
-        } else if (feedback.waiting) {
-            this.waiting_count++;
-            this.verified = false;
-            this.active = false;
         } else if (feedback.password) {
             this.password_count++;
-            this.verified = false;
-            this.active = false;
         }
     }
 
@@ -532,7 +529,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static makeThat70sTime(time?: any, timezone?: string): DateTime {
-        let t: DateTime = DateTime.local();
+        let t: DateTime | null = DateTime.local();
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm'
