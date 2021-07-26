@@ -280,7 +280,7 @@ export class Meeting extends Id implements IMeeting {
             this._startTimeString = null;
             this._daytimeString = null;
             console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime.toISOTime()}`);
-            
+
             this.backgroundUpdate()
         }, 1000 * 60);
     }
@@ -645,17 +645,4 @@ export class Meeting extends Id implements IMeeting {
         }
         return t.join(''); // return adjusted time or original string
     }
-
-    public static startIndex: any = {
-        startTime: {
-            ood: false,
-            startAfter: Meeting.oneDayMillis * -1,
-            id: null
-        },
-        startDateTime: {
-            ood: false,
-            startAfter: Meeting.oneWeekMillis * -1,
-            id: null
-        }
-    };
 }
