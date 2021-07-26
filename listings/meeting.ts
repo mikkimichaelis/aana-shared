@@ -383,9 +383,9 @@ export class Meeting extends Id implements IMeeting {
         this.continuous = this.meetingTypes.find(mt => mt === '24/7') === undefined ? false : true;
         this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
         this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
-        this.tags_location_ = concat(split(this.location, ', ')).map(t => t.toLowerCase()).filter(filter);
+        this.tags_location_ = concat(split(this.location, ', ')).filter(mt => !isNil(mt) && !isEmpty(mt)); // .map(t => t.toLowerCase()).filter(filter);
 
-        this.tags_ = concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_);
+        this.tags_ = concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_).filter(mt => !isNil(mt) && !isEmpty(mt));
 
         // this.description_links= [];
     }
