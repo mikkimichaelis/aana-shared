@@ -1,10 +1,11 @@
-import { concat, isEmpty, isNil, join, split } from 'lodash';
+import { concat, isEmpty, isNil, join, random, split } from 'lodash';
 import { DateTime } from 'luxon';
 import { IUser, User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
 import { SpecificDay } from '../listings/search-settings';
 import { IMeeting } from './imeeting';
+import { environment } from 'src/environments/environment';
 export class Meeting extends Id implements IMeeting {
 
     iid: string = '';
@@ -20,6 +21,8 @@ export class Meeting extends Id implements IMeeting {
     password_count: number = 0;
     waiting_count: number = 0;
     nothing_count: number = 0;
+
+    isVerified: boolean = false;
 
     meetingUrl: string = '';
     homeUrl: string = '';
@@ -92,21 +95,6 @@ export class Meeting extends Id implements IMeeting {
         }
         return this._isLive;
     }
-
-    // get makeLocalStartDateTime(): DateTime {
-    //     return DateTime.local();
-    // }
-
-    // returns a DateTime of this meetings local start time
-    // get startTimeLocal(): DateTime {
-    //     // if this meeting is Weekly (specific dow)
-    //     return DateTime.fromMillis(this.startDateTime).toLocal().set({
-    //         day: 0,
-    //     })
-    //     // if this meeting is 
-    //     // if this meetings start time is < 12 hours past 
-
-    // }
 
     private _startTimeString?: string = null;
     get startTimeString(): string {
@@ -269,20 +257,27 @@ export class Meeting extends Id implements IMeeting {
         this.backgroundUpdate();
     }
 
+    backgroundUpdateEnabled = true;
     backgroundUpdate() {
-        
-        setTimeout(() => {
-            this._isLive = null;
-            this._nextTime = null;
-            this._nextTimeEnd = null;
-            this._startTimeFormat = null;
-            this._startTimeFormatLocal = null;
-            this._startTimeString = null;
-            this._daytimeString = null;
-            console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime.toISOTime()}`);
+        if (!this.backgroundUpdateEnabled) {
+            const now = DateTime.local();
+            const nextMinuteMillis = now.endOf('minute').toMillis();
+            const randomMillis = Math.floor((Math.random() * (environment.meetingBackgroundUpdateMax - 0) + 0) * 1000);
+            const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
+            setTimeout(() => {
+                // clear cached property values
+                this._isLive = null;
+                this._nextTime = null;
+                this._nextTimeEnd = null;
+                this._startTimeFormat = null;
+                this._startTimeFormatLocal = null;
+                this._startTimeString = null;
+                this._daytimeString = null;
+                console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime.toISOTime()}`);
 
-            this.backgroundUpdate()
-        }, 1000 * 60);
+                this.backgroundUpdate()
+            }, timeoutMillis);
+        }
     }
 
     toObject(): IMeeting {
@@ -290,24 +285,6 @@ export class Meeting extends Id implements IMeeting {
         const exclude = ['tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive',
             'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
-    }
-
-    setFeedback(feedback: any) {
-        if (feedback.success) {
-            this.verified_count++;
-        } else if (feedback.nothing) {
-            this.nothing_count++;
-            this.verified = false;
-            this.active = false;
-        } else if (feedback.waiting) {
-            this.waiting_count++;
-            this.verified = false;
-            this.active = false;
-        } else if (feedback.password) {
-            this.password_count++;
-            this.verified = false;
-            this.active = false;
-        }
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -353,8 +330,13 @@ export class Meeting extends Id implements IMeeting {
         this.updateProperties();
         this.updateTags();
         this.updateDayTime();
+        this.updateCounterProperties();
 
         return this;
+    }
+
+    public updateCounterProperties(): void {
+        this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
     }
 
     public updateProperties() {

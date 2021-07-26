@@ -19,6 +19,8 @@ export interface IMeeting extends IId {
     waiting_count: number;
     nothing_count: number;
 
+    isVerified: boolean;
+
     meetingUrl: string;
     homeUrl: string;
     sourceUrl: string;
@@ -89,5 +91,4 @@ export interface IMeeting extends IId {
     updateTags();
 
     isHome(user: User): boolean;       // TODO remove
-    setFeedback(feedback: any): void;
 }
