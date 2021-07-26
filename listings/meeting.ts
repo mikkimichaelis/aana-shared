@@ -111,11 +111,11 @@ export class Meeting extends Id implements IMeeting {
     private _startTimeString?: string = null;
     get startTimeString(): string {
         if (isNil(this._startTimeString)) {
-            if (this.isLive) return 'Live';
+            // if (this.isLive) return 'Live';
 
             let timeString = `${this.nextTime.toFormat("h")}`;
             timeString = timeString + (this.nextTime.minute === 0 ? ' - ' : `:${this.nextTime.toFormat("mm")} - `);
-            timeString = timeString + `${this.nextTimeEnd.toFormat('h')} `;
+            timeString = timeString + `${this.nextTimeEnd.toFormat('h')}` + (this.nextTimeEnd.minute === 0 ? ' ' : `:${this.nextTimeEnd.toFormat("mm")} `);
             timeString = timeString + this.nextTime.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
             this._startTimeString = timeString;
         }
@@ -636,8 +636,16 @@ export class Meeting extends Id implements IMeeting {
         return t.join(''); // return adjusted time or original string
     }
 
-    public static startIndex: IMeeting = <any> {
-        startDateTime: Meeting.oneWeekMillis * -1,
-        startTime: Meeting.oneDayMillis * -1
-    } as IMeeting;
+    public static startIndex: any = {
+        startTime: { 
+            ood: false,
+            startAfter: Meeting.oneDayMillis * -1, 
+            id: null 
+        },
+        startDateTime: { 
+            ood: false,
+            startAfter: Meeting.oneWeekMillis * -1, 
+            id: null 
+        }
+    };
 }
