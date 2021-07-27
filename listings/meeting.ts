@@ -259,7 +259,7 @@ export class Meeting extends Id implements IMeeting {
 
     backgroundUpdateEnabled = true;
     backgroundUpdate() {
-        if (!this.backgroundUpdateEnabled) {
+        if (this.backgroundUpdateEnabled) {
             const now = DateTime.local();
             const nextMinuteMillis = now.endOf('minute').toMillis();
             const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
@@ -284,8 +284,8 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = ['tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 'meetingTypesString', 'isLive',
-            'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
+        const exclude = ['backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 
+        'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
