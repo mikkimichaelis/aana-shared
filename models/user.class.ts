@@ -50,6 +50,7 @@ export interface IUser extends IUserBase {
     favMeetings: string[];
     blkMeetings: string[];
     friends: IUserFriend[];
+    attendance: string[];
 
     chatUser: any;
     created: string;
@@ -77,6 +78,7 @@ export class User extends UserBase implements IUser {
     friends: IUserFriend[] = [];
     chatUser: any = null;
     created: string = DateTime.utc().toISO();
+    attendance: string[] = [];
 
     public get isOnline(): boolean {
         const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
