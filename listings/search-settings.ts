@@ -17,6 +17,7 @@ export enum SpecificDay {
 export enum SearchType {
 	'search' = 'search',
 	'live' = 'live',
+	'upcoming' = 'upcoming',
 	'owned' = 'owned',
 	'favorite' = 'favorite'
 };
