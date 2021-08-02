@@ -260,10 +260,16 @@ export class Meeting extends Id implements IMeeting {
     backgroundUpdateEnabled = true;
     backgroundUpdate() {
         if (this.backgroundUpdateEnabled) {
-            const now = DateTime.local();
-            const nextMinuteMillis = now.endOf('minute').toMillis();
-            const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
-            const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
+            // const now = DateTime.local();
+            // const nextMinuteMillis = now.endOf('minute').toMillis();
+            // const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
+            // const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
+
+            const now = DateTime.local().toMillis();
+            const eoh = DateTime.fromMillis(now).endOf('hour').toMillis() + 1;
+            const eohh = eoh - (30 * 60 * 1000); // 30min
+            const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
+            const timeout = (eohh > now ? eohh : eoh) - now + random;
             setTimeout(() => {
                 // clear cached property
                 this._isLive = null;
@@ -278,7 +284,7 @@ export class Meeting extends Id implements IMeeting {
                 console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
 
                 this.backgroundUpdate()
-            }, timeoutMillis);
+            }, timeout);
         }
     }
 
