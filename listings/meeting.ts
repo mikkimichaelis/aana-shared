@@ -1,5 +1,5 @@
-import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
-import { DateTime } from 'luxon';
+import { cloneDeep, concat, isEmpty, isNil, join, now, split } from 'lodash';
+import { DateTime, Duration } from 'luxon';
 import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
@@ -79,6 +79,46 @@ export class Meeting extends Id implements IMeeting {
 
     get tags(): string[] {
         return this.tags_;
+    }
+
+    // - Mills till isLive ends
+    // + Mills till isLive starts
+    private _tminus?: number | null = null;
+    get tMinus(): number | null {
+        if (this.continuous) {
+            this._tminus = 0;
+        } else if (isNil(this._tminus)) {
+            if (this.isLive) {
+                this._tminus = -1 * this.endsIn;  // Millis till this meeting ends
+                    // TODO should be a Duration
+                    // TODO Meeting API is getting very messy.....
+            } else {
+                this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();
+            }
+        }
+        return this._tminus;
+    }
+
+    private _endsIn?: number | null = null;
+    get endsIn(): number | null {    // TODO make Duration
+        if (isNil(this._endsIn)) {
+            if (this.continuous) {
+                this._endsIn = null;
+            } else if (this.isLive) {
+                if (this.recurrence.type === 'Daily') {
+                    const now = Meeting.makeThat70sTime().toMillis();
+                    this._endsIn = this.endTime - now;
+                    console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
+                    console.log(`$(this._isLiveEnd: ${this._endsIn}`)
+                } else {
+                    const now = <any>Meeting.makeThat70sDateTime()?.toMillis();
+                    this._endsIn = this.endDateTime - now;
+                }
+            } else {
+                this._endsIn = null;
+            }
+        }
+        return this._endsIn;
     }
 
     private _isLive?: boolean | null = null;
@@ -162,7 +202,7 @@ export class Meeting extends Id implements IMeeting {
             if (this.recurrence.type === 'Daily') {
                 // Daily meetings use startTime to compare with now time
                 const now = Meeting.makeThat70sTime();
-                const startTime = DateTime.fromMillis(this.startTime).toLocal();
+                const startTime = DateTime.fromMillis(this.startTime);
                 if (startTime > now) {
                     // this meeting happens later today, adjust now to forthcoming hh:mm
                     const next = DateTime.now().set({
@@ -181,22 +221,18 @@ export class Meeting extends Id implements IMeeting {
             } else {
                 // Weekly meetings use startDateTime to compare with now
                 const now = <any>Meeting.makeThat70sDateTime();
-                const startDateTime = DateTime.fromMillis(this.startDateTime).toLocal();
+                const startDateTime = DateTime.fromMillis(this.startDateTime);
+                const next = DateTime.now().set({
+                    hour: startDateTime.hour,
+                    minute: startDateTime.minute,
+                    weekday: startDateTime.weekday
+                });
                 if (startDateTime > now) {
                     // this meeting happens later this week
-                    const next = DateTime.now().set({
-                        hour: startDateTime.hour,
-                        minute: startDateTime.minute,
-                        weekday: startDateTime.weekday
-                    });
                     this._nextTime = next;
                 } else {
-                    const next = DateTime.now().set({
-                        hour: startDateTime.hour,
-                        minute: startDateTime.minute,
-                        weekday: startDateTime.weekday
-                    }).plus({ weeks: 1 });
-                    this._nextTime = next;
+                    // this meetings already happened this week, move to next
+                    this._nextTime = next.plus({ weeks: 1 });
                 }
             }
         }
@@ -290,8 +326,8 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = ['backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString', 
-        'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
+        const exclude = ['backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString',
+            'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
@@ -300,7 +336,7 @@ export class Meeting extends Id implements IMeeting {
             this.verified_count++;
 
             // TODO add logic to set verified taking into account bogus 'nothing' reports
-            this.verified = true;   
+            this.verified = true;
         } else if (feedback.nothing) {
             // TODO this can happen if user tries to join at very end of meeting already ended
             this.nothing_count++;
@@ -381,7 +417,7 @@ export class Meeting extends Id implements IMeeting {
         this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
 
         // TODO improve this filtering with word filtering
-        const filter = (t:string) => {
+        const filter = (t: string) => {
             return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
         };
 
@@ -423,100 +459,6 @@ export class Meeting extends Id implements IMeeting {
                 this.startTime = 0;
                 this.endTime = 0;
             }
-
-            // old development comments....
-            //
-            // This is the little magic box of Time.
-            // All meeting's startTime(s) are set to occur on 1/1/1970 in UTC ms.
-            // This creates a 24h box of time in which all startTimes exist.
-            // A recurring time is indifferent to the specific day it happens on
-            // because the time happens on all days.
-            //
-            // This allows for searches for startTime for any meeting on any Day.
-            // Of course, meetings actually happen at a time on a Specific Day
-            // That is addressed below.
-            // this.startTime = DateTime.fromObject({
-            //     year: 1970,
-            //     month: 1,
-            //     day: 1,
-            //     hour: Number.parseInt(this.time24h.split(':')[0]),
-            //     minute: Number.parseInt(this.time24h.split(':')[1]),
-            //     zone: this.timezone,
-            // }).toUTC().toMillis();
-
-            // Here is the little magic.
-            // If the startTime falls outside 1/1/1970 UTC (due to startTimes in different UTC offsets),
-            // simply rotate the startTime back into the opposite edge of the 24h window
-
-            // #1                            [--------1/1/1970--------]                             array of 24hs
-            // #2                           [[--------1/1/1970--------],[--------1/2/1970--------]] array of 2 Days
-            // #3 1/2/1970 22:00:00 GMT-0800 [------------------------------->startTime          ]  st === 1/2/1970 06:00:00 GMT+0000                              
-            // 
-            //
-            // startTime is created in the TZ of the meeting and then placed in 1/1/1970 UTC+0
-            // due to UTC offsets this may place startTime outside the box.
-            //
-            // #3 1/1/1970 22:00:00 UTC-0800 starts @ 1/2/1970 00:06:00 UTC+0 (outside the magic 1/1/1970 box)
-            // but thats ok, we simply subtract oneDayMills from startTime to move it back into the box.
-
-            //    [[--------1/1/1970--------],[--------1/2/1970--------]]   array of 48hs
-            // #4   -->startTime                                            st 1/1/1970 00:06:00 GMT-0800
-
-            // #4 Note the day is different (actually 12/31/1969 for UTC-0800)
-            // but this does not matter as we are only encoding the Time in startTime!
-            //
-            // Note the opposite case for a TZ positive to UTC+0 is handled similarly by positive rotation
-
-            // If this startTime happens in 1/2/1970 UTC+0, rotate it backward onDayMillis
-            // if (this.startTime >= Meeting.oneDayMillis) this.startTime = this.startTime - Meeting.oneDayMillis;
-
-            // // If this startTime happens in 12/31/1969 UTC+0, rotate it forward onDayMillis
-            // if (this.startTime < 0) this.startTime = this.startTime + Meeting.oneDayMillis;
-
-            // // set the endTime
-            // this.endTime = this.startTime + (this.duration * 60 * 1000);
-
-
-            // This is the big magic box of Time.
-            // All meeting's startDateTime(s) are set to occur the first week of 1/1/1970 in UTC ms.
-            // This creates a 7d box of time in which all startDateTime exist.
-            // A recurring time is indifferent to the specific week it happens on
-            // because the time happens on the same day every week.
-            //
-            // This allows for searches for startDateTime for any meeting on any Day at a particular Time.
-            // 
-            // Yes startDateTime does also encode the the same Time component as startTime,
-            // however being NoSQL it makes for easier and more flexible queries to encode startTime separately
-            // this.startDateTime = DateTime.fromObject({
-            //     year: 1970,
-            //     month: 1,
-            //     day: 1,
-            //     hour: Number.parseInt(this.time24h.split(':')[0]),
-            //     minute: Number.parseInt(this.time24h.split(':')[1]),
-            //     zone: this.timezone,
-            // }).set({ weekday: IMeeting.weekday2index(this.recurrence.weekly_day) }).toUTC().toMillis();
-
-            // Here is the big magic.
-            // The concept here is the same as the little magic
-            // just on a 7 times larger array of UoT
-
-            // here's the illustration
-            //
-            // #1 [[Sun24h][Mon24h][Tue24h][Wed24h][Thu24h][Fri24h][Sat24h]]                            array of 7ds of 24hs ea
-            //                                                                                          array of 2 weeks (below)
-            // #2 [[[Sun24h][Mon24h][Tue24h][Wed24h][Thu24h][Fri24h][Sat24h]],[[Sun24h][Mon24h][Tue24h][Wed24h][Thu24h][Fri24h][Sat24h]]]  
-            // #3 1/2/70 -0800 [------------------------------------------------->startDateTime ... ]   sdt === 1/8/1970 +0000                              
-            // 
-            //
-            // startDateTime is created in the TZ of the meeting and then placed in the week of 1/1/1970 UTC+0
-            // due to UTC offsets this may place startDateTime into the next week.
-            //
-            // Stated simply, recurring Meetings that occur on Sunday at 1am UTC+0 do not care which week of the year they occur on.
-            //
-            // This or others similar helps https://codechi.com/dev-tools/date-to-millisecond-calculators/comment-page-3/#comments
-
-            // if (this.startDateTime >= Meeting.oneWeekMillis) this.startDateTime = this.startDateTime - Meeting.oneWeekMillis;
-            // if (this.startDateTime < 0) this.startDateTime = this.startDateTime + Meeting.oneWeekMillis;
 
         } catch (error) {
             console.error(error);
