@@ -344,7 +344,7 @@ export class Meeting extends Id implements IMeeting {
         } else if (feedback.nothing) {
             // TODO this can happen if user tries to join at very end of meeting already ended
             this.nothing_count++;
-            this.verified = false;
+            if (this.nothing_count > this.verified_count) this.verified = false;
         } else if (feedback.password) {
             this.password_count++;
         }
