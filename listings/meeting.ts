@@ -90,8 +90,8 @@ export class Meeting extends Id implements IMeeting {
         } else if (isNil(this._tminus)) {
             if (this.isLive) {
                 this._tminus = -1 * this.endsIn;  // Millis till this meeting ends
-                    // TODO should be a Duration
-                    // TODO Meeting API is getting very messy.....
+                // TODO should be a Duration
+                // TODO Meeting API is getting very messy.....
             } else {
                 this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();
             }
@@ -203,20 +203,16 @@ export class Meeting extends Id implements IMeeting {
                 // Daily meetings use startTime to compare with now time
                 const now = Meeting.makeThat70sTime();
                 const startTime = DateTime.fromMillis(this.startTime);
+                const next = DateTime.now().set({
+                    hour: startTime.hour,
+                    minute: startTime.minute
+                });
                 if (startTime > now) {
-                    // this meeting happens later today, adjust now to forthcoming hh:mm
-                    const next = DateTime.now().set({
-                        hour: startTime.hour,
-                        minute: startTime.minute
-                    });
+                    // this meeting happens later today, adjust now to upcoming hh:mm
                     this._nextTime = next;
                 } else {
-                    // this meeting occurred earlier today, move now to tomorrow at adjusted schedule hh:mm
-                    const next = DateTime.now().set({
-                        hour: startTime.hour,
-                        minute: startTime.minute
-                    }).plus({ days: 1 });
-                    this._nextTime = next;
+                    // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
+                    this._nextTime = next.plus({ days: 1 });
                 }
             } else {
                 // Weekly meetings use startDateTime to compare with now
@@ -228,12 +224,11 @@ export class Meeting extends Id implements IMeeting {
                     weekday: startDateTime.weekday
                 });
                 if (startDateTime > now) {
-                    // this meeting happens later this week
                     this._nextTime = next;
                 } else {
-                    // this meetings already happened this week, move to next
-                    this._nextTime = next.plus({ weeks: 1 });
+                    this._nextTime = next.plus({ weeks: 1});
                 }
+                
             }
         }
 
@@ -301,11 +296,20 @@ export class Meeting extends Id implements IMeeting {
             // const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
             // const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
 
+            // get the next 1 minute mark from now
             const now = DateTime.local().toMillis();
-            const eoh = DateTime.fromMillis(now).endOf('hour').toMillis() + 1;
-            const eohh = eoh - (30 * 60 * 1000); // 30min
-            const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
-            const timeout = (eohh > now ? eohh : eoh) - now + random;
+            const eom = DateTime.fromMillis(now).endOf('minute').toMillis() + 1;
+            const random = Math.floor((Math.random() * (10 - 0) + 0) * 10);
+            const timeout = eom - now + random;
+
+
+            // get the next 30 minute mark from now
+            // const now = DateTime.local().toMillis();
+            // const eoh = DateTime.fromMillis(now).endOf('hour').toMillis() + 1;
+            // const eohh = eoh - (30 * 60 * 1000); // 30min
+            // const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
+            // const timeout = (eohh > now ? eohh : eoh) - now + random;
+
             setTimeout(() => {
                 // clear cached property
                 this._isLive = null;
