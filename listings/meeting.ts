@@ -1,5 +1,5 @@
-import { cloneDeep, concat, isEmpty, isNil, join, now, split } from 'lodash';
-import { DateTime, Duration } from 'luxon';
+import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
+import { DateTime } from 'luxon';
 import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
@@ -100,7 +100,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     private _endsIn?: number | null = null;
-    get endsIn(): number | null {    // TODO make Duration
+    get endsIn(): number {    // TODO make Duration
         if (isNil(this._endsIn)) {
             if (this.continuous) {
                 this._endsIn = null;
@@ -118,7 +118,7 @@ export class Meeting extends Id implements IMeeting {
                 this._endsIn = null;
             }
         }
-        return this._endsIn;
+        return <any>this._endsIn;
     }
 
     private _isLive?: boolean | null = null;
@@ -197,7 +197,7 @@ export class Meeting extends Id implements IMeeting {
     // Determine the next DateTime that this meeting occurs
     // returned DateTime will be in local timezone
     private _nextTime: DateTime | null = null;
-    get nextTime(): DateTime | null {
+    get nextTime(): DateTime {
         if (isNil(this._nextTime)) {
             if (this.recurrence.type === 'Daily') {
                 // Daily meetings use startTime to compare with now time
@@ -232,7 +232,7 @@ export class Meeting extends Id implements IMeeting {
             }
         }
 
-        return this._nextTime;
+        return <any>this._nextTime;
     }
 
     private _startTimeFormat?: string | null = null;

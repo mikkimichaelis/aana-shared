@@ -1,6 +1,4 @@
-import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
-import { User } from '../models/user.class';
 import { Id, IId } from '../models/id.class';
 
 
@@ -16,17 +14,17 @@ export interface IAttendance extends IId {
 
 export class Attendance extends Id {
     uid: string = '';
-    mid: string;
+    mid: string = '';
     zid: string = '';
 
     records: IAttendanceRecord[] = [];
 
-    ip: string;
-    iip: number[];
+    ip: string = '';;
+    iip: number[] = [];
 
-    signature: string;
+    signature: string = ''
 
-    constructor(attendance) {
+    constructor(attendance: any) {
         super(attendance);
         this.initialize(this, attendance);
     }
@@ -61,11 +59,11 @@ export class AttendanceRecord extends Id {
     status: string = '';
     verified: boolean = false; 
     visible: boolean = false;
-    volume: number;
-    audio: boolean;
-    muted: boolean;
-    loud: boolean;
-    timestamp: string;
+    volume: number = 0;
+    audio: boolean = false;
+    muted: boolean = true;
+    loud: boolean = false;
+    timestamp: string = '';
     created: string = DateTime.utc().toISO();
    
     constructor(attendance?: any) {
