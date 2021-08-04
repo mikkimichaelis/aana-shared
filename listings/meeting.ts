@@ -286,6 +286,18 @@ export class Meeting extends Id implements IMeeting {
         this.initialize(this, meeting);
 
         this.backgroundUpdate();
+
+        console.log(JSON.stringify({
+            tMinus: this.tMinus,
+            endsIn: this.endsIn,
+            isLive: this.isLive,
+            nextTime: this.nextTime,
+            nextTimeEnd: this.nextTimeEnd,
+            startTimeFormat: this.startTimeFormat,
+            startTimeFormatLocal: this.startTimeFormatLocal,
+            startTimeString: this.startTimeString,
+            daytimeString: this.daytimeString
+        }, null, 3))
     }
 
     backgroundUpdateEnabled = true;
@@ -312,6 +324,9 @@ export class Meeting extends Id implements IMeeting {
 
             setTimeout(() => {
                 // clear cached property
+
+                this._tminus = null;
+                this._endsIn = null;
                 this._isLive = null;
                 this._nextTime = null;
                 this._nextTimeEnd = null;
@@ -330,7 +345,7 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = ['backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString',
+        const exclude = ['tMinus', 'endsIn', 'backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString',
             'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
