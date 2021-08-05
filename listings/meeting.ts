@@ -85,15 +85,16 @@ export class Meeting extends Id implements IMeeting {
     // + Mills till isLive starts
     private _tminus?: number | null = null;
     get tMinus(): number | null {
-        if (this.continuous) {
-            this._tminus = 0;
-        } else if (isNil(this._tminus)) {
-            if (this.isLive) {
-                this._tminus = -1 * this.endsIn;  // Millis till this meeting ends
-                // TODO should be a Duration
-                // TODO Meeting API is getting very messy.....
+        if (isNil(this._tminus)) {
+            if (this.continuous) {
+                this._tminus = 0;
+            } 
+            else if (this.isLive) {
+                this._tminus = this.endsIn * -1;    // Millis till this meeting ends
+                                                    // negative value means 'end in'
             } else {
-                this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();
+                this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();    // Millis till this meeting ends
+                                                                                        // positive value means 'start in'
             }
         }
         return this._tminus;
@@ -108,8 +109,8 @@ export class Meeting extends Id implements IMeeting {
                 if (this.recurrence.type === 'Daily') {
                     const now = Meeting.makeThat70sTime().toMillis();
                     this._endsIn = this.endTime - now;
-                    console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
-                    console.log(`$(this._isLiveEnd: ${this._endsIn}`)
+                    // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
+                    // console.log(`$(this._isLiveEnd: ${this._endsIn}`)
                 } else {
                     const now = <any>Meeting.makeThat70sDateTime()?.toMillis();
                     this._endsIn = this.endDateTime - now;
@@ -287,17 +288,21 @@ export class Meeting extends Id implements IMeeting {
 
         this.backgroundUpdate();
 
-        console.log(JSON.stringify({
-            tMinus: this.tMinus,
-            endsIn: this.endsIn,
-            isLive: this.isLive,
-            nextTime: this.nextTime,
-            nextTimeEnd: this.nextTimeEnd,
-            startTimeFormat: this.startTimeFormat,
-            startTimeFormatLocal: this.startTimeFormatLocal,
-            startTimeString: this.startTimeString,
-            daytimeString: this.daytimeString
-        }, null, 3))
+        // console.log(JSON.stringify({
+        //     tMinus: this.tMinus,
+        //     endsIn: this.endsIn,
+        //     isLive: this.isLive,
+        //     nextTime: this.nextTime,
+        //     nextTimeEnd: this.nextTimeEnd,
+        //     startTimeFormat: this.startTimeFormat,
+        //     startTimeFormatLocal: this.startTimeFormatLocal,
+        //     startTimeString: this.startTimeString,
+        //     daytimeString: this.daytimeString
+        // }, null, 3))
+    }
+
+    public destroy() {
+        this.backgroundUpdateEnabled = false
     }
 
     backgroundUpdateEnabled = true;
@@ -336,7 +341,7 @@ export class Meeting extends Id implements IMeeting {
                 this._daytimeString = null;
 
                 this.updateCounters();
-                console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
+                // TODO console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
 
                 this.backgroundUpdate()
             }, timeout);
@@ -345,8 +350,19 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = ['tMinus', 'endsIn', 'backgroundUpdateEnabled', 'tags', 'nextDateTime', 'meetingSub', 'weekdays', 'weekday', 'tagsString',
-            'meetingTypesString', 'isLive', 'startTimeString', 'startTimeFormatLocal', 'startTimeFormat', 'nextTime', 'daytimeString', 'nextTimeEnd'];
+        const exclude = [   'tMinus', '_tMinus', 
+                            'endsIn', '_endsIn', 
+                            'backgroundUpdateEnabled', 
+                            'tags', 'tagsString',
+                            'meetingTypesString', 
+                            'meetingSub', 'weekdays', 'weekday', 
+                            'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal', 
+                            'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
+
+                            // updateDayTime(): void;
+                            // updateTags(): void;
+                            // isHome(user: User): boolean;       // TODO remove
+
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
@@ -515,7 +531,7 @@ export class Meeting extends Id implements IMeeting {
                     t = time;
                     break;
                 default:
-                    debugger;
+                    // debugger;
             }
         }
 
