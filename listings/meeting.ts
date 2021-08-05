@@ -91,10 +91,10 @@ export class Meeting extends Id implements IMeeting {
             } 
             else if (this.isLive) {
                 this._tminus = this.endsIn * -1;    // Millis till this meeting ends
-                                                    // negative value means 'end in'
+                                                    // negative value means 'ends in'
             } else {
                 this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();    // Millis till this meeting ends
-                                                                                        // positive value means 'start in'
+                                                                                        // positive value means 'starts in'
             }
         }
         return this._tminus;
@@ -599,8 +599,13 @@ export class Meeting extends Id implements IMeeting {
         weekday = Meeting.iso_weekday_2_70s_dow[weekday];
 
         // save original size of window
+        // here is the bug!  (diff < 0) === true!
         const diff = end.diff(start);   // save start-end diff so we know where to put end (if on a different day)
 
+
+        // TODO MIDNIGHT-BUG chased damn midnight bug to here and then the clock struck 1 and it's gone
+        // was a good one too....was on the Wed/Thu DateTime split too.
+        // fix tomorrow night....
         const _start: DateTime = start.set({ day: weekday });                     // set new start weekday
         const _end: DateTime = _start.plus({ milliseconds: diff.milliseconds }); // adjust end to new start
         return { start: _start, end: _end };
