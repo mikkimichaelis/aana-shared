@@ -255,7 +255,7 @@ export class Meeting extends Id implements IMeeting {
                 }).setZone('local');
                 this._startTimeFormatLocal = start;
             } catch (error) {
-                console.error(error);
+                // console.error(error);
                 // TODO
                 // return;
                 this._startTimeFormatLocal = <any>null;
@@ -496,7 +496,7 @@ export class Meeting extends Id implements IMeeting {
             }
 
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             // TODO some random thought.....
             // map out function call branches and exception propagation
             // show graphically in cs code
