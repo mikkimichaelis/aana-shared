@@ -97,6 +97,7 @@ export class Meeting extends Id implements IMeeting {
                                                                                         // positive value means 'starts in'
             }
         }
+        if (this._tminus === 0) debugger;
         return this._tminus;
     }
 
@@ -352,6 +353,7 @@ export class Meeting extends Id implements IMeeting {
         // list properties that are static or computed (not serialized into the database)
         const exclude = [   'tMinus', '_tMinus', 
                             'endsIn', '_endsIn', 
+                            'isVerified', 
                             'backgroundUpdateEnabled', 
                             'tags', 'tagsString',
                             'meetingTypesString', 
