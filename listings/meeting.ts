@@ -351,7 +351,7 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = [   'tMinus', '_tMinus', 
+        const exclude = [   'tMinus', '_tminus', 
                             'endsIn', '_endsIn', 
                             'isVerified', 
                             'backgroundUpdateEnabled', 
