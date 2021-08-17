@@ -309,10 +309,9 @@ export class Meeting extends Id implements IMeeting {
     backgroundUpdateEnabled = true;
     backgroundUpdate() {
         if (this.backgroundUpdateEnabled) {
-            // const now = DateTime.local();
-            // const nextMinuteMillis = now.endOf('minute').toMillis();
-            // const randomMillis = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
-            // const timeoutMillis = (nextMinuteMillis + randomMillis) - now.toMillis();
+            
+            // start by updating
+            this.updateCounters();
 
             // get the next 1 minute mark from now
             const now = DateTime.local().toMillis();
