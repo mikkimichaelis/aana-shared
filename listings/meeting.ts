@@ -596,6 +596,9 @@ export class Meeting extends Id implements IMeeting {
         // get weekday to move this search to
         weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
 
+        // midnight indicates start happens on previous day
+        const midnight = start.weekday != weekday;
+
         // align weekday into 70's dow
         // @ts-ignore
         weekday = Meeting.iso_weekday_2_70s_dow[weekday];
@@ -608,8 +611,13 @@ export class Meeting extends Id implements IMeeting {
         // TODO MIDNIGHT-BUG chased damn midnight bug to here and then the clock struck 1 and it's gone
         // was a good one too....was on the Wed/Thu DateTime split too.
         // fix tomorrow night....
-        const _start: DateTime = start.set({ day: weekday });                     // set new start weekday
-        const _end: DateTime = _start.plus({ milliseconds: diff.milliseconds }); // adjust end to new start
+
+        // start weekday - if midnight and weekday is the 1st, roll weekday to 7th otherwise day before weekday
+        const _startWeekday = !midnight ? weekday : weekday === 1 ? 7 : weekday - 1; 
+
+
+        const _start: DateTime = start.set({ day: _startWeekday });              // set new start weekday
+        const _end: DateTime = end.set({ day: weekday }); // adjust end to new start
         return { start: _start, end: _end };
     }
 
