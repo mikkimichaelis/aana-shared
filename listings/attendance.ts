@@ -6,20 +6,22 @@ export interface IAttendance extends IId {
     uid: string;    // User ID
     mid: string;    // Meeting.id
     zid: string;    // Zoom ID
+    pid: string;    // Zoom meeting participation(?) id
 
     records: IAttendanceRecord[];
 
     signature: string;
 }
 
-export class Attendance extends Id {
+export class Attendance extends Id implements IAttendance {
     uid: string = '';
     mid: string = '';
     zid: string = '';
+    pid: string = '';
 
     records: IAttendanceRecord[] = [];
 
-    ip: string = '';;
+    ip: string = '';
     iip: number[] = [];
 
     signature: string = ''
