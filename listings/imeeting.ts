@@ -55,7 +55,11 @@ export interface IMeeting extends IId {
     tags_: string[];                // meetingTypes + tags_description_ + tags_name_ + tags_custom_ + tags_location_
 
     continuous: boolean;
+
+    parent: string;
     recurrence: IRecurrence;
+    siblings: string[];
+    
     timezone: string;
     time24h: string;                // HH:MM
     duration: number;
