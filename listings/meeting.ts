@@ -57,9 +57,9 @@ export class Meeting extends Id implements IMeeting {
     tags_name_: string[] = [];
     tags_: string[] = [];
 
-    parent: string;
+    parent: string = '';
     recurrence: IRecurrence = new Recurrence();
-    siblings: string[];
+    siblings: string[] = [];
     
     timezone: string = "America/New_York";
     time24h: string = "00:00";
