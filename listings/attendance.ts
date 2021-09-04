@@ -4,11 +4,11 @@ import { Id, IId } from '../models/id.class';
 
 
 export interface IAttendance extends IId {
-    uid: string;    // User ID
-    mid: string;    // Meeting.id
-    zid: string;    // Zoom id
-    zID: string;    // Zoom ID
-    pid: string;    // Zoom meeting participation(?) id
+    uid: string;            // User ID
+    mid: string;            // Meeting.id
+    zid: string;            // Zoom id
+    zID: string;            // Zoom ID
+    pid: string;            // Zoom meeting participation(?) id
 
     records: IAttendanceRecord[];
 
@@ -16,7 +16,7 @@ export interface IAttendance extends IId {
     log: string[];          // invalid reasons otherwise []
     credit: number;         // millis of attendance
 
-    timestamp: string;
+    timestamp: string;      // UTC ISO string
 
     isValid(): boolean;
 }
@@ -74,11 +74,6 @@ export interface IAttendanceRecord extends IId {
 }
 
 export class AttendanceRecord extends Id {
-
-    uid: string = '';
-    zid: string = '';
-    did: string = '';
-
     status: string = '';
     visible: boolean = false;
     volume: number = 0;
