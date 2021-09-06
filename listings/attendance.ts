@@ -4,22 +4,23 @@ import { Id, IId } from '../models/id.class';
 
 
 export interface IAttendance extends IId {
-    uid: string;            // User ID
+    uid: string;            // User.id
     mid: string;            // Meeting.id
-    zid: string;            // Zoom id
-    zID: string;            // Zoom ID
-    pid: string;            // Zoom meeting participation(?) id
+    zid: string;            // Zoom meeting number (same as Meeting.zid)
+    uzid: string;           // Unique Zoom Meeting id for this occurrence
+    zpid: string;           // Zoom Participant id
+    zuid: string;           // Zoom User ID
 
     records: IAttendanceRecord[];
-
-    status: string;         // 'VALID' || 'INVALID'
     log: string[];          // verbose record of attendanceRecords
+
+    valid: boolean;
     credit: number;         // millis of attendance
 
     local: string;          // Local pretty date
     timestamp: number;      // UTC Millis
 
-    isGarbage(): boolean;
+    isValid(): boolean;
     process(): boolean;
 
     addRecord(record: any);
@@ -29,13 +30,14 @@ export class Attendance extends Id implements IAttendance {
     uid: string = '';
     mid: string = '';
     zid: string = '';
-    zID: string = '';
-    pid: string = '';
+    uzid: string = '';
+    zpid: string = '';
+    zuid: string;           // Zoom User ID
 
     records: IAttendanceRecord[] = [];
-
-    status: string = 'INVALID';
     log: string[] = [];
+
+    valid: boolean = false;
     credit: number = 0;
 
     local: string = DateTime.now().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
@@ -46,16 +48,33 @@ export class Attendance extends Id implements IAttendance {
         this.initialize(this, attendance);
     }
 
+    stamp(record: any) {
+
+    }
+
     public addRecord(record: any) {
+        if (['MEETING_ACTIVE_FALSE', 'MEETING_ACTIVE_TRUE]'].indexOf(record.status) == -1) {
+            // update with zoom meeting values
+            // these are not available for MEETING_ACTIVE_TRUE || MEETING_ACTIVE_FALSE events.
+            // We must wait a few seconds after MEETING_ACTIVE_TRUE to receive
+            // this data in the first ZoomVisibleTask event providing visibility status, etc.
+            this.zid = record.zid;
+            this.zpid = record.zpid;
+            this.uzid = record.uzid;
+            this.zuid = record.zuid;
+        }
         this.records.push(new AttendanceRecord(record));
     }
 
     // Here we check for garbage
     // attendance time > 1m
-    public isGarbage(): boolean {
+    public isValid(): boolean {
         let valid = true;
 
-        valid = valid && this.records.length > 1;   // require two records to be valid
+        valid = valid && this.records.length > 2;   // require three records to be valid
+                                                    // 1 START
+                                                    // 2 IN_MEETING STATUS
+                                                    // 3 END
 
         // @ts-ignore
         const start = DateTime.fromISO(head(this.records).timestamp);
@@ -69,6 +88,11 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public process(): boolean {
+        this.valid = this.isValid();
+        if (!this.valid) {
+            return false;
+        }
+
         this.log = [];      // be sure to clear running lists.....
         this.credit = 0;    // and counters!
 
