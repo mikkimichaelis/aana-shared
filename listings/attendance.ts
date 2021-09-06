@@ -32,7 +32,7 @@ export class Attendance extends Id implements IAttendance {
     zid: string = '';
     uzid: string = '';
     zpid: string = '';
-    zuid: string;           // Zoom User ID
+    zuid: string = '';           // Zoom User ID
 
     records: IAttendanceRecord[] = [];
     log: string[] = [];
