@@ -40,7 +40,7 @@ export class Attendance extends Id implements IAttendance {
     valid: boolean = false;
     credit: number = 0;
 
-    local: string = DateTime.now().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
+    local: string = DateTime.now().toFormat('FFF');
     timestamp: number = DateTime.now().toMillis();
 
     constructor(attendance?: any) {
@@ -81,9 +81,10 @@ export class Attendance extends Id implements IAttendance {
         const start = DateTime.fromMillis(head(this.records).timestamp);
         // @ts-ignore
         const end = DateTime.fromMillis(last(this.records).timestamp);
-        // const duration: Duration = end.diff(start); // TODO wtf wont this work
-        // valid = valid && duration.minutes > 1;  // TODO config this
 
+        // TODO wtf wont this work?
+        // const duration: Duration = end.diff(start); 
+        // valid = valid && duration.minutes > 1;  // TODO config this
         const duration = end.toMillis() - start.toMillis();
         valid = valid && duration > 60 * 1000;  // 1m - TODO config this
 
@@ -164,7 +165,7 @@ export class AttendanceRecord extends Id {
     audio: boolean = true;
     loud: boolean = true;
 
-    local: string = DateTime.local().toLocaleString(DateTime.TIME_WITH_SHORT_OFFSET);
+    local: string = DateTime.now().toFormat('ttt');
     timestamp: number = DateTime.now().toMillis();
 
     constructor(attendanceRecord?: any) {
