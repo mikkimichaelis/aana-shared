@@ -106,12 +106,12 @@ export class Attendance extends Id implements IAttendance {
             let log = ``;
             if (r.status === 'MEETING_ACTIVE_TRUE') {
                 period_start = r.timestamp;
-                this.log.push(`*PERIOD START ${r.local}`)
+                this.log.push(`${r.local} START`)
             } else if (r.status === 'MEETING_ACTIVE_FALSE') {
                 if (period_start) {
                     const duration = Duration.fromMillis(r.timestamp - period_start);
                     this.credit = this.credit + duration.toMillis();
-                    this.log.push(`*PERIOD END ${duration.toFormat('hh:mm:ss')} ${r.local}`);
+                    this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')} duration`);
                 }
                 period_start = null;
             } else {
@@ -130,14 +130,14 @@ export class Attendance extends Id implements IAttendance {
                 if (log === '') {
                     if (!period_start) {
                         period_start = r.timestamp;
-                        this.log.push(`*PERIOD START ${r.local}`)
+                        this.log.push(`${r.local} START`)
                     }
                 } else {
                     if (period_start) {
                         // end existing period
                         const duration = Duration.fromMillis(r.timestamp - period_start);
                         this.credit = this.credit + duration.toMillis();
-                        this.log.push(`*PERIOD END ${duration.toFormat('hh:mm:ss')} ${r.local} ${log}`);
+                        this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')} duration`);
                         period_start = null;
                     } 
                 }
