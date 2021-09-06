@@ -67,7 +67,8 @@ export class Attendance extends Id implements IAttendance {
     }
 
     // Here we check for garbage
-    // attendance time > 1m
+    // the garbage seems to be the time spent in the waiting room
+    // 
     public isValid(): boolean {
         let valid = true;
 
@@ -77,12 +78,14 @@ export class Attendance extends Id implements IAttendance {
                                                     // 3 END
 
         // @ts-ignore
-        const start = DateTime.fromISO(head(this.records).timestamp);
+        const start = DateTime.fromMillis(head(this.records).timestamp);
         // @ts-ignore
-        const end = DateTime.fromISO(last(this.records).timestamp);
-        const duration: Duration = end.diff(start);
+        const end = DateTime.fromMillis(last(this.records).timestamp);
+        // const duration: Duration = end.diff(start); // TODO wtf wont this work
+        // valid = valid && duration.minutes > 1;  // TODO config this
 
-        valid = valid && duration.minutes > 1;
+        const duration = end.toMillis() - start.toMillis();
+        valid = valid && duration > 60 * 1000;  // 1m - TODO config this
 
         return valid;
     }
