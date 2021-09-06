@@ -17,7 +17,7 @@ export interface IAttendance extends IId {
     valid: boolean;
     credit: number;         // millis of attendance
 
-    local: string;          // Local pretty date
+    created: string;        // UTC created
     timestamp: number;      // UTC Millis
 
     isValid(): boolean;
@@ -40,8 +40,7 @@ export class Attendance extends Id implements IAttendance {
     valid: boolean = false;
     credit: number = 0;
 
-    local: string = DateTime.now().toFormat('FFF');
-    created: number = DateTime.now().toMillis();
+    created: string = DateTime.now().toUTC().toFormat('FFF');
     timestamp: number = DateTime.now().toMillis();
 
     constructor(attendance?: any) {
