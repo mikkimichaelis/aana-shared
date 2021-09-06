@@ -22,7 +22,7 @@ export interface IAttendance extends IId {
     isGarbage(): boolean;
     process(): boolean;
 
-    addRecord(record: any);
+    addRecord(record: any): void;
 }
 
 export class Attendance extends Id implements IAttendance {
@@ -74,7 +74,7 @@ export class Attendance extends Id implements IAttendance {
 
         // here we create a log entry for each period (intended for support viewing)
         // a period is the time between validity changes
-        let period_start: number = null;
+        let period_start: any = null;
         this.records.forEach((r, index) => {
             let log = ``;
             if (r.status === 'MEETING_ACTIVE_TRUE') {
