@@ -147,7 +147,7 @@ export class Attendance extends Id implements IAttendance {
                 }
             }
         });
-        this.log.push(`${DateTime.fromMillis(this.timestamp).toUTC().toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
+        this.log.push(`${DateTime.fromMillis(this.timestamp).toUTC().toFormat('FFF')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
         return true;
     }
 }
