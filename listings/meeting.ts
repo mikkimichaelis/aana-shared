@@ -607,7 +607,7 @@ export class Meeting extends Id implements IMeeting {
 
         // save original size of window
         // here is the bug!  (diff < 0) === true!
-        const diff = end.diff(start);   // save start-end diff so we know where to put end (if on a different day)
+        // const diff = end.diff(start);   // save start-end diff so we know where to put end (if on a different day)
 
 
         // TODO MIDNIGHT-BUG chased damn midnight bug to here and then the clock struck 1 and it's gone
