@@ -2,7 +2,6 @@ import { head, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { Id, IId } from '../models/id.class';
 
-
 export interface IAttendance extends IId {
     uid: string;            // User.id
     mid: string;            // Meeting.id
@@ -20,7 +19,7 @@ export interface IAttendance extends IId {
 
     start: number;          // local utc millis when participation started
     start$: string;         // ISO string in timezone
-                            // $ meant String in BASIC long before it meant Observable.....
+    // $ meant String in BASIC long before it meant Observable.....
     end: number;            // local utc millis when participation ended
     end$: string;
 
@@ -39,7 +38,7 @@ export interface IAttendance extends IId {
     created: number;        // server utc millis created
 
     isValid(): boolean;
-    process(): boolean;
+    process(): Promise<boolean>; // returns success
 
     addRecord(record: any): void;
 }
@@ -77,34 +76,34 @@ export class Attendance extends Id implements IAttendance {
     zid: string = '';
     uzid: string = '';
     zpid: string = '';
-    zuid: string = '';           // Zoom User ID
+    zuid: string = '';
 
     records: IAttendanceRecord[] = [];
     log: string[] = [];
 
-    timezone: string = DateTime.now().zoneName;  
+    timezone: string = DateTime.now().zoneName;
 
     start: number = DateTime.now().toMillis();                  // client populated millis
-    start$: string= DateTime.now().toUTC().toFormat('FFF');     // client populated local tz datetime string
+    start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
-    end: number = null;             // server populated millis
-    end$: string = null;            // server populated local tz datetime string
+    end: number = <any>null;            // server populated millis
+    end$: string = <any>null;           // server populated local tz datetime string
 
-    duration: number = 0;           // server populated millis
-    duration$: string = '00:00:00'; // server populated string
+    duration: number = 0;               // server populated millis
+    duration$: string = '00:00:00';     // server populated string
 
-    credit: number = 0;             // server populated millis
-    credit$: string = "0";          // server populated hh:mm:ss string
+    credit: number = 0;                 // server populated millis
+    credit$: string = "0";              // server populated hh:mm:ss string
 
-    processed: number = null;       // server populated millis
-    processed$: string = null;      // server populated local tz datetime string
+    processed: number = <any>null;      // server populated millis
+    processed$: string = <any>null;     // server populated local tz datetime string
 
-    updated: number = null;         // server populated millis
-    updated$: string = null;        // server populated local tz datetime string
+    updated: number = <any>null;        // server populated millis
+    updated$: string = <any>null;       // server populated local tz datetime string
 
-    created: number = null;         // server populated millis
+    created: number = <any>null;        // server populated millis
 
-    valid: boolean = false;         // server populated
+    valid: boolean = false;             // server populated
 
     constructor(attendance?: any) {
         super(attendance);
@@ -145,9 +144,9 @@ export class Attendance extends Id implements IAttendance {
         let valid = true;
 
         valid = valid && this.records.length > 2;   // require three records to be valid
-                                                    // 1 START
-                                                    // 2 IN_MEETING STATUS
-                                                    // 3 END
+        // 1 START
+        // 2 IN_MEETING STATUS
+        // 3 END
 
         // @ts-ignore
         const start = DateTime.fromMillis(head(this.records).timestamp);
@@ -163,64 +162,71 @@ export class Attendance extends Id implements IAttendance {
         return valid;
     }
 
-    public process(): boolean {
-        this.updated = DateTime.now().toMillis();
+    public async process(): Promise<boolean> {
+        // @ts-ignore
+        return new Promise<boolean>(async (resolve, reject) => {
+            // try {
+                this.updated = DateTime.now().toMillis();
 
-        this.valid = this.isValid();
-        if (!this.valid) {
-            return false;
-        }
-
-        this.log = [];      // be sure to clear running lists.....
-        this.credit = 0;    // and counters!
-
-        // here we create a log entry for each period (intended for support viewing)
-        // a period is the time between validity changes
-        let period_start: any = null;
-        this.records.forEach((r, index) => {
-            let log = ``;
-            if (r.status === 'MEETING_ACTIVE_TRUE') {
-                period_start = r.timestamp;
-                this.log.push(`${r.local} START`)
-            } else if (r.status === 'MEETING_ACTIVE_FALSE') {
-                if (period_start) {
-                    const duration = Duration.fromMillis(r.timestamp - period_start);
-                    this.credit = this.credit + duration.toMillis();
-                    this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')} duration`);
-                }
-                period_start = null;
-            } else {
-                if (!r.visible) {
-                    log = log + '!VISIBLE ';
+                this.valid = this.isValid();
+                if (!this.valid) {
+                    return false;
                 }
 
-                if (!r.audio) {
-                    log = log + '!AUDIO ';
-                }
+                this.log = [];      // be sure to clear running lists.....
+                this.credit = 0;    // and counters!
 
-                if (r.volume < .4) {
-                    log = log + '!VOLUME ';
-                }
-
-                if (log === '') {
-                    if (!period_start) {
+                // here we create a log entry for each period (intended for support viewing)
+                // a period is the time between validity changes
+                let period_start: any = null;
+                this.records.forEach((r, index) => {
+                    let log = ``;
+                    if (r.status === 'MEETING_ACTIVE_TRUE') {
                         period_start = r.timestamp;
                         this.log.push(`${r.local} START`)
-                    }
-                } else {
-                    if (period_start) {
-                        // end existing period
-                        const duration = Duration.fromMillis(r.timestamp - period_start);
-                        this.credit = this.credit + duration.toMillis();
-                        this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')} duration`);
+                    } else if (r.status === 'MEETING_ACTIVE_FALSE') {
+                        if (period_start) {
+                            const duration = Duration.fromMillis(r.timestamp - period_start);
+                            this.credit = this.credit + duration.toMillis();
+                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')} duration`);
+                        }
                         period_start = null;
-                    } 
-                }
-            }
-        });
-        this.processed = DateTime.now().toMillis()
-        this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
-        return true;
+                    } else {
+                        if (!r.visible) {
+                            log = log + '!VISIBLE ';
+                        }
+
+                        if (!r.audio) {
+                            log = log + '!AUDIO ';
+                        }
+
+                        if (r.volume < .4) {
+                            log = log + '!VOLUME ';
+                        }
+
+                        if (log === '') {
+                            if (!period_start) {
+                                period_start = r.timestamp;
+                                this.log.push(`${r.local} START`)
+                            }
+                        } else {
+                            if (period_start) {
+                                // end existing period
+                                const duration = Duration.fromMillis(r.timestamp - period_start);
+                                this.credit = this.credit + duration.toMillis();
+                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')} duration`);
+                                period_start = null;
+                            }
+                        }
+                    }
+                });
+
+                this.update();
+                this.processed = DateTime.now().toMillis()
+                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
+                // Add digital signature
+                
+                resolve(true);
+        })
     }
 }
-
