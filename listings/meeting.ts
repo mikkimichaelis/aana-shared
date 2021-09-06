@@ -100,7 +100,7 @@ export class Meeting extends Id implements IMeeting {
                                                                                         // positive value means 'starts in'
             }
         }
-        if (this._tminus === 0) debugger;
+        // if (this._tminus === 0) debugger;
         return this._tminus;
     }
 
