@@ -12,18 +12,63 @@ export interface IAttendance extends IId {
     zuid: string;           // Zoom User ID
 
     records: IAttendanceRecord[];
-    log: string[];          // verbose record of attendanceRecords
+    log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
     valid: boolean;
-    credit: number;         // millis of attendance
 
-    created: string;        // UTC created
-    timestamp: number;      // UTC Millis
+    timezone: string;       // tz of user at time of attendance
+
+    start: number;          // local utc millis when participation started
+    start$: string;         // ISO string in timezone
+                            // $ meant String in BASIC long before it meant Observable.....
+    end: number;            // local utc millis when participation ended
+    end$: string;
+
+    duration: number;       // millis end - start
+    duration$: string;
+
+    credit: number;         // millis valid amount of duration credited for attendance (see log)
+    credit$: string;        // hh:mm:ss
+
+    processed: number;      // server utc millis processed or null
+    processed$: string;
+
+    updated: number;        // server utc millis last updated
+    updated$: string;
+
+    created: number;        // server utc millis created
 
     isValid(): boolean;
     process(): boolean;
 
     addRecord(record: any): void;
+}
+
+export interface IAttendanceRecord extends IId {
+    status: string;     // [Zoom.MeetingStatus] || ['MEETING_ACTIVE_TRUE', 'MEETING_ACTIVE_FALSE']
+    visible: boolean;   // Video Activity visible
+    volume: number;     // device call volume (not media!)
+    audio: boolean;     // Zoom audio connected
+    loud: boolean;      // speakerphone
+
+    local: string;      // local time string
+    timestamp: number;  // UTC Millis from device
+}
+
+export class AttendanceRecord extends Id {
+    status: string = '';        // client populated
+    visible: boolean = true;    // client populated
+    volume: number = 0;         // client populated
+    audio: boolean = true;      // client populated
+    loud: boolean = true;       // client populated
+
+    local: string = DateTime.now().toFormat('ttt');
+    timestamp: number = DateTime.now().toMillis();
+
+    constructor(attendanceRecord?: any) {
+        super(attendanceRecord);
+        this.initialize(this, attendanceRecord);
+    }
 }
 
 export class Attendance extends Id implements IAttendance {
@@ -37,15 +82,42 @@ export class Attendance extends Id implements IAttendance {
     records: IAttendanceRecord[] = [];
     log: string[] = [];
 
-    valid: boolean = false;
-    credit: number = 0;
+    timezone: string = DateTime.now().zoneName;  
 
-    created: string = DateTime.now().toUTC().toFormat('FFF');
-    timestamp: number = DateTime.now().toMillis();
+    start: number = DateTime.now().toMillis();                  // client populated millis
+    start$: string= DateTime.now().toUTC().toFormat('FFF');     // client populated local tz datetime string
+
+    end: number = null;             // server populated millis
+    end$: string = null;            // server populated local tz datetime string
+
+    duration: number = 0;           // server populated millis
+    duration$: string = '00:00:00'; // server populated string
+
+    credit: number = 0;             // server populated millis
+    credit$: string = "0";          // server populated hh:mm:ss string
+
+    processed: number = null;       // server populated millis
+    processed$: string = null;      // server populated local tz datetime string
+
+    updated: number = null;         // server populated millis
+    updated$: string = null;        // server populated local tz datetime string
+
+    created: number = null;         // server populated millis
+
+    valid: boolean = false;         // server populated
 
     constructor(attendance?: any) {
         super(attendance);
         this.initialize(this, attendance);
+    }
+
+    private update() {
+        this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
+        this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
+        this.duration$ = DateTime.fromMillis(this.duration).setZone(this.timezone).toFormat('FFF');
+        this.credit$ = DateTime.fromMillis(this.credit).setZone(this.timezone).toFormat('FFF');
+        this.processed$ = DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('FFF');
+        this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
     }
 
     stamp(record: any) {
@@ -92,7 +164,7 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public process(): boolean {
-        this.timestamp = DateTime.now().toMillis();
+        this.updated = DateTime.now().toMillis();
 
         this.valid = this.isValid();
         if (!this.valid) {
@@ -146,33 +218,9 @@ export class Attendance extends Id implements IAttendance {
                 }
             }
         });
-        this.log.push(`${DateTime.fromMillis(this.timestamp).toUTC().toFormat('FFF')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
+        this.processed = DateTime.now().toMillis()
+        this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
         return true;
     }
 }
 
-export interface IAttendanceRecord extends IId {
-    status: string;     // [Zoom.MeetingStatus] || ['MEETING_ACTIVE_TRUE', 'MEETING_ACTIVE_FALSE']
-    visible: boolean;   // Video Activity visible
-    volume: number;     // device call volume (not media!)
-    audio: boolean;     // Zoom audio connected
-    loud: boolean;      // speakerphone
-    local: string;      // local datetime string
-    timestamp: number;  // UTC Millis
-}
-
-export class AttendanceRecord extends Id {
-    status: string = '';
-    visible: boolean = true;
-    volume: number = 0;
-    audio: boolean = true;
-    loud: boolean = true;
-
-    local: string = DateTime.now().toFormat('ttt');
-    timestamp: number = DateTime.now().toMillis();
-
-    constructor(attendanceRecord?: any) {
-        super(attendanceRecord);
-        this.initialize(this, attendanceRecord);
-    }
-}
