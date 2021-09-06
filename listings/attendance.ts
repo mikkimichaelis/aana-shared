@@ -48,7 +48,9 @@ export class Attendance extends Id implements IAttendance {
 
         valid = valid && this.records.length > 1;   // require two records to be valid
 
+        // @ts-ignore
         const start = DateTime.fromISO(head(this.records).timestamp);
+        // @ts-ignore
         const end = DateTime.fromISO(last(this.records).timestamp);
         const duration: Duration = end.diff(start);
 
