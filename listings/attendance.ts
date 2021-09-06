@@ -41,6 +41,7 @@ export class Attendance extends Id implements IAttendance {
     credit: number = 0;
 
     local: string = DateTime.now().toFormat('FFF');
+    created: number = DateTime.now().toMillis();
     timestamp: number = DateTime.now().toMillis();
 
     constructor(attendance?: any) {
@@ -92,6 +93,8 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public process(): boolean {
+        this.timestamp = DateTime.now().toMillis();
+
         this.valid = this.isValid();
         if (!this.valid) {
             return false;
@@ -144,6 +147,7 @@ export class Attendance extends Id implements IAttendance {
                 }
             }
         });
+        this.log.push(`${DateTime.fromMillis(this.timestamp).toUTC().toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
         return true;
     }
 }
