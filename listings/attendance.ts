@@ -112,15 +112,17 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public update() {
+        // TODO don't really like this much at all.....
+        if (!this.created) this.created = DateTime.now().toMillis();
+
         if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
         if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
         if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
         if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
         if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
-        if (this.updated) this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
 
-        if (!this.created) this.created = DateTime.now().toMillis();            // Set created
-        this.updated = DateTime.now().toMillis();                               // Set updated
+        this.updated = DateTime.now().toMillis();     
+        this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
     }
 
     stamp(record: any) {
@@ -232,14 +234,13 @@ export class Attendance extends Id implements IAttendance {
                         }
                     }
 
-                    this.end = r.timestamp;     // will contain the last records timestamp
+                    this.end = r.timestamp;
                 });
 
-                this.update();
                 this.processed = DateTime.now().toMillis();
+                this.update();
                 this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
-                // Add digital signature
-                
+
                 resolve(true);
         })
     }
