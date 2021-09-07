@@ -87,8 +87,8 @@ export class Attendance extends Id implements IAttendance {
     start: number = DateTime.now().toMillis();                  // client populated millis
     start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
-    end: number = 0;            // server populated millis
-    end$: string = '';           // server populated local tz datetime string
+    end: number = 0;                    // server populated millis
+    end$: string = '';                  // server populated local tz datetime string
 
     duration: number = 0;               // server populated millis
     duration$: string = '00:00:00';     // server populated string
@@ -97,12 +97,12 @@ export class Attendance extends Id implements IAttendance {
     credit$: string = "00:00:00";       // server populated hh:mm:ss string
 
     processed: number = 0;              // server populated millis
-    processed$: string = '';    // server populated local tz datetime string
+    processed$: string = '';            // server populated local tz datetime string
 
-    updated: number = 0;        // server populated millis
-    updated$: string = '';       // server populated local tz datetime string
+    updated: number = 0;                // server populated millis
+    updated$: string = '';              // server populated local tz datetime string
 
-    created: number = 0;        // server populated millis
+    created: number = 0;                // server populated millis
 
     valid: boolean = false;             // server populated
 
@@ -114,10 +114,13 @@ export class Attendance extends Id implements IAttendance {
     public update() {
         if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
         if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
-        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('ttt');
-        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('ttt');
+        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
         if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('FFF');
         if (this.updated) this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
+
+        if (!this.created) this.created = DateTime.now().toMillis();            // Set created
+        this.updated = DateTime.now().toMillis();                               // Set updated
     }
 
     stamp(record: any) {
