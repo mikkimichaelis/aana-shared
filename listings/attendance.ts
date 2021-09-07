@@ -235,7 +235,7 @@ export class Attendance extends Id implements IAttendance {
 
                 this.update();
                 this.processed = DateTime.now().toMillis();
-                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${this.duration$} duration ${this.credit$}s credit`)
+                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s credit`)
                 // Add digital signature
                 
                 resolve(true);
