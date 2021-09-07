@@ -38,6 +38,7 @@ export interface IAttendance extends IId {
     created: number;        // server utc millis created
 
     isValid(): boolean;
+    update(): void;
     process(): Promise<boolean>; // returns success
 
     addRecord(record: any): void;
@@ -110,8 +111,8 @@ export class Attendance extends Id implements IAttendance {
         this.initialize(this, attendance);
     }
 
-    private update() {
-        this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
+    public update() {
+        if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
         if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
         if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('ttt');
         if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('ttt');
