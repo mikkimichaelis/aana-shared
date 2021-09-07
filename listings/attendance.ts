@@ -86,8 +86,8 @@ export class Attendance extends Id implements IAttendance {
     start: number = DateTime.now().toMillis();                  // client populated millis
     start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
-    end: number = <any>null;            // server populated millis
-    end$: string = <any>null;           // server populated local tz datetime string
+    end: number = 0;            // server populated millis
+    end$: string = '';           // server populated local tz datetime string
 
     duration: number = 0;               // server populated millis
     duration$: string = '00:00:00';     // server populated string
@@ -95,13 +95,13 @@ export class Attendance extends Id implements IAttendance {
     credit: number = 0;                 // server populated millis
     credit$: string = "00:00:00";       // server populated hh:mm:ss string
 
-    processed: number = <any>null;      // server populated millis
-    processed$: string = <any>null;     // server populated local tz datetime string
+    processed: number = 0;              // server populated millis
+    processed$: string = '';    // server populated local tz datetime string
 
-    updated: number = <any>null;        // server populated millis
-    updated$: string = <any>null;       // server populated local tz datetime string
+    updated: number = 0;        // server populated millis
+    updated$: string = '';       // server populated local tz datetime string
 
-    created: number = <any>null;        // server populated millis
+    created: number = 0;        // server populated millis
 
     valid: boolean = false;             // server populated
 
@@ -170,6 +170,8 @@ export class Attendance extends Id implements IAttendance {
 
                 this.valid = this.isValid();
                 if (!this.valid) {
+                    this.processed = DateTime.now().toMillis();
+                    this.update();
                     return false;
                 }
 
@@ -228,7 +230,7 @@ export class Attendance extends Id implements IAttendance {
                 });
 
                 this.update();
-                this.processed = DateTime.now().toMillis()
+                this.processed = DateTime.now().toMillis();
                 this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${this.duration$} duration ${this.credit$}s credit`)
                 // Add digital signature
                 
