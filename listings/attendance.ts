@@ -184,7 +184,7 @@ export class Attendance extends Id implements IAttendance {
 
                 // @ts-ignore
                 // we know records.length > 2
-                this.duration = head(this.records).timestamp - last(this.records).timestamp;
+                this.duration = last(this.records).timestamp - head(this.records).timestamp;
 
                 // here we create a log entry for each period (intended for support viewing)
                 // a period is the time between validity changes
