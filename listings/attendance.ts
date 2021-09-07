@@ -116,7 +116,7 @@ export class Attendance extends Id implements IAttendance {
         if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
         if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
         if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('FFF');
+        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
         if (this.updated) this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
 
         if (!this.created) this.created = DateTime.now().toMillis();            // Set created
