@@ -93,7 +93,7 @@ export class Attendance extends Id implements IAttendance {
     duration$: string = '00:00:00';     // server populated string
 
     credit: number = 0;                 // server populated millis
-    credit$: string = "0";              // server populated hh:mm:ss string
+    credit$: string = "00:00:00";       // server populated hh:mm:ss string
 
     processed: number = <any>null;      // server populated millis
     processed$: string = <any>null;     // server populated local tz datetime string
@@ -112,11 +112,11 @@ export class Attendance extends Id implements IAttendance {
 
     private update() {
         this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
-        this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
-        this.duration$ = DateTime.fromMillis(this.duration).setZone(this.timezone).toFormat('FFF');
-        this.credit$ = DateTime.fromMillis(this.credit).setZone(this.timezone).toFormat('FFF');
-        this.processed$ = DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('FFF');
-        this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
+        if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
+        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('ttt');
+        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('ttt');
+        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('FFF');
+        if (this.updated) this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
     }
 
     stamp(record: any) {
@@ -143,7 +143,7 @@ export class Attendance extends Id implements IAttendance {
     public isValid(): boolean {
         let valid = true;
 
-        valid = valid && this.records.length > 2;   // require three records to be valid
+        valid = valid && this.records.length > 2;   // require min three records to be valid
         // 1 START
         // 2 IN_MEETING STATUS
         // 3 END
@@ -175,6 +175,10 @@ export class Attendance extends Id implements IAttendance {
 
                 this.log = [];      // be sure to clear running lists.....
                 this.credit = 0;    // and counters!
+
+                // @ts-ignore
+                // we know records.length > 2
+                this.duration = head(this.records).timestamp - last(this.records).timestamp;
 
                 // here we create a log entry for each period (intended for support viewing)
                 // a period is the time between validity changes
@@ -219,11 +223,13 @@ export class Attendance extends Id implements IAttendance {
                             }
                         }
                     }
+
+                    this.end = r.timestamp;     // will contain the last records timestamp
                 });
 
                 this.update();
                 this.processed = DateTime.now().toMillis()
-                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${Duration.fromMillis(this.credit).toFormat('hh:mm:ss')} credit`)
+                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid} ${this.duration$} duration ${this.credit$}s credit`)
                 // Add digital signature
                 
                 resolve(true);
