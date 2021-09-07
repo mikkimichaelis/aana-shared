@@ -171,16 +171,18 @@ export class Attendance extends Id implements IAttendance {
         return new Promise<boolean>(async (resolve, reject) => {
             // try {
                 this.updated = DateTime.now().toMillis();
+                this.log = [];      // be sure to clear running lists.....
+                this.credit = 0;    // and counters!
+                this.duration = 0;
 
                 this.valid = this.isValid();
                 if (!this.valid) {
+                    // @ts-ignore
+                    this.end = last(this.records).timestamp;
                     this.processed = DateTime.now().toMillis();
                     this.update();
                     return false;
                 }
-
-                this.log = [];      // be sure to clear running lists.....
-                this.credit = 0;    // and counters!
 
                 // @ts-ignore
                 // we know records.length > 2
@@ -198,7 +200,7 @@ export class Attendance extends Id implements IAttendance {
                         if (period_start) {
                             const duration = Duration.fromMillis(r.timestamp - period_start);
                             this.credit = this.credit + duration.toMillis();
-                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')} duration`);
+                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s DURATION`);
                         }
                         period_start = null;
                     } else {
@@ -224,7 +226,7 @@ export class Attendance extends Id implements IAttendance {
                                 // end existing period
                                 const duration = Duration.fromMillis(r.timestamp - period_start);
                                 this.credit = this.credit + duration.toMillis();
-                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')} duration`);
+                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s DURATION`);
                                 period_start = null;
                             }
                         }
@@ -235,7 +237,7 @@ export class Attendance extends Id implements IAttendance {
 
                 this.update();
                 this.processed = DateTime.now().toMillis();
-                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s credit`)
+                this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
                 // Add digital signature
                 
                 resolve(true);
