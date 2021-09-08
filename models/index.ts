@@ -19,5 +19,6 @@ export * from './userMember.class';
 
 export * from '../listings/meeting';
 export * from '../listings/imeeting';
+export * from '../listings/device';
 
 
