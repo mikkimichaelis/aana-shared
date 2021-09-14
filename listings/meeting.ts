@@ -479,6 +479,7 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = [];
                 this.startTime = 0;
+                this.startTime$ = '24/7';
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = 0;
                 this.endDateTime = 0;
