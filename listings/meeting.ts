@@ -488,7 +488,7 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
-                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt');
+                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone} );
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = 0;
                 this.endDateTime = 0;
