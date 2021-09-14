@@ -70,6 +70,7 @@ export class Meeting extends Id implements IMeeting {
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time on any day 
     // this is used to search where meetings are at a specific time on any day
     startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
+    startTime$: string = '';
     endTime: number = 0;        // startTime + duration
 
     // these fields should only be populated by Weekly meetings
@@ -487,6 +488,7 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
+                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt');
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = 0;
                 this.endDateTime = 0;

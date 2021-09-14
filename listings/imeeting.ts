@@ -67,6 +67,7 @@ export interface IMeeting extends IId {
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
     // this is used to search where specificDay is any
     startTime: number;              // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
+    startTime$: string;             // 'ffff' formatted startTime in timezone
     endTime: number;                // startTime + duration
 
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time

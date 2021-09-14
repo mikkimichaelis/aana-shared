@@ -15,7 +15,7 @@ export interface IAttendance extends IId {
     user: IUser;            // Copies of user and meeting data at time of attendance
     meeting: IMeeting;      // Set server side when processed
 
-    meetingStartTime: string;
+    meetingStartTime$: string;
     meetingDuration: number;
 
     records: IAttendanceRecord[];
@@ -123,6 +123,26 @@ export class Attendance extends Id implements IAttendance {
     constructor(attendance?: any) {
         super(attendance);
         this.initialize(this, attendance);
+    }
+
+    toObject(): IAttendance {
+        // list properties that are static or computed (not serialized into the database)
+        const exclude: string[] = [];
+        // [   'tMinus', '_tminus', 
+        //                     'endsIn', '_endsIn', 
+        //                     'isVerified', 
+        //                     'backgroundUpdateEnabled', 
+        //                     'tags', 'tagsString',
+        //                     'meetingTypesString', 
+        //                     'meetingSub', 'weekdays', 'weekday', 
+        //                     'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal', 
+        //                     'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
+
+                            // updateDayTime(): void;
+                            // updateTags(): void;
+                            // isHome(user: User): boolean;       // TODO remove
+
+        return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
     public update() {
