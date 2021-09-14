@@ -157,6 +157,7 @@ export class Meeting extends Id implements IMeeting {
 
     private _daytimeString?: string | null = null;
     get daytimeString(): string | null {
+        // TODO https://moment.github.io/luxon/api-docs/index.html#datetimetorelativecalendar
         if (isNil(this._daytimeString)) {
             const nowMeridiem = DateTime.now().toFormat('a');
             const past = DateTime.now() > <any>this.nextTimeEnd;

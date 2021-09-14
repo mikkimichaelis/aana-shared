@@ -15,6 +15,9 @@ export interface IAttendance extends IId {
     user: IUser;            // Copies of user and meeting data at time of attendance
     meeting: IMeeting;      // Set server side when processed
 
+    meetingStartTime: string;
+    meetingDuration: number;
+
     records: IAttendanceRecord[];
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
@@ -92,7 +95,10 @@ export class Attendance extends Id implements IAttendance {
 
     timezone: string = DateTime.now().zoneName;
 
-    start: number = DateTime.local().toMillis();                  // client populated millis
+    meetingStartTime$: string = '';
+    meetingDuration: number = 0;
+    
+    start: number = DateTime.local().toMillis();                // client populated millis
     start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
     end: number = 0;                    // server populated millis
