@@ -498,6 +498,7 @@ export class Meeting extends Id implements IMeeting {
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
                 this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
                 this.startDateTime = <any>Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
+                this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone} );
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = 0;
                 this.endTime = 0;
