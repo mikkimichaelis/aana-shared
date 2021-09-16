@@ -61,14 +61,35 @@ export interface IAttendanceRecord extends IId {
 
     local: string;      // local time string
     timestamp: number;  // UTC Millis from device
+
+    userCount: number,
+    password: string ,
+    inWaitingRoom: boolean,
+    unmuteSelfAllowed: boolean,
+    isMyAudioMuted: boolean,
+    canUnmuteMyVideo: boolean,
+    isMyVideoMuted: boolean,
+    isSpotlight: boolean,
+    getPinnedUser: number,
+    activeVideoUserID: number
 }
 
 export class AttendanceRecord extends Id {
-    status: string = '';        // client populated
-    visible: boolean = true;    // client populated
-    volume: number = 0;         // client populated
-    audio: boolean = true;      // client populated
-    loud: boolean = true;       // client populated
+    status: string = null;        // client populated
+    visible: boolean = null;    // client populated
+    volume: number = null;         // client populated
+    audio: boolean = null;      // client populated
+    loud: boolean = null;       // client populated
+    userCount: number = 0;
+    password: string = null;
+    inWaitingRoom: boolean = null;
+    unmuteSelfAllowed: boolean = null;
+    isMyAudioMuted: boolean = null;
+    canUnmuteMyVideo: boolean = null;
+    isMyVideoMuted: boolean = null;
+    isSpotlight: boolean = null;
+    getPinnedUser: number = null;
+    activeVideoUserID: number = null;
 
     local: string = DateTime.now().toFormat('ttt');
     timestamp: number = DateTime.now().toMillis();
