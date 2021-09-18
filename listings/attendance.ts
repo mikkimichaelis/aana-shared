@@ -99,12 +99,12 @@ export class AttendanceRecord extends Id {
 }
 
 export class Attendance extends Id implements IAttendance {
-    uid: string = null;
-    mid: string = null;
-    zid: string = null;
-    uzid: string = null;
-    zpid: string = null;
-    zuid: string = null;
+    uid: string = <any>null;
+    mid: string = <any>null;
+    zid: string = <any>null;
+    uzid: string = <any>null;
+    zpid: string = <any>null;
+    zuid: string = <any>null;
 
     user: IUser = <any>null;
     meeting: IMeeting = <any>null;
@@ -114,28 +114,28 @@ export class Attendance extends Id implements IAttendance {
 
     timezone: string = DateTime.now().zoneName;
 
-    meetingStartTime$: string = null;
-    meetingDuration$: string = null;
+    meetingStartTime$: string = <any>null;
+    meetingDuration$: string = <any>null;
     
     start: number = DateTime.local().toMillis();                // client populated millis
     start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
-    end: number = null;                     // server populated millis
-    end$: string = null;                    // server populated local tz datetime string
+    end: number = <any>null;                     // server populated millis
+    end$: string = <any>null;                    // server populated local tz datetime string
 
-    duration: number = null;                // server populated millis
-    duration$: string = null;               // server populated string
+    duration: number = <any>null;                // server populated millis
+    duration$: string = <any>null;               // server populated string
 
-    credit: number = null;                  // server populated millis
-    credit$: string = null;                 // server populated hh:mm:ss string
+    credit: number = <any>null;                  // server populated millis
+    credit$: string = <any>null;                 // server populated hh:mm:ss string
 
-    processed: number = null;               // server populated millis
-    processed$: string = null;              // server populated local tz datetime string
+    processed: number = <any>null;               // server populated millis
+    processed$: string = <any>null;              // server populated local tz datetime string
 
-    updated: number = null;                 // server populated millis
-    updated$: string = null;                // server populated local tz datetime string
+    updated: number = <any>null;                 // server populated millis
+    updated$: string = <any>null;                // server populated local tz datetime string
 
-    created: number = null;                 // server populated millis
+    created: number = <any>null;                 // server populated millis
 
     valid: boolean = false;                 // server populated
 
