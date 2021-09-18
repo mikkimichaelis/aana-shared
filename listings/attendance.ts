@@ -1,4 +1,4 @@
-import { head, last } from 'lodash';
+import { head, isNil, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
@@ -149,18 +149,14 @@ export class Attendance extends Id implements IAttendance {
         // TODO don't really like this much at all.....
         if (!this.created) this.created = DateTime.now().toMillis();
 
-        if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
-        if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
-        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
+        if (!isNil(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
+        if (!isNil(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
+        if (!isNil(this.duration)) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (!isNil(this.credit)) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+        if (!isNil(this.processed)) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
-    }
-
-    stamp(record: any) {
-
     }
 
     public addRecord(record: any) {
