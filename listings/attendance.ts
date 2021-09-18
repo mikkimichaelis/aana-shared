@@ -73,21 +73,21 @@ export interface IAttendanceRecord extends IId {
 }
 
 export class AttendanceRecord extends Id {
-    status: string = null;        // client populated
-    visible: boolean = null;    // client populated
-    volume: number = null;         // client populated
-    audio: boolean = null;      // client populated
-    loud: boolean = null;       // client populated
+    status: string = <any>null;        // client populated
+    visible: boolean = <any>null;    // client populated
+    volume: number = <any>null;         // client populated
+    audio: boolean = <any>null;      // client populated
+    loud: boolean = <any>null;       // client populated
     userCount: number = 0;
-    password: string = null;
-    inWaitingRoom: boolean = null;
-    unmuteSelfAllowed: boolean = null;
-    isMyAudioMuted: boolean = null;
-    canUnmuteMyVideo: boolean = null;
-    isMyVideoMuted: boolean = null;
-    isSpotlight: boolean = null;
-    getPinnedUser: number = null;
-    activeVideoUserID: number = null;
+    password: string = <any>null;
+    inWaitingRoom: boolean = <any>null;
+    unmuteSelfAllowed: boolean = <any>null;
+    isMyAudioMuted: boolean = <any>null;
+    canUnmuteMyVideo: boolean = <any>null;
+    isMyVideoMuted: boolean = <any>null;
+    isSpotlight: boolean = <any>null;
+    getPinnedUser: number = <any>null;
+    activeVideoUserID: number = <any>null;
 
     local: string = DateTime.now().toFormat('ttt');
     timestamp: number = DateTime.now().toMillis();
@@ -165,8 +165,9 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public update() {
-        // TODO don't really like this much at all.....
-        if (!this.created) this.created = DateTime.now().toMillis();
+        // TODO don't really like this much at all.....could move all this into setters to auto update the strings
+        
+        if (isNil(this.created)) this.created = DateTime.now().toMillis();
 
         if (!isNil(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
         if (!isNil(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
@@ -204,15 +205,15 @@ export class Attendance extends Id implements IAttendance {
         // 3 END
 
         // @ts-ignore
-        const start = DateTime.fromMillis(head(this.records).timestamp);
+        // const start = DateTime.fromMillis(head(this.records).timestamp);
         // @ts-ignore
-        const end = DateTime.fromMillis(last(this.records).timestamp);
+        // const end = DateTime.fromMillis(last(this.records).timestamp);
 
         // TODO wtf wont this work?
         // const duration: Duration = end.diff(start); 
         // valid = valid && duration.minutes > 1;  // TODO config this
-        const duration = end.toMillis() - start.toMillis();
-        valid = valid && duration >= 60 * 1000;  // 1m - TODO config this
+        // const duration = end.toMillis() - start.toMillis();
+        // valid = valid && duration >= 60 * 1000;  // 1m - TODO config this
 
         return valid;
     }
