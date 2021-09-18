@@ -3,7 +3,6 @@ import { DateTime, Duration } from 'luxon';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
-
 export interface IAttendance extends IId {
     uid: string;            // User.id
     mid: string;            // Meeting.id
@@ -18,7 +17,6 @@ export interface IAttendance extends IId {
     meetingStartTime$: string;
     meetingDuration$: string;
 
-    records: IAttendanceRecord[];
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
     valid: boolean;
@@ -101,12 +99,12 @@ export class AttendanceRecord extends Id {
 }
 
 export class Attendance extends Id implements IAttendance {
-    uid: string = '';
-    mid: string = '';
-    zid: string = '';
-    uzid: string = '';
-    zpid: string = '';
-    zuid: string = '';
+    uid: string = null;
+    mid: string = null;
+    zid: string = null;
+    uzid: string = null;
+    zpid: string = null;
+    zuid: string = null;
 
     user: IUser = <any>null;
     meeting: IMeeting = <any>null;
@@ -116,30 +114,30 @@ export class Attendance extends Id implements IAttendance {
 
     timezone: string = DateTime.now().zoneName;
 
-    meetingStartTime$: string = '';
-    meetingDuration$: string = '00:00:00';
+    meetingStartTime$: string = null;
+    meetingDuration$: string = null;
     
     start: number = DateTime.local().toMillis();                // client populated millis
     start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
 
-    end: number = 0;                    // server populated millis
-    end$: string = '';                  // server populated local tz datetime string
+    end: number = null;                     // server populated millis
+    end$: string = null;                    // server populated local tz datetime string
 
-    duration: number = 0;               // server populated millis
-    duration$: string = '00:00:00';     // server populated string
+    duration: number = null;                // server populated millis
+    duration$: string = null;               // server populated string
 
-    credit: number = 0;                 // server populated millis
-    credit$: string = "00:00:00";       // server populated hh:mm:ss string
+    credit: number = null;                  // server populated millis
+    credit$: string = null;                 // server populated hh:mm:ss string
 
-    processed: number = 0;              // server populated millis
-    processed$: string = '';            // server populated local tz datetime string
+    processed: number = null;               // server populated millis
+    processed$: string = null;              // server populated local tz datetime string
 
-    updated: number = 0;                // server populated millis
-    updated$: string = '';              // server populated local tz datetime string
+    updated: number = null;                 // server populated millis
+    updated$: string = null;                // server populated local tz datetime string
 
-    created: number = 0;                // server populated millis
+    created: number = null;                 // server populated millis
 
-    valid: boolean = false;             // server populated
+    valid: boolean = false;                 // server populated
 
     constructor(attendance?: any) {
         super(attendance);
