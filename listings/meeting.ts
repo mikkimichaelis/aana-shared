@@ -109,7 +109,7 @@ export class Meeting extends Id implements IMeeting {
     get endsIn(): number {    // TODO make Duration
         if (isNil(this._endsIn)) {
             if (this.continuous) {
-                this._endsIn = null;
+                this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
                 if (this.recurrence.type === 'Daily') {
                     const now = Meeting.makeThat70sTime().toMillis();
