@@ -568,7 +568,7 @@ export class Meeting extends Id implements IMeeting {
             // console.log(dt.toISO());
             return dt;
         } catch (error) {
-            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
@@ -586,7 +586,7 @@ export class Meeting extends Id implements IMeeting {
                 zone: timezone,
             });
         } catch (error) {
-            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
