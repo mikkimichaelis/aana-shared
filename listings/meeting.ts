@@ -109,7 +109,7 @@ export class Meeting extends Id implements IMeeting {
     get endsIn(): number {    // TODO make Duration
         if (isNil(this._endsIn)) {
             if (this.continuous) {
-                this._endsIn = null;
+                this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
                 if (this.recurrence.type === 'Daily') {
                     const now = Meeting.makeThat70sTime().toMillis();
@@ -568,7 +568,7 @@ export class Meeting extends Id implements IMeeting {
             // console.log(dt.toISO());
             return dt;
         } catch (error) {
-            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
@@ -586,7 +586,7 @@ export class Meeting extends Id implements IMeeting {
                 zone: timezone,
             });
         } catch (error) {
-            console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
