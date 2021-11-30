@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { SpecificDay } from '../listings/search-settings';
+import { SpecificDay } from '../../app/classes/search-settings';
 import { IMeeting } from './imeeting';
 // import { environment } from 'src/environments/environment';
 export class Meeting extends Id implements IMeeting {
@@ -598,13 +598,13 @@ export class Meeting extends Id implements IMeeting {
             weekday);
     }
 
-    // TODO wtf?
+    // Move this search into the appropriate specific weekday of 1/1/1970
     static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime } {
         // get weekday to move this search to
         weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
 
         // midnight indicates start happens on previous day
-        const midnight = start.weekday != weekday;
+        const midnight = start.weekday != end.weekday;
 
         // align weekday into 70's dow
         // @ts-ignore
