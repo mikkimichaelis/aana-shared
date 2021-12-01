@@ -30,6 +30,7 @@ export class Device extends Id implements IDevice {
     updated: number = 0;                // server populated millis
     updated$: string = '';              // server populated local tz datetime string
     
+    // Device values
     cordova: any = null;
     model: any = null;
     platform: any = null;
@@ -38,6 +39,18 @@ export class Device extends Id implements IDevice {
     manufacturer: any = null;
     isVirtual: any = null;
     serial: any = null;
+
+    // Browser values
+    appCodeName: any = null;
+    appName: any = null;
+    appVersion: any = null;
+    language: any = null;
+    // platform: any = null;
+    product: any = null;
+    productSub: any = null;
+    userAgent: any = null;
+    vendor: any = null;
+    vendorSub: any = null;
 
     constructor(device?: any) {
         super(device);
