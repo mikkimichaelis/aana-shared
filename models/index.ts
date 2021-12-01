@@ -17,6 +17,10 @@ export * from './userFavorite.class';
 export * from './userFriend.class';
 export * from './userMember.class';
 
+export * from './user-settings';
+export * from './system-settings';
+export * from './search-settings';
+
 export * from '../listings/meeting';
 export * from '../listings/imeeting';
 export * from '../listings/device';
