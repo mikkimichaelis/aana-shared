@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
-import { SpecificDay } from '../../app/classes/search-settings';
+import { SpecificDay } from '../models/search-settings';
 import { IMeeting } from './imeeting';
 // import { environment } from 'src/environments/environment';
 export class Meeting extends Id implements IMeeting {
