@@ -34,14 +34,12 @@ export interface IDevice extends IId {
 }
 
 export class Device extends Id implements IDevice {
-    id: string = '';                    // device.uuid
-    
     timezone: string = DateTime.now().zoneName;
     created: number = DateTime.now().toMillis();                // server populated millis
     created$: string = DateTime.now().toISO();
     updated: number = 0;                // server populated millis
     updated$: string = '';              // server populated local tz datetime string
-    
+
     cordova: any = null;
     model: any = null;
     platform: any = null;
@@ -65,7 +63,9 @@ export class Device extends Id implements IDevice {
     constructor(device?: any) {
         super(device);
         this.initialize(this, device);
-        this.id = device.uuid;
+        if (device.uuid) {
+            this.id = device.uuid;
+        }
     }
 
     public update(): IDevice {
