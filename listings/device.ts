@@ -34,7 +34,7 @@ export interface IDevice extends IId {
 }
 
 export class Device extends Id implements IDevice {
-    timezone: string = DateTime.now().zoneName;
+    timezone: string = DateTime.now().zoneName;                 // server populated......TODO fix this
     created: number = DateTime.now().toMillis();                // server populated millis
     created$: string = DateTime.now().toISO();
     updated: number = 0;                // server populated millis

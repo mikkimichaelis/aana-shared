@@ -12,7 +12,7 @@ export interface ISystemSettings {
 export class SystemSettings extends SettingsBase implements ISystemSettings {
     // Default Values
     version = 0;                // This is the version of these settings
-    app_version = null;         // set app_version value of this build in SettingsService 
+    app_version = <any>null;    // set app_version value of this build in SettingsService 
                                 // can't import version.js here, we are a shared lib
     first_run = true;
     show_slides = true;
