@@ -9,14 +9,26 @@ export interface IDevice extends IId {
     created: number;        // server utc millis created
     created$: string;
 
+    // Device values
     cordova: any;
     model: any;
-    platform: any;
     uuid: any;
     version: any;
     manufacturer: any;
     isVirtual: any;
     serial: any;
+    platform: any;          // shared in both Device and Browser
+
+    // Browser values
+    appCodeName: any;
+    appName: any;
+    appVersion: any;
+    language: any;
+    product: any;
+    productSub: any;
+    userAgent: any;
+    vendor: any
+    vendorSub: any;
 
     update(): IDevice;
 }
@@ -30,7 +42,6 @@ export class Device extends Id implements IDevice {
     updated: number = 0;                // server populated millis
     updated$: string = '';              // server populated local tz datetime string
     
-    // Device values
     cordova: any = null;
     model: any = null;
     platform: any = null;
@@ -45,7 +56,6 @@ export class Device extends Id implements IDevice {
     appName: any = null;
     appVersion: any = null;
     language: any = null;
-    // platform: any = null;
     product: any = null;
     productSub: any = null;
     userAgent: any = null;
