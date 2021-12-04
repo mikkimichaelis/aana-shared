@@ -309,8 +309,10 @@ export class Meeting extends Id implements IMeeting {
 
     public destroy() {
         this.backgroundUpdateEnabled = false
+        if (this.timeout) clearTimeout(this.timeout);
     }
 
+    timeout: any = null;
     backgroundUpdateEnabled = true;
     backgroundUpdate() {
         if (this.backgroundUpdateEnabled) {
@@ -332,9 +334,8 @@ export class Meeting extends Id implements IMeeting {
             // const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
             // const timeout = (eohh > now ? eohh : eoh) - now + random;
 
-            setTimeout(() => {
+            this.timeout = setTimeout(() => {
                 // clear cached property
-
                 this._tminus = null;
                 this._endsIn = null;
                 this._isLive = null;
