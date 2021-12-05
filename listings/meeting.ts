@@ -60,7 +60,7 @@ export class Meeting extends Id implements IMeeting {
     parent: string = '';
     recurrence: IRecurrence = new Recurrence();
     siblings: string[] = [];
-    
+
     timezone: string = "America/New_York";
     time24h: string = "00:00";
     duration: number = 60;
@@ -92,13 +92,13 @@ export class Meeting extends Id implements IMeeting {
         if (isNil(this._tminus)) {
             if (this.continuous) {
                 this._tminus = 0;
-            } 
+            }
             else if (this.isLive) {
                 this._tminus = this.endsIn * -1;    // Millis till this meeting ends
-                                                    // negative value means 'ends in'
+                // negative value means 'ends in'
             } else {
                 this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();    // Millis till this meeting ends
-                                                                                        // positive value means 'starts in'
+                // positive value means 'starts in'
             }
         }
         // if (this._tminus === 0) debugger;
@@ -233,9 +233,9 @@ export class Meeting extends Id implements IMeeting {
                 if (startDateTime > now) {
                     this._nextTime = next;
                 } else {
-                    this._nextTime = next.plus({ weeks: 1});
+                    this._nextTime = next.plus({ weeks: 1 });
                 }
-                
+
             }
         }
 
@@ -292,7 +292,9 @@ export class Meeting extends Id implements IMeeting {
         super(meeting);
         this.initialize(this, meeting);
 
-        this.backgroundUpdate();
+        this.updateCounters();
+
+        // this.backgroundUpdate();
 
         // console.log(JSON.stringify({
         //     tMinus: this.tMinus,
@@ -307,68 +309,77 @@ export class Meeting extends Id implements IMeeting {
         // }, null, 3))
     }
 
-    public destroy() {
-        this.backgroundUpdateEnabled = false
-        if (this.timeout) clearTimeout(this.timeout);
+    refresh() {
+        this._tminus = null;
+        this._endsIn = null;
+        this._isLive = null;
+        this._nextTime = null;
+        this._nextTimeEnd = null;
+        this._startTimeFormat = null;
+        this._startTimeFormatLocal = null;
+        this._startTimeString = null;
+        this._daytimeString = null;
+        this.updateCounters();
     }
 
-    timeout: any = null;
-    backgroundUpdateEnabled = true;
-    backgroundUpdate() {
-        if (this.backgroundUpdateEnabled) {
-            
-            // start by updating
-            this.updateCounters();
+    // public destroy() {
+    //     if (this.timeout) clearTimeout(this.timeout);
+    // }
 
-            // get the next 1 minute mark from now
-            const now = DateTime.local().toMillis();
-            const eom = DateTime.fromMillis(now).endOf('minute').toMillis() + 1;
-            const random = Math.floor((Math.random() * (10 - 0) + 0) * 10);
-            const timeout = eom - now + random;
+    // timeout: any = null;
+    // backgroundUpdate() {
+
+    //     // start by updating
+    //     this.updateCounters();
+
+    //     // get the next 1 minute mark from now
+    //     const now = DateTime.local().toMillis();
+    //     const eom = DateTime.fromMillis(now).endOf('minute').toMillis() + 1;
+    //     const random = Math.floor((Math.random() * (10 - 0) + 0) * 10);
+    //     const timeout = eom - now + random;
 
 
-            // get the next 30 minute mark from now
-            // const now = DateTime.local().toMillis();
-            // const eoh = DateTime.fromMillis(now).endOf('hour').toMillis() + 1;
-            // const eohh = eoh - (30 * 60 * 1000); // 30min
-            // const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
-            // const timeout = (eohh > now ? eohh : eoh) - now + random;
+    //     // get the next 30 minute mark from now
+    //     // const now = DateTime.local().toMillis();
+    //     // const eoh = DateTime.fromMillis(now).endOf('hour').toMillis() + 1;
+    //     // const eohh = eoh - (30 * 60 * 1000); // 30min
+    //     // const random = Math.floor((Math.random() * (10 - 0) + 0) * 1000);
+    //     // const timeout = (eohh > now ? eohh : eoh) - now + random;
 
-            this.timeout = setTimeout(() => {
-                // clear cached property
-                this._tminus = null;
-                this._endsIn = null;
-                this._isLive = null;
-                this._nextTime = null;
-                this._nextTimeEnd = null;
-                this._startTimeFormat = null;
-                this._startTimeFormatLocal = null;
-                this._startTimeString = null;
-                this._daytimeString = null;
+    //     this.timeout = setTimeout(() => {
+    //         // clear cached property
+    //         this._tminus = null;
+    //         this._endsIn = null;
+    //         this._isLive = null;
+    //         this._nextTime = null;
+    //         this._nextTimeEnd = null;
+    //         this._startTimeFormat = null;
+    //         this._startTimeFormatLocal = null;
+    //         this._startTimeString = null;
+    //         this._daytimeString = null;
 
-                this.updateCounters();
-                // TODO console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
+    //         this.updateCounters();
+    //         // TODO console.log(`${this.name}: isLive: ${this.isLive} nextTime: ${this.nextTime?.toISOTime()}`);
 
-                this.backgroundUpdate()
-            }, timeout);
-        }
-    }
+    //         this.backgroundUpdate()
+    //     }, timeout);
+    // }
 
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
-        const exclude = [   'tMinus', '_tminus', 
-                            'endsIn', '_endsIn', 
-                            'isVerified', 
-                            'backgroundUpdateEnabled', 
-                            'tags', 'tagsString',
-                            'meetingTypesString', 
-                            'meetingSub', 'weekdays', 'weekday', 
-                            'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal', 
-                            'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
+        const exclude = ['tMinus', '_tminus',
+            'endsIn', '_endsIn',
+            'isVerified',
+            'backgroundUpdateEnabled',
+            'tags', 'tagsString',
+            'meetingTypesString',
+            'meetingSub', 'weekdays', 'weekday',
+            'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal',
+            'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
 
-                            // updateDayTime(): void;
-                            // updateTags(): void;
-                            // isHome(user: User): boolean;       // TODO remove
+        // updateDayTime(): void;
+        // updateTags(): void;
+        // isHome(user: User): boolean;       // TODO remove
 
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
@@ -427,6 +438,7 @@ export class Meeting extends Id implements IMeeting {
         return user.homeMeeting === this.id;
     }
 
+    // TODO review all these updates...seems some of them are import updates and unnecessary here....
     public update(): Meeting {
         this.updateCounters();
         this.updateProperties();
@@ -490,7 +502,7 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
-                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone} );
+                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = 0;
                 this.endDateTime = 0;
@@ -499,7 +511,7 @@ export class Meeting extends Id implements IMeeting {
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
                 this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
                 this.startDateTime = <any>Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
-                this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone} );
+                this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = 0;
                 this.endTime = 0;
@@ -541,7 +553,7 @@ export class Meeting extends Id implements IMeeting {
                     t = time;
                     break;
                 default:
-                    // debugger;
+                // debugger;
             }
         }
 
@@ -621,7 +633,7 @@ export class Meeting extends Id implements IMeeting {
         // fix tomorrow night....
 
         // start weekday - if midnight and weekday is the 1st, roll weekday to 7th otherwise day before weekday
-        const _startWeekday = !midnight ? weekday : weekday === 1 ? 7 : weekday - 1; 
+        const _startWeekday = !midnight ? weekday : weekday === 1 ? 7 : weekday - 1;
 
 
         const _start: DateTime = start.set({ day: _startWeekday });              // set new start weekday
