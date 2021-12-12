@@ -47,7 +47,7 @@ export interface IAttendance extends IId {
     update(): void;
     process(): Promise<boolean>; // returns success
 
-    addRecord(record: any): void;
+    // addRecord(record: any): void;
 }
 
 export interface IAttendanceRecord extends IId {
@@ -179,19 +179,19 @@ export class Attendance extends Id implements IAttendance {
         this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
     }
 
-    public addRecord(record: any) {
-        if (['MEETING_ACTIVE_FALSE', 'MEETING_ACTIVE_TRUE]'].indexOf(record.status) == -1) {
-            // update with zoom meeting values
-            // these are not available for MEETING_ACTIVE_TRUE || MEETING_ACTIVE_FALSE events.
-            // We must wait a few seconds after MEETING_ACTIVE_TRUE to receive
-            // this data in the first ZoomVisibleTask event providing visibility status, etc.
-            this.zid = record.zid;
-            this.zpid = record.zpid;
-            this.uzid = record.uzid;
-            this.zuid = record.zuid;
-        }
-        this.records.push(new AttendanceRecord(record));
-    }
+    // public addRecord(record: any) {
+    //     if (['MEETING_ACTIVE_FALSE', 'MEETING_ACTIVE_TRUE]'].indexOf(record.status) == -1) {
+    //         // update with zoom meeting values
+    //         // these are not available for MEETING_ACTIVE_TRUE || MEETING_ACTIVE_FALSE events.
+    //         // We must wait a few seconds after MEETING_ACTIVE_TRUE to receive
+    //         // this data in the first ZoomVisibleTask event providing visibility status, etc.
+    //         this.zid = record.zid;
+    //         this.zpid = record.zpid;
+    //         this.uzid = record.uzid;
+    //         this.zuid = record.zuid;
+    //     }
+    //     this.records.push(new AttendanceRecord(record));
+    // }
 
     // Here we check for garbage
     // the garbage seems to be the time spent in the waiting room
