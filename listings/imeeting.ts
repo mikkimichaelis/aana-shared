@@ -96,7 +96,7 @@ export interface IMeeting extends IId {
     updateTags(): void;
 
     isHome(user: User): boolean;       // TODO remove
-    refresh();
+    refresh(): void;
 
     // destroy(): void;
 }
