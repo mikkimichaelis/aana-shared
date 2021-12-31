@@ -11,11 +11,13 @@ export interface IAttendance extends IId {
     zpid: string;           // Zoom Participant id
     zuid: string;           // Zoom User ID
 
-    user: IUser;            // Copies of user and meeting data at time of attendance
-    meeting: IMeeting;      // Set server side when processed
+    user: IUser;            // [attached] Copies of user and meeting data at time of attendance
+    meeting: IMeeting;      // [attached] Set server side when processed
 
     meetingStartTime$: string;
     meetingDuration$: string;
+
+    records: IAttendanceRecord[];   // [attached]
 
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
@@ -23,11 +25,10 @@ export interface IAttendance extends IId {
 
     timezone: string;       // tz of user at time of attendance
 
-    start: number;          // local utc millis when participation started
+    start: number;          // utc millis when participation started
     start$: string;         // ISO string in timezone
-    // $ meant String in BASIC long before it meant Observable.....
     end: number;            // local utc millis when participation ended
-    end$: string;
+    end$: string;           // ISO string in timezone
 
     duration: number;       // millis end - start
     duration$: string;
@@ -36,10 +37,10 @@ export interface IAttendance extends IId {
     credit$: string;        // hh:mm:ss
 
     processed: number;      // server utc millis processed or null
-    processed$: string;
+    processed$: string;     // ISO string in timezone
 
     updated: number;        // server utc millis last updated
-    updated$: string;
+    updated$: string;       // ISO string in UTC
 
     created: number;        // server utc millis created
 
@@ -145,21 +146,9 @@ export class Attendance extends Id implements IAttendance {
     }
 
     toObject(): IAttendance {
-        // list properties that are static or computed (not serialized into the database)
-        const exclude: string[] = [];
-        // [   'tMinus', '_tminus', 
-        //                     'endsIn', '_endsIn', 
-        //                     'isVerified', 
-        //                     'backgroundUpdateEnabled', 
-        //                     'tags', 'tagsString',
-        //                     'meetingTypesString', 
-        //                     'meetingSub', 'weekdays', 'weekday', 
-        //                     'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal', 
-        //                     'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
-
-                            // updateDayTime(): void;
-                            // updateTags(): void;
-                            // isHome(user: User): boolean;       // TODO remove
+        // list properties that are static or computed or attached and
+        // should not be serialized into the database with this document
+        const exclude: string[] = ['user', 'meeting', 'records'];
 
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
