@@ -13,6 +13,7 @@ export interface IMeeting extends IId {
     active: boolean;
     verified: boolean;
     authorized: boolean;
+    deactivated: any;
 
     verified_count: number;
     password_count: number;
