@@ -16,6 +16,7 @@ export class Meeting extends Id implements IMeeting {
     active: boolean = true;
     verified: boolean = true;
     authorized: boolean = true;
+    deactivated: string = '';
 
     verified_count: number = 0;
     password_count: number = 0;
