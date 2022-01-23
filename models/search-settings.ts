@@ -27,8 +27,10 @@ export interface ISearchSettings {
     resetIndex: boolean,
     searchType: SearchType,
 
+    // These relative are converted into bySpecificTimeRange values
     bySpecificDay: SpecificDay,		// null || SpecificDay.[any, Monday, ... today]
     byCurrentTime: boolean,
+
     bySpecificTimeRange: any,   	// null || { start: string, end: string }
 
     live: boolean,					// Include live meetings in search results
