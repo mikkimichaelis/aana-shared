@@ -9,7 +9,7 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
-import { Meeting } from '.';
+import { IMeeting, Meeting } from '.';
 
 // this data never goes to !uid
 export interface IUserProfile {
@@ -18,6 +18,17 @@ export interface IUserProfile {
     firstName: string;
     lastInitial: string;
     bday: string;
+    pronouns: string;
+    location: string;
+}
+export interface IUserPreferences {
+    pronouns: boolean;
+    pronouns_value: string;
+    location: boolean;
+    location_value: string;
+    apptag: boolean;
+    homegroup: boolean;
+    bday: boolean;
 }
 
 export class UserProfile extends Base implements IUserProfile {
@@ -26,6 +37,8 @@ export class UserProfile extends Base implements IUserProfile {
     firstName: string = 'Anonymous';
     lastInitial: string = 'A';
     bday: string = '';
+    pronouns: string = '';
+    location: string = '';
 
     // ignore provided values that don't exist on object
     // overwrite defaults with provided values
@@ -38,6 +51,7 @@ export class UserProfile extends Base implements IUserProfile {
 }
 
 export interface IUser extends IUserBase {
+    preferences: IUserPreferences,
     email: string;
     emailVerified: boolean;
     zoomUser: boolean;
@@ -55,8 +69,8 @@ export interface IUser extends IUserBase {
     chatUser: any;
     created: string;
 
-    addFavoriteMeeting(meeting: Meeting): boolean;
-    removeFavoriteMeeting(meeting: Meeting): boolean;
+    addFavoriteMeeting(meeting: IMeeting): boolean;
+    removeFavoriteMeeting(meeting: IMeeting): boolean;
 
     setUserAuthNames(displayName?: string): boolean;
     setUserNames(firstName: string, lastInitial: string): boolean;
@@ -64,6 +78,16 @@ export interface IUser extends IUserBase {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
+    preferences: IUserPreferences = {
+        pronouns: false,
+        pronouns_value: '',
+
+        location: false,
+        location_value: '',
+        apptag: true,
+        homegroup: false,
+        bday: false
+    }
     email: string = '';
     emailVerified: boolean = false;
     zoomUser: boolean = false;
@@ -153,21 +177,21 @@ export class User extends UserBase implements IUser {
     //     return rv;
     // }
 
-    public isFavoriteMeeting(meeting: Meeting): boolean {
+    public isFavoriteMeeting(meeting: IMeeting): boolean {
         const rv = -1 !== findIndex(this.favMeetings, (id => {
             return (id === meeting.id);
         }))
         return rv;
     }
 
-    public addFavoriteMeeting(meeting: Meeting): boolean {
+    public addFavoriteMeeting(meeting: IMeeting): boolean {
         if (!this.isFavoriteMeeting(meeting)) {
             this.favMeetings.push(meeting.id);
         }
         return true;
     }
 
-    public removeFavoriteMeeting(meeting: Meeting): boolean {
+    public removeFavoriteMeeting(meeting: IMeeting): boolean {
         if (this.isFavoriteMeeting(meeting)) {
             remove(this.favMeetings, (value: any, index: number, array: any) => {
                 return value === meeting.id;
@@ -178,7 +202,7 @@ export class User extends UserBase implements IUser {
 
     public setUserAuthNames(name?: string): boolean {
         const random_li = ''; // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-        const names = <string []>name?.split(' ');
+        const names = <string[]>name?.split(' ');
         this.profile.firstName = names[0];
         this.profile.lastInitial = (names.length === 1) ? random_li
             : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
