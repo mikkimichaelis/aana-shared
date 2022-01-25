@@ -80,6 +80,8 @@ export interface IMeeting extends IId {
 
     // Non serialized getter properties
     isLive: boolean | null;
+    tMinus: any;    // TODO
+    endsIn: any;
     startTimeString: string | null;
     daytimeString: string | null;
     nextTimeEnd: DateTime | null;

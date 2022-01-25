@@ -613,7 +613,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     // Move this search into the appropriate specific weekday of 1/1/1970
-    static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime } {
+    static makeThat70sWeekday(start: DateTime, end: DateTime, weekday: any): { start: DateTime, end: DateTime, _start: string, _end: string } {
         // get weekday to move this search to
         weekday = weekday !== SpecificDay.today ? weekday : DateTime.local().weekday;
 
@@ -639,7 +639,13 @@ export class Meeting extends Id implements IMeeting {
 
         const _start: DateTime = start.set({ day: _startWeekday });              // set new start weekday
         const _end: DateTime = end.set({ day: weekday }); // adjust end to new start
-        return { start: _start, end: _end };
+        return {
+            start: _start,
+            end: _end,
+            // DEBUG data
+            _start: _start.toLocaleString(DateTime.DATETIME_SHORT),
+            _end: _end.toLocaleString(DateTime.DATETIME_SHORT)
+        };
     }
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
