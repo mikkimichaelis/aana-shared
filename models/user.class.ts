@@ -55,8 +55,8 @@ export interface IUser extends IUserBase {
     chatUser: any;
     created: string;
 
-    addFavoriteMeeting(meeting: Meeting): boolean;
-    removeFavoriteMeeting(meeting: Meeting): boolean;
+    addFavoriteMeeting(mid: string): boolean;
+    removeFavoriteMeeting(mid: string): boolean;
 
     setUserAuthNames(displayName?: string): boolean;
     setUserNames(firstName: string, lastInitial: string): boolean;
@@ -153,24 +153,24 @@ export class User extends UserBase implements IUser {
     //     return rv;
     // }
 
-    public isFavoriteMeeting(meeting: Meeting): boolean {
+    public isFavoriteMeeting(mid: string): boolean {
         const rv = -1 !== findIndex(this.favMeetings, (id => {
-            return (id === meeting.id);
+            return (id === mid);
         }))
         return rv;
     }
 
-    public addFavoriteMeeting(meeting: Meeting): boolean {
-        if (!this.isFavoriteMeeting(meeting)) {
-            this.favMeetings.push(meeting.id);
+    public addFavoriteMeeting(mid: string): boolean {
+        if (!this.isFavoriteMeeting(mid)) {
+            this.favMeetings.push(mid);
         }
         return true;
     }
 
-    public removeFavoriteMeeting(meeting: Meeting): boolean {
-        if (this.isFavoriteMeeting(meeting)) {
+    public removeFavoriteMeeting(mid: string): boolean {
+        if (this.isFavoriteMeeting(mid)) {
             remove(this.favMeetings, (value: any, index: number, array: any) => {
-                return value === meeting.id;
+                return value === mid;
             });
         }
         return true;
