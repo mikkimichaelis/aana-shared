@@ -80,15 +80,14 @@ export interface IUser extends IUserBase {
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
     preferences: IUserPreferences = {
-        pronouns: false,
-        pronouns_value: '',
-
-        location: false,
-        location_value: '',
         apptag: true,
         homemeeting: false,
+        pronouns: false,
+        pronouns_value: '',
         sobriety: false,
-        sobriety_value: ''
+        sobriety_value: '',
+        location: false,
+        location_value: '',
     }
     email: string = '';
     emailVerified: boolean = false;
