@@ -27,8 +27,9 @@ export interface IUserPreferences {
     location: boolean;
     location_value: string;
     apptag: boolean;
-    homegroup: boolean;
-    bday: boolean;
+    sobriety: boolean;
+    sobriety_value: string;
+    homemeeting: boolean;
 }
 
 export class UserProfile extends Base implements IUserProfile {
@@ -85,8 +86,9 @@ export class User extends UserBase implements IUser {
         location: false,
         location_value: '',
         apptag: true,
-        homegroup: false,
-        bday: false
+        homemeeting: false,
+        sobriety: false,
+        sobriety_value: ''
     }
     email: string = '';
     emailVerified: boolean = false;
