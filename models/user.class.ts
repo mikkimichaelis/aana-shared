@@ -22,13 +22,14 @@ export interface IUserProfile {
     location: string;
 }
 export interface IUserPreferences {
+    apptag: boolean;
+    homegroup: boolean;
     pronouns: boolean;
     pronouns_value: string;
     location: boolean;
     location_value: string;
-    apptag: boolean;
-    homegroup: boolean;
-    bday: boolean;
+    sobriety: boolean;
+    sobriety_value: string;
 }
 
 export class UserProfile extends Base implements IUserProfile {
@@ -178,26 +179,29 @@ export class User extends UserBase implements IUser {
     // }
 
     public isFavoriteMeeting(mid: string): boolean {
-        const rv = -1 !== findIndex(this.favMeetings, (id => {
+        return -1 !== findIndex(this.favMeetings, (id => {
             return (id === mid);
         }))
-        return rv;
     }
 
     public addFavoriteMeeting(mid: string): boolean {
         if (!this.isFavoriteMeeting(mid)) {
             this.favMeetings.push(mid);
+            return this.isFavoriteMeeting(mid);
+        } else {
+            return false;
         }
-        return true;
     }
 
     public removeFavoriteMeeting(mid: string): boolean {
         if (this.isFavoriteMeeting(mid)) {
-            remove(this.favMeetings, (value: any, index: number, array: any) => {
+            const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
                 return value === mid;
             });
+            return !this.isFavoriteMeeting(mid);
+        } else {
+            return false;
         }
-        return true;
     }
 
     public setUserAuthNames(name?: string): boolean {
