@@ -140,7 +140,7 @@ export class Meeting extends Id implements IMeeting {
             }
 
         }
-        return this._isLive;
+        return this.continuous || this._isLive;
     }
 
     private _startTimeString?: string | null = null;
