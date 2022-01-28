@@ -28,6 +28,7 @@ export interface IUserPreferences {
     pronouns_value: string;
     sobriety: boolean;
     sobriety_value: string;
+    sobriety_days: boolean;
     location: boolean;
     location_value: string;
 }
@@ -86,6 +87,7 @@ export class User extends UserBase implements IUser {
         pronouns_value: '',
         sobriety: false,
         sobriety_value: '',
+        sobriety_days: false,
         location: false,
         location_value: '',
     }
