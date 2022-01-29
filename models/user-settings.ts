@@ -4,6 +4,8 @@ export interface IUserSettings {
     theme: string;
     darkTheme: boolean;
     useZoomApp: boolean;
+    liveSearchLanguage: boolean;
+    liveSearchType: boolean;
 }
 
 export class UserSettings extends SettingsBase implements IUserSettings {
@@ -12,6 +14,8 @@ export class UserSettings extends SettingsBase implements IUserSettings {
     theme = 'blue';
     darkTheme = true;
     useZoomApp = false;
+    liveSearchLanguage = false;
+    liveSearchType = false;
 
     constructor(settings?: IUserSettings) {
         super();
