@@ -10,8 +10,8 @@ export interface IUserSettings {
 
 export class UserSettings extends SettingsBase implements IUserSettings {
     // Default Values
-    version = 3;
-    theme = 'blue';
+    version = 4;
+    theme = 'dark-myka-marie';
     darkTheme = true;
     useZoomApp = false;
     liveSearchLanguage = false;
