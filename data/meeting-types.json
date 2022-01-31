@@ -11,9 +11,9 @@
         {
             "valid": true,
             "tx": null,
-            "code": "AB",
-            "type": "Ask-It-Basket",
-            "desc": "A topic is chosen from suggestions placed into a basket."
+            "code": "CC",
+            "type": "Closed Captioned",
+            "desc": "This meeting provides live closed captioning of the speakers audio."
         },
         {
             "valid": false,
