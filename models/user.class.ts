@@ -217,14 +217,13 @@ export class User extends UserBase implements IUser {
 
     public setUserNames(firstName: string, lastInitial: string): boolean {
         if (!firstName
-            || !lastInitial
             || firstName.length > 25
             || lastInitial.length > 25) {
             return false;
         }
         this.profile.firstName = firstName;
-        this.profile.lastInitial = lastInitial;
-        this.profile.name = `${firstName} ${lastInitial}` + (lastInitial.length === 1 ? '.' : '');
+        this.profile.lastInitial = lastInitial ? lastInitial : '';
+        this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}` + (this.profile.lastInitial.length === 1 ? '.' : '');
         this.name = this.profile.name;
         return true;
     }
