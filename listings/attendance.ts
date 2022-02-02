@@ -216,6 +216,12 @@ export class Attendance extends Id implements IAttendance {
             this.credit = 0;    // and counters!
             this.duration = 0;
 
+            this.records.sort((x,y) => {
+                if (x.timestamp < y.timestamp) return -1;
+                if (x.timestamp > y.timestamp) return 1;
+                return 0;
+            });
+
             this.valid = this.isValid();
             if (!this.valid) {
                 // @ts-ignore
