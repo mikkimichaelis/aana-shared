@@ -63,12 +63,12 @@ export interface IAttendanceRecord extends IId {
 
     userCount: number,
     password: string ,
-    inWaitingRoom: boolean,
-    unmuteSelfAllowed: boolean,
+    // inWaitingRoom: boolean,
+    // unmuteSelfAllowed: boolean,
     isMyAudioMuted: boolean,
     canUnmuteMyVideo: boolean,
     isMyVideoMuted: boolean,
-    isSpotlight: boolean,
+    // isSpotlight: boolean,
     getPinnedUser: number,
     activeVideoUserID: number
 }
