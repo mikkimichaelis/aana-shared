@@ -81,12 +81,12 @@ export class AttendanceRecord extends Id {
     loud: boolean = <any>null;       // client populated
     userCount: number = 0;
     password: string = <any>null;
-    inWaitingRoom: boolean = <any>null;
-    unmuteSelfAllowed: boolean = <any>null;
+    // inWaitingRoom: boolean = <any>null;
+    // unmuteSelfAllowed: boolean = <any>null;
     isMyAudioMuted: boolean = <any>null;
     canUnmuteMyVideo: boolean = <any>null;
     isMyVideoMuted: boolean = <any>null;
-    isSpotlight: boolean = <any>null;
+    // isSpotlight: boolean = <any>null;
     getPinnedUser: number = <any>null;
     activeVideoUserID: number = <any>null;
 
