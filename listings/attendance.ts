@@ -24,7 +24,7 @@ export interface IAttendanceRecord extends IId {
 
 export class AttendanceRecord extends Id implements IAttendanceRecord {
     aid: string = <any>null;
-    timestamp: number = <any>null;
+    timestamp: number = DateTime.now().toMillis();
     local: string = <any>null;
 
     // Zoom data
@@ -94,8 +94,8 @@ export class Attendance extends Id implements IAttendance {
     log: string[] = [];
 
     meetingStartTime$: string = <any>null;  // time meeting started
-    meetingDuration$: string = <any>null;    
-     
+    meetingDuration$: string = <any>null;
+
     start: number = DateTime.now().toMillis(); start$: string = <any>null;  // server populated millis
     end: number = <any>null; end$: string = <any>null;                      // server populated millis
     duration: number = <any>null; duration$: string = <any>null;            // server populated millis
@@ -149,7 +149,7 @@ export class Attendance extends Id implements IAttendance {
             this.credit = 0;    // and counters!
             this.duration = 0;
 
-            this.records.sort((x, y) => {
+            this.records = this.records.sort((x, y) => {
                 if (x.timestamp < y.timestamp) return -1;
                 if (x.timestamp > y.timestamp) return 1;
                 return 0;
@@ -167,25 +167,26 @@ export class Attendance extends Id implements IAttendance {
                 // here we create a log entry for each period (intended for support viewing)
                 // a period is the time between validity changes
                 let period_start: any = null;
+
                 this.records.forEach((r, index, records) => {
                     let log = ``;
                     if (r.status === 'MEETING_ACTIVE_TRUE') {
                         period_start = r.timestamp;
 
                         if (index > 0) {
-                            const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                            this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                            // const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                            // this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
                         } else {
                             this.log.push(`${r.local} START`)
                         }
                     } else if (r.status === 'MEETING_ACTIVE_FALSE') {
-                        if (period_start) {
-                            const duration = Duration.fromMillis(r.timestamp - period_start);
-                            this.credit = this.credit + duration.toMillis();
-                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                        }
+                        // if (period_start) {
+                        //     const duration = Duration.fromMillis(r.timestamp - period_start);
+                        //     this.credit = this.credit + duration.toMillis();
+                        //     this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                        // }
                         period_start = null;
-                    } else {
+                    } else if (r.status === 'MEETING_STATUS_INMEETING') {
                         if (!r.visible) {
                             log = log + '!VISIBLE ';
                         }
@@ -202,37 +203,39 @@ export class Attendance extends Id implements IAttendance {
                             if (!period_start) {
                                 period_start = r.timestamp;
 
-                                if (index > 0) {
-                                    const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                                    this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
-                                } else {
-                                    this.log.push(`${r.local} START`)
-                                }
+                                // if (index > 0) {
+                                //     const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                                //     this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                                // } else {
+                                //     this.log.push(`${r.local} START`)
+                                // }
                             } else {
-                                // this.log.push(`${r.local} UNKNOWN ${JSON.stringify(r)}`);
+                                this.log.push(`${r.local} UNKNOWN ${JSON.stringify(r)}`);
                             }
                         } else {
-                            if (period_start) {
-                                // end existing period
-                                const duration = Duration.fromMillis(r.timestamp - period_start);
-                                this.credit = this.credit + duration.toMillis();
-                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                                period_start = null;
-                            } else {
-                                // this.log.push(`${r.local} UNKNOWN ${log}: ${JSON.stringify(r)}`);
-                            }
+                            // if (period_start) {
+                            //     // end existing period
+                            //     const duration = Duration.fromMillis(r.timestamp - period_start);
+                            //     this.credit = this.credit + duration.toMillis();
+                            //     this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                            //     period_start = null;
+                            // } else {
+                            //     // this.log.push(`${r.local} UNKNOWN ${log}: ${JSON.stringify(r)}`);
+                            // }
                         }
+                    } else {
+                        throw new Error(`UNKNOWN STATUS: ${r.status}`);
                     }
 
                     this.end = r.timestamp;
                 });
+
+                // this.processed = DateTime.now().toMillis();
+                // this.update();
+                // this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
+
+                resolve(true);
             }
-
-            this.processed = DateTime.now().toMillis();
-            this.update();
-            this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
-
-            resolve(true);
         })
     }
 
