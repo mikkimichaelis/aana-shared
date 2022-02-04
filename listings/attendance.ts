@@ -77,10 +77,9 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 
     // TODO bug here...same as below
     // @ts-ignore
-    constructor(record: any, public _aid?: string) {
+    constructor(record: any) {
         super(record);
         this.initialize(this, record);
-        if (_aid) this.aid = _aid;
     }
 }
 
