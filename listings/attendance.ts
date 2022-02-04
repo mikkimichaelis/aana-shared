@@ -5,15 +5,14 @@ import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendanceRecord extends IId {
     aid: string;
+    local: string;      // client populated
+    timestamp: number;  // UTC Millis from device
+
     status: string;     // [Zoom.MeetingStatus] || ['MEETING_ACTIVE_TRUE', 'MEETING_ACTIVE_FALSE']
     visible: boolean;   // Video Activity visible
     volume: number;     // device call volume (not media!)
     audio: boolean;     // Zoom audio connected
     loud: boolean;      // speakerphone
-
-    local: string;      // client populated
-    timestamp: number;  // UTC Millis from device
-
     userCount: number,
     password: string,
     isMyAudioMuted: boolean,
@@ -97,12 +96,12 @@ export class Attendance extends Id implements IAttendance {
     meetingStartTime$: string = <any>null;  // time meeting started
     meetingDuration$: string = <any>null;    
      
-    start: number = DateTime.now().toMillis(); start$: string = <any>null; // server populated millis
+    start: number = DateTime.now().toMillis(); start$: string = <any>null;  // server populated millis
     end: number = <any>null; end$: string = <any>null;                      // server populated millis
-    duration: number = <any>null; duration$: string = <any>null;               // server populated millis
-    credit: number = <any>null; credit$: string = <any>null;                 // server populated millis
-    processed: number = <any>null; processed$: string = <any>null;              // server populated millis
-    updated: number = <any>null; updated$: string = <any>null;                // server populated millis
+    duration: number = <any>null; duration$: string = <any>null;            // server populated millis
+    credit: number = <any>null; credit$: string = <any>null;                // server populated millis
+    processed: number = <any>null; processed$: string = <any>null;          // server populated millis
+    updated: number = <any>null; updated$: string = <any>null;              // server populated millis
 
     // EXCLUDED!
     user: IUser = <any>null;
