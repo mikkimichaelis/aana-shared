@@ -4,6 +4,7 @@ import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendance extends IId {
+    zone?: string;
     uid: string;            // User.id
     mid: string;            // Meeting.id
     zid: string;            // Zoom meeting number (same as Meeting.zid)
@@ -52,6 +53,7 @@ export interface IAttendance extends IId {
 }
 
 export interface IAttendanceRecord extends IId {
+    aid: string;
     status: string;     // [Zoom.MeetingStatus] || ['MEETING_ACTIVE_TRUE', 'MEETING_ACTIVE_FALSE']
     visible: boolean;   // Video Activity visible
     volume: number;     // device call volume (not media!)
@@ -93,7 +95,8 @@ export class AttendanceRecord extends Id {
     local: string = DateTime.now().toFormat('ttt');
     timestamp: number = DateTime.now().toMillis();
 
-    constructor(attendanceRecord?: any) {
+    // @ts-ignore
+    constructor(public aid: string, attendanceRecord: any) {
         super(attendanceRecord);
         this.initialize(this, attendanceRecord);
     }
@@ -140,9 +143,10 @@ export class Attendance extends Id implements IAttendance {
 
     valid: boolean = false;                 // server populated
 
-    constructor(attendance?: any) {
+    constructor(attendance?: any, public zone?: string) {
         super(attendance);
         this.initialize(this, attendance);
+        if (!this.zone) this.zone = DateTime.now().zoneName;
     }
 
     toObject(): IAttendance {
