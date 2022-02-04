@@ -3,39 +3,6 @@ import { DateTime, Duration } from 'luxon';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
-export interface IAttendance extends IId {
-    uid: string;            // User.id
-    mid: string;            // Meeting.id
-    zid: string;            // Zoom meeting number (same as Meeting.zid)
-    uzid: string;           // Unique Zoom Meeting id for this occurrence
-    zpid: string;           // Zoom Participant id
-    zuid: string;           // Zoom User ID
-    timezone: string;       // tz of user at time of attendance
-
-    user: IUser;            // [attached] Copies of user and meeting data at time of attendance
-    meeting: IMeeting;      // [attached] Set server side when processed
-
-    meetingStartTime$: string;
-    meetingDuration$: string;
-
-    records: IAttendanceRecord[];   // [attached]
-    log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
-
-    valid: boolean;
-    created: number;                            // server utc millis created
-
-    start: number; start$: string;              // utc millis when participation started
-    end: number; end$: string;                  // local utc millis when participation ended
-    duration: number; duration$: string;        // millis end - start
-    credit: number; credit$: string;            // millis valid amount of duration credited for attendance (see log)
-    processed: number; processed$: string;      // server utc millis processed or null
-    updated: number; updated$: string;          // server utc millis last updated
-
-    isValid(): boolean;
-    update(): void;
-    process(): Promise<boolean>;
-}
-
 export interface IAttendanceRecord extends IId {
     aid: string;
     status: string;     // [Zoom.MeetingStatus] || ['MEETING_ACTIVE_TRUE', 'MEETING_ACTIVE_FALSE']
@@ -58,8 +25,8 @@ export interface IAttendanceRecord extends IId {
 
 export class AttendanceRecord extends Id implements IAttendanceRecord {
     aid: string = <any>null;
-    timestamp: number = DateTime.now().toMillis();
-    local: string = DateTime.now().toFormat('ttt');
+    timestamp: number = <any>null;
+    local: string = <any>null;
 
     // Zoom data
     status: string = <any>null;
@@ -82,7 +49,38 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
         this.initialize(this, record);
     }
 }
+export interface IAttendance extends IId {
+    uid: string;            // User.id
+    mid: string;            // Meeting.id
+    zid: string;            // Zoom meeting number (same as Meeting.zid)
+    uzid: string;           // Unique Zoom Meeting id for this occurrence
+    zpid: string;           // Zoom Participant id
+    zuid: string;           // Zoom User ID
+    timezone: string;       // tz of user at time of attendance
 
+    created: number;                            // server utc millis created
+    valid: boolean;
+    log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
+
+    meetingStartTime$: string;
+    meetingDuration$: string;
+
+    start: number; start$: string;              // utc millis when participation started
+    end: number; end$: string;                  // local utc millis when participation ended
+    duration: number; duration$: string;        // millis end - start
+    credit: number; credit$: string;            // millis valid amount of duration credited for attendance (see log)
+    processed: number; processed$: string;      // server utc millis processed or null
+    updated: number; updated$: string;          // server utc millis last updated
+
+    user: IUser;            // [attached] Copies of user and meeting data at time of attendance
+    meeting: IMeeting;      // [attached] Set server side when processed
+    records: IAttendanceRecord[];   // [attached]
+
+
+    isValid(): boolean;
+    update(): void;
+    process(): Promise<boolean>;
+}
 export class Attendance extends Id implements IAttendance {
     uid: string = <any>null;
     mid: string = <any>null;
@@ -92,11 +90,13 @@ export class Attendance extends Id implements IAttendance {
     zuid: string = <any>null;
     timezone: string = <any>null;
 
-    created: number = DateTime.now().toMillis();
+    created: number = <any>null;
     valid: boolean = false;
     log: string[] = [];
 
-    meetingStartTime$: string = <any>null; meetingDuration$: string = <any>null;     // time meeting started
+    meetingStartTime$: string = <any>null;  // time meeting started
+    meetingDuration$: string = <any>null;    
+     
     start: number = DateTime.now().toMillis(); start$: string = <any>null; // server populated millis
     end: number = <any>null; end$: string = <any>null;                      // server populated millis
     duration: number = <any>null; duration$: string = <any>null;               // server populated millis
