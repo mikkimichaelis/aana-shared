@@ -87,7 +87,7 @@ export class Attendance extends Id implements IAttendance {
     uzid: string = <any>null;
     zpid: string = <any>null;
     zuid: string = <any>null;
-    timezone: string = <any>null;
+    timezone: string = DateTime.now().zoneName;
 
     created: number = <any>null;
     valid: boolean = false;
@@ -113,7 +113,6 @@ export class Attendance extends Id implements IAttendance {
         super(attendance);
         // TODO this is a security hole.  Any authorized user can post any default values here.  Meaning passing attendance.end = 99999999999999999
         this.initialize(this, attendance);
-        if (!this.timezone) this.timezone = DateTime.now().zoneName;
     }
 
     toObject(): IAttendance {
