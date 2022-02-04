@@ -4,13 +4,13 @@ import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendance extends IId {
-    zone?: string;
     uid: string;            // User.id
     mid: string;            // Meeting.id
     zid: string;            // Zoom meeting number (same as Meeting.zid)
     uzid: string;           // Unique Zoom Meeting id for this occurrence
     zpid: string;           // Zoom Participant id
     zuid: string;           // Zoom User ID
+    timezone: string;       // tz of user at time of attendance
 
     user: IUser;            // [attached] Copies of user and meeting data at time of attendance
     meeting: IMeeting;      // [attached] Set server side when processed
@@ -19,37 +19,21 @@ export interface IAttendance extends IId {
     meetingDuration$: string;
 
     records: IAttendanceRecord[];   // [attached]
-
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
     valid: boolean;
+    created: number;                            // server utc millis created
 
-    timezone: string;       // tz of user at time of attendance
-
-    start: number;          // utc millis when participation started
-    start$: string;         // ISO string in timezone
-    end: number;            // local utc millis when participation ended
-    end$: string;           // ISO string in timezone
-
-    duration: number;       // millis end - start
-    duration$: string;
-
-    credit: number;         // millis valid amount of duration credited for attendance (see log)
-    credit$: string;        // hh:mm:ss
-
-    processed: number;      // server utc millis processed or null
-    processed$: string;     // ISO string in timezone
-
-    updated: number;        // server utc millis last updated
-    updated$: string;       // ISO string in UTC
-
-    created: number;        // server utc millis created
+    start: number; start$: string;              // utc millis when participation started
+    end: number; end$: string;                  // local utc millis when participation ended
+    duration: number; duration$: string;        // millis end - start
+    credit: number; credit$: string;            // millis valid amount of duration credited for attendance (see log)
+    processed: number; processed$: string;      // server utc millis processed or null
+    updated: number; updated$: string;          // server utc millis last updated
 
     isValid(): boolean;
     update(): void;
-    process(): Promise<boolean>; // returns success
-
-    // addRecord(record: any): void;
+    process(): Promise<boolean>;
 }
 
 export interface IAttendanceRecord extends IId {
@@ -60,45 +44,43 @@ export interface IAttendanceRecord extends IId {
     audio: boolean;     // Zoom audio connected
     loud: boolean;      // speakerphone
 
-    local: string;      // local time string
+    local: string;      // client populated
     timestamp: number;  // UTC Millis from device
 
     userCount: number,
-    password: string ,
-    // inWaitingRoom: boolean,
-    // unmuteSelfAllowed: boolean,
+    password: string,
     isMyAudioMuted: boolean,
     canUnmuteMyVideo: boolean,
     isMyVideoMuted: boolean,
-    // isSpotlight: boolean,
     getPinnedUser: number,
     activeVideoUserID: number
 }
 
-export class AttendanceRecord extends Id {
-    status: string = <any>null;        // client populated
-    visible: boolean = <any>null;    // client populated
-    volume: number = <any>null;         // client populated
-    audio: boolean = <any>null;      // client populated
-    loud: boolean = <any>null;       // client populated
+export class AttendanceRecord extends Id implements IAttendanceRecord {
+    aid: string = <any>null;
+    timestamp: number = DateTime.now().toMillis();
+    local: string = DateTime.now().toFormat('ttt');
+
+    // Zoom data
+    status: string = <any>null;
+    visible: boolean = <any>null;
+    volume: number = <any>null;
+    audio: boolean = <any>null;
+    loud: boolean = <any>null;
     userCount: number = 0;
     password: string = <any>null;
-    // inWaitingRoom: boolean = <any>null;
-    // unmuteSelfAllowed: boolean = <any>null;
     isMyAudioMuted: boolean = <any>null;
     canUnmuteMyVideo: boolean = <any>null;
     isMyVideoMuted: boolean = <any>null;
-    // isSpotlight: boolean = <any>null;
     getPinnedUser: number = <any>null;
     activeVideoUserID: number = <any>null;
 
-    local: string = DateTime.now().toFormat('ttt');
-    timestamp: number = DateTime.now().toMillis();
-
+    // TODO bug here...same as below
     // @ts-ignore
-    constructor(public aid: string, attendanceRecord: any) {
-        super(attendanceRecord);
-        this.initialize(this, attendanceRecord);
+    constructor(record: any, public _aid?: string) {
+        super(record);
+        this.initialize(this, record);
+        if (_aid) this.aid = _aid;
     }
 }
 
@@ -109,108 +91,58 @@ export class Attendance extends Id implements IAttendance {
     uzid: string = <any>null;
     zpid: string = <any>null;
     zuid: string = <any>null;
+    timezone: string = <any>null;
 
-    user: IUser = <any>null;
-    meeting: IMeeting = <any>null;
-
-    records: IAttendanceRecord[] = [];
+    created: number = DateTime.now().toMillis();
+    valid: boolean = false;
     log: string[] = [];
 
-    timezone: string = DateTime.now().zoneName;
+    meetingStartTime$: string = <any>null; meetingDuration$: string = <any>null;     // time meeting started
+    start: number = DateTime.now().toMillis(); start$: string = <any>null; // server populated millis
+    end: number = <any>null; end$: string = <any>null;                      // server populated millis
+    duration: number = <any>null; duration$: string = <any>null;               // server populated millis
+    credit: number = <any>null; credit$: string = <any>null;                 // server populated millis
+    processed: number = <any>null; processed$: string = <any>null;              // server populated millis
+    updated: number = <any>null; updated$: string = <any>null;                // server populated millis
 
-    meetingStartTime$: string = <any>null;
-    meetingDuration$: string = <any>null;
-    
-    start: number = DateTime.local().toMillis();                // client populated millis
-    start$: string = DateTime.now().toUTC().toFormat('FFF');    // client populated local tz datetime string
+    // EXCLUDED!
+    user: IUser = <any>null;
+    meeting: IMeeting = <any>null;
+    records: IAttendanceRecord[] = [];
 
-    end: number = <any>null;                     // server populated millis
-    end$: string = <any>null;                    // server populated local tz datetime string
-
-    duration: number = <any>null;                // server populated millis
-    duration$: string = <any>null;               // server populated string
-
-    credit: number = <any>null;                  // server populated millis
-    credit$: string = <any>null;                 // server populated hh:mm:ss string
-
-    processed: number = <any>null;               // server populated millis
-    processed$: string = <any>null;              // server populated local tz datetime string
-
-    updated: number = <any>null;                 // server populated millis
-    updated$: string = <any>null;                // server populated local tz datetime string
-
-    created: number = <any>null;                 // server populated millis
-
-    valid: boolean = false;                 // server populated
-
-    constructor(attendance?: any, public zone?: string) {
+    // server side called constructor only!
+    constructor(attendance: any) {
         super(attendance);
+        // TODO this is a security hole.  Any authorized user can post any default values here.  Meaning passing attendance.end = 99999999999999999
         this.initialize(this, attendance);
-        if (!this.zone) this.zone = DateTime.now().zoneName;
+        if (!this.timezone) this.timezone = DateTime.now().zoneName;
     }
 
     toObject(): IAttendance {
         // list properties that are static or computed or attached and
         // should not be serialized into the database with this document
         const exclude: string[] = ['user', 'meeting', 'records'];
-
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
+    // TODO don't really like this much at all.....could move all this into setters to auto update the strings
     public update() {
-        // TODO don't really like this much at all.....could move all this into setters to auto update the strings
-        
-        if (isNil(this.created)) this.created = DateTime.now().toMillis();
-
-        if (!isNil(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(this.timezone).toFormat('FFF');
-        if (!isNil(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(this.timezone).toFormat('FFF');
+        if (!isNil(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
+        if (!isNil(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
         if (!isNil(this.duration)) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
         if (!isNil(this.credit)) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
         if (!isNil(this.processed)) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
-        this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
+        this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
     }
 
-    // public addRecord(record: any) {
-    //     if (['MEETING_ACTIVE_FALSE', 'MEETING_ACTIVE_TRUE]'].indexOf(record.status) == -1) {
-    //         // update with zoom meeting values
-    //         // these are not available for MEETING_ACTIVE_TRUE || MEETING_ACTIVE_FALSE events.
-    //         // We must wait a few seconds after MEETING_ACTIVE_TRUE to receive
-    //         // this data in the first ZoomVisibleTask event providing visibility status, etc.
-    //         this.zid = record.zid;
-    //         this.zpid = record.zpid;
-    //         this.uzid = record.uzid;
-    //         this.zuid = record.zuid;
-    //     }
-    //     this.records.push(new AttendanceRecord(record));
-    // }
-
-    // Here we check for garbage
-    // the garbage seems to be the time spent in the waiting room
-    // 
+    // TODO validate based on length of attendance
     public isValid(): boolean {
-        let valid = true;
-
-        valid = valid && this.records.length > 2;   // require min three records to be valid
-        // 1 START
-        // 2 IN_MEETING STATUS
-        // 3 END
-
-        // @ts-ignore
-        // const start = DateTime.fromMillis(head(this.records).timestamp);
-        // @ts-ignore
-        // const end = DateTime.fromMillis(last(this.records).timestamp);
-
-        // TODO wtf wont this work?
-        // const duration: Duration = end.diff(start); 
-        // valid = valid && duration.minutes > 1;  // TODO config this
-        // const duration = end.toMillis() - start.toMillis();
-        // valid = valid && duration >= 60 * 1000;  // 1m - TODO config this
-
-        return valid;
+        return this.records.length > 2;   // require min three records to be valid
     }
 
+    // TODO ADD MASSIVE ERROR CHECKING!!!
     public async process(): Promise<boolean> {
         // @ts-ignore
         return new Promise<boolean>(async (resolve, reject) => {
@@ -220,7 +152,7 @@ export class Attendance extends Id implements IAttendance {
             this.credit = 0;    // and counters!
             this.duration = 0;
 
-            this.records.sort((x,y) => {
+            this.records.sort((x, y) => {
                 if (x.timestamp < y.timestamp) return -1;
                 if (x.timestamp > y.timestamp) return 1;
                 return 0;
@@ -301,9 +233,23 @@ export class Attendance extends Id implements IAttendance {
 
             this.processed = DateTime.now().toMillis();
             this.update();
-            this.log.push(`${DateTime.fromMillis(this.processed).setZone(this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
+            this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
 
             resolve(true);
         })
     }
+
+    // public addRecord(record: any) {
+    //     if (['MEETING_ACTIVE_FALSE', 'MEETING_ACTIVE_TRUE]'].indexOf(record.status) == -1) {
+    //         // update with zoom meeting values
+    //         // these are not available for MEETING_ACTIVE_TRUE || MEETING_ACTIVE_FALSE events.
+    //         // We must wait a few seconds after MEETING_ACTIVE_TRUE to receive
+    //         // this data in the first ZoomVisibleTask event providing visibility status, etc.
+    //         this.zid = record.zid;
+    //         this.zpid = record.zpid;
+    //         this.uzid = record.uzid;
+    //         this.zuid = record.zuid;
+    //     }
+    //     this.records.push(new AttendanceRecord(record));
+    // }
 }
