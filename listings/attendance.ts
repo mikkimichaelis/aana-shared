@@ -5,6 +5,7 @@ import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendanceRecord extends IId {
     aid: string;
+    
     local: string;      // client populated
     timestamp: number;  // UTC Millis from device
 
@@ -24,8 +25,9 @@ export interface IAttendanceRecord extends IId {
 
 export class AttendanceRecord extends Id implements IAttendanceRecord {
     aid: string = <any>null;
+
+    local: string = DateTime.now().toFormat('ttt');
     timestamp: number = DateTime.now().toMillis();
-    local: string = <any>null;
 
     // Zoom data
     status: string = <any>null;
@@ -55,9 +57,10 @@ export interface IAttendance extends IId {
     uzid: string;           // Unique Zoom Meeting id for this occurrence
     zpid: string;           // Zoom Participant id
     zuid: string;           // Zoom User ID
-    timezone: string;       // tz of user at time of attendance
 
-    created: number;                            // server utc millis created
+    timezone: string;       // tz of user at time of attendance
+    timestamp: number;
+
     valid: boolean;
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
@@ -87,9 +90,10 @@ export class Attendance extends Id implements IAttendance {
     uzid: string = <any>null;
     zpid: string = <any>null;
     zuid: string = <any>null;
-    timezone: string = DateTime.now().zoneName;
 
-    created: number = <any>null;
+    timezone: string = DateTime.now().zoneName;
+    timestamp: number = DateTime.now().toMillis();
+
     valid: boolean = false;
     log: string[] = [];
 
