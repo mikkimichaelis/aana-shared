@@ -178,17 +178,17 @@ export class Attendance extends Id implements IAttendance {
                         period_start = r.timestamp;
 
                         if (index > 0) {
-                            // const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                            // this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                            const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                            this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
                         } else {
                             this.log.push(`${r.local} START`)
                         }
                     } else if (r.status === 'MEETING_ACTIVE_FALSE') {
-                        // if (period_start) {
-                        //     const duration = Duration.fromMillis(r.timestamp - period_start);
-                        //     this.credit = this.credit + duration.toMillis();
-                        //     this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                        // }
+                        if (period_start) {
+                            const duration = Duration.fromMillis(r.timestamp - period_start);
+                            this.credit = this.credit + duration.toMillis();
+                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                        }
                         period_start = null;
                     } else if (r.status === 'MEETING_STATUS_INMEETING') {
                         if (!r.visible) {
@@ -207,25 +207,25 @@ export class Attendance extends Id implements IAttendance {
                             if (!period_start) {
                                 period_start = r.timestamp;
 
-                                // if (index > 0) {
-                                //     const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                                //     this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
-                                // } else {
-                                //     this.log.push(`${r.local} START`)
-                                // }
+                                if (index > 0) {
+                                    const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                                    this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                                } else {
+                                    this.log.push(`${r.local} START`)
+                                }
                             } else {
                                 this.log.push(`${r.local} UNKNOWN ${JSON.stringify(r)}`);
                             }
                         } else {
-                            // if (period_start) {
-                            //     // end existing period
-                            //     const duration = Duration.fromMillis(r.timestamp - period_start);
-                            //     this.credit = this.credit + duration.toMillis();
-                            //     this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                            //     period_start = null;
-                            // } else {
-                            //     // this.log.push(`${r.local} UNKNOWN ${log}: ${JSON.stringify(r)}`);
-                            // }
+                            if (period_start) {
+                                // end existing period
+                                const duration = Duration.fromMillis(r.timestamp - period_start);
+                                this.credit = this.credit + duration.toMillis();
+                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                                period_start = null;
+                            } else {
+                                this.log.push(`${r.local} UNKNOWN ${log}: ${JSON.stringify(r)}`);
+                            }
                         }
                     } else {
                         throw new Error(`UNKNOWN STATUS: ${r.status}`);
@@ -234,9 +234,9 @@ export class Attendance extends Id implements IAttendance {
                     this.end = r.timestamp;
                 });
 
-                // this.processed = DateTime.now().toMillis();
-                // this.update();
-                // this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
+                this.processed = DateTime.now().toMillis();
+                this.update();
+                this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
 
                 resolve(true);
             }
