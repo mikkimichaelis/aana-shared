@@ -140,7 +140,16 @@ export class Attendance extends Id implements IAttendance {
 
     // TODO validate based on length of attendance
     public isValid(): boolean {
-        return this.records.length > 2;   // require min three records to be valid
+        let valid = true;
+
+        valid = this.records.length > 2;   // require min three records to be valid
+        if (!valid) return valid;
+
+        valid = head(this.records).status === 'MEETING_ACTIVE_TRUE';
+        if (!valid) return valid;
+
+        valid = last(this.records).status === 'MEETING_ACTIVE_FALSE';
+        return valid;
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
