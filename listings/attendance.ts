@@ -150,8 +150,8 @@ export class Attendance extends Id implements IAttendance {
             // try {
             this.updated = DateTime.now().toMillis();
             this.log = [];      // be sure to clear running lists.....
-            this.credit = 0;    // and counters!
-            this.duration = 0;
+            this.credit = <any>null;    // and counters!
+            this.duration = <any>null;
 
             this.records = this.records.sort((x, y) => {
                 if (x.timestamp < y.timestamp) return -1;
@@ -188,6 +188,8 @@ export class Attendance extends Id implements IAttendance {
                             const duration = Duration.fromMillis(r.timestamp - period_start);
                             this.credit = this.credit + duration.toMillis();
                             this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                        } else {
+                            // invalid
                         }
                         period_start = null;
                     } else if (r.status === 'MEETING_STATUS_INMEETING') {
@@ -205,7 +207,7 @@ export class Attendance extends Id implements IAttendance {
 
                         if (log === '') {
                             if (!period_start) {
-                                period_start = r.timestamp;
+                                period_start = r.timestamp; // start a period
 
                                 if (index > 0) {
                                     const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
@@ -214,7 +216,7 @@ export class Attendance extends Id implements IAttendance {
                                     this.log.push(`${r.local} START`)
                                 }
                             } else {
-                                this.log.push(`${r.local} UNKNOWN ${JSON.stringify(r)}`);
+                                // skip this MEETING_STATUS_INMEETING .. we are already in a period
                             }
                         } else {
                             if (period_start) {
@@ -224,7 +226,7 @@ export class Attendance extends Id implements IAttendance {
                                 this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
                                 period_start = null;
                             } else {
-                                this.log.push(`${r.local} UNKNOWN ${log}: ${JSON.stringify(r)}`);
+                                // skip this MEETING_STATUS_INMEETING .. this record is not valid & we're not in a period anyway
                             }
                         }
                     } else {
