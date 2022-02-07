@@ -127,6 +127,8 @@ export class Attendance extends Id implements IAttendance {
     // server side called constructor only!
     constructor(attendance: any) {
         super(attendance);
+        // don't used passed in status here (only used in AttendanceRecord)
+        attendance.status = undefined;
         // TODO this is a security hole.  Any authorized user can post any default values here.  Meaning passing attendance.end = 99999999999999999
         this.initialize(this, attendance);
     }
