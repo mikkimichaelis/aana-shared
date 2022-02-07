@@ -50,6 +50,16 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
         this.initialize(this, record);
     }
 }
+
+export enum AttendanceStatus {
+    unknown,        
+    active,         // meeting is active
+    pending,        // meeting is pending upload
+    uploading,      // meeting is being uploaded
+    uploaded,       // meeting is uploaded
+    processing,     // meeting is being processed
+    processed       // meeting is processed
+}
 export interface IAttendance extends IId {
     uid: string;            // User.id
     mid: string;            // Meeting.id
@@ -61,6 +71,7 @@ export interface IAttendance extends IId {
     timezone: string;       // tz of user at time of attendance
     timestamp: number;
 
+    status: AttendanceStatus;
     valid: boolean;
     log: string[];          // verbose translation of attendanceRecords and accounting ledger for credit
 
@@ -94,6 +105,7 @@ export class Attendance extends Id implements IAttendance {
     timezone: string = DateTime.now().zoneName;
     timestamp: number = DateTime.now().toMillis();
 
+    status: AttendanceStatus = AttendanceStatus.unknown;
     valid: boolean = false;
     log: string[] = [];
 
