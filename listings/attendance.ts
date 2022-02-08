@@ -52,13 +52,14 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    unknown,        
-    active,         // meeting is active
-    pending,        // meeting is pending upload
-    uploading,      // meeting is being uploaded
-    uploaded,       // meeting is uploaded
-    processing,     // meeting is being processed
-    processed       // meeting is processed
+    unknown     = 'unknown',        
+    active      = 'active',         // meeting is active
+    pending     = 'pending',        // attendance is pending upload
+    retrying    = 'retrying',       // attendance is retrying upload
+    uploading   = 'uploading',      // attendance is uploading
+    uploaded    = 'uploaded',       // attendance is uploaded
+    processing  = 'processing',     // attendance is processing
+    processed   = 'processed'       // attendance is processed
 }
 export interface IAttendance extends IId {
     uid: string;            // User.id
@@ -127,7 +128,6 @@ export class Attendance extends Id implements IAttendance {
     // server side called constructor only!
     constructor(attendance: any) {
         super(attendance);
-        // don't used passed in status here (only used in AttendanceRecord)
         // TODO this is a security hole.  Any authorized user can post any default values here.  Meaning passing attendance.end = 99999999999999999
         this.initialize(this, attendance);
     }
