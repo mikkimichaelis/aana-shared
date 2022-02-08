@@ -55,7 +55,6 @@ export enum AttendanceStatus {
     unknown     = 'unknown',        
     active      = 'active',         // meeting is active
     pending     = 'pending',        // attendance is pending upload
-    retrying    = 'retrying',       // attendance is retrying upload
     uploading   = 'uploading',      // attendance is uploading
     uploaded    = 'uploaded',       // attendance is uploaded
     processing  = 'processing',     // attendance is processing
