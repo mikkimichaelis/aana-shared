@@ -1,4 +1,4 @@
-import { head, isNil, last } from 'lodash';
+import { head, isEmpty, isNil, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
@@ -140,11 +140,11 @@ export class Attendance extends Id implements IAttendance {
 
     // TODO don't really like this much at all.....could move all this into setters to auto update the strings
     public update() {
-        if (!isNil(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
-        if (!isNil(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
-        if (!isNil(this.duration)) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        if (!isNil(this.credit)) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-        if (!isNil(this.processed)) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
+        if (!isNil(this.start) && !isEmpty(this.start)) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
+        if (!isNil(this.end) && !isEmpty(this.end)) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
+        if (!isNil(this.duration) && !isEmpty(this.duration)) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (!isNil(this.credit) && !isEmpty(this.credit)) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+        if (!isNil(this.processed) && !isEmpty(this.processed)) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
