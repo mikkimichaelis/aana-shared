@@ -52,6 +52,7 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
+    invalid     = 'invalid',        // failed processing
     unknown     = 'unknown',        
     active      = 'active',         // meeting is active
     pending     = 'pending',        // attendance is pending upload
