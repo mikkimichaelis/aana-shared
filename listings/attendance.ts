@@ -161,6 +161,9 @@ export class Attendance extends Id implements IAttendance {
         valid = head(this.records)?.status === 'MEETING_ACTIVE_TRUE';
         if (!valid) return valid;
 
+        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')
+        if (!valid) return valid;
+
         valid = last(this.records)?.status === 'MEETING_ACTIVE_FALSE';
         return valid;
     }
