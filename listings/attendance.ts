@@ -1,11 +1,13 @@
 import { head, isEmpty, isNil, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
+import { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs/internal/observable/of';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendanceRecord extends IId {
     aid: string;
-    
+
     local: string;      // client populated
     timestamp: number;  // UTC Millis from device
 
@@ -52,14 +54,14 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    invalid     = 'invalid',        // failed processing
-    unknown     = 'unknown',        
-    active      = 'active',         // meeting is active
-    pending     = 'pending',        // attendance is pending upload
-    uploading   = 'uploading',      // attendance is uploading
-    uploaded    = 'uploaded',       // attendance is uploaded
-    processing  = 'processing',     // attendance is processing
-    processed   = 'processed'       // attendance is processed
+    invalid = 'invalid',        // failed processing
+    unknown = 'unknown',
+    active = 'active',         // meeting is active
+    pending = 'pending',        // attendance is pending upload
+    uploading = 'uploading',      // attendance is uploading
+    uploaded = 'uploaded',       // attendance is uploaded
+    processing = 'processing',     // attendance is processing
+    processed = 'processed'       // attendance is processed
 }
 export interface IAttendance extends IId {
     uid: string;            // User.id
@@ -153,55 +155,40 @@ export class Attendance extends Id implements IAttendance {
 
     public isValid(): boolean {
         // order records by timestamp
-        this.records = this.records.sort((x, y) => {
-            if (x.timestamp < y.timestamp) return -1;
-            if (x.timestamp > y.timestamp) return 1;
-            return 0;
-        });
+        this.sort();
 
         // doctorAttendance() depends on this specific ordering of checks
         if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
         if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
-        if (this.records.length < 3) throw new Error('invalid record length');
+        if (this.records.length < 3) throw new Error('invalid records length');
         return true;
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
     public async process(): Promise<boolean> {
-        // @ts-ignore
         return new Promise<boolean>(async (resolve, reject) => {
-            // try {
             this.updated = DateTime.now().toMillis();
-            this.log = [];      // be sure to clear running lists.....
-            this.credit = <any>null;    // and counters!
+            this.log = [];                  // be sure to clear running lists.....
+            this.credit = <any>null;        // and counters!
             this.duration = <any>null;
-
-            this.records = this.records.sort((x, y) => {
-                if (x.timestamp < y.timestamp) return -1;
-                if (x.timestamp > y.timestamp) return 1;
-                return 0;
-            });
-
-            this.valid = this.isValid();
+            this.valid = this.isValid();    // sort and kinda validate records.....
             if (!this.valid) {
                 // @ts-ignore
                 this.end = last(this.records).timestamp;
             } else {
-                // @ts-ignore
-                // we know records.length > 2
                 this.duration = last(this.records).timestamp - head(this.records).timestamp;
 
-                // here we create a log entry for each period (intended for support viewing)
+                // here we create a log entry for each period (human readable)
                 // a period is the time between validity changes
                 let period_start: any = null;
 
                 this.records.forEach((r, index, records) => {
                     let log = ``;
-                    if (r.status === 'MEETING_ACTIVE_TRUE') {
-                        period_start = r.timestamp;
+                    if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
+                        period_start = r.timestamp;             // start a period
 
-                        if (index > 0) {
+                        if (index > 0) {    // This should never happen
                             const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
                             this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
                         } else {
@@ -210,10 +197,10 @@ export class Attendance extends Id implements IAttendance {
                     } else if (r.status === 'MEETING_ACTIVE_FALSE') {
                         if (period_start) {
                             const duration = Duration.fromMillis(r.timestamp - period_start);
-                            this.credit = this.credit + duration.toMillis();
+                            this.credit += duration.toMillis();
                             this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
                         } else {
-                            // invalid
+                            // invalid Attendance
                         }
                         period_start = null;
                     } else if (r.status === 'MEETING_STATUS_INMEETING') {
@@ -225,7 +212,7 @@ export class Attendance extends Id implements IAttendance {
                             log = log + '!AUDIO ';
                         }
 
-                        if (r.volume < .4) {
+                        if (r.volume < .4) {    // TODO WTF?
                             log = log + '!VOLUME ';
                         }
 
@@ -267,6 +254,14 @@ export class Attendance extends Id implements IAttendance {
                 resolve(true);
             }
         })
+    }
+
+    public sort() {
+        this.records = this.records.sort((x, y) => {
+            if (x.timestamp < y.timestamp) return -1;
+            if (x.timestamp > y.timestamp) return 1;
+            return 0;
+        });
     }
 
     // public addRecord(record: any) {
