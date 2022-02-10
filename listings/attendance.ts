@@ -151,21 +151,20 @@ export class Attendance extends Id implements IAttendance {
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
     }
 
-    // TODO validate based on length of attendance
     public isValid(): boolean {
-        let valid = true;
+        // order records by timestamp
+        this.records = this.records.sort((x, y) => {
+            if (x.timestamp < y.timestamp) return -1;
+            if (x.timestamp > y.timestamp) return 1;
+            return 0;
+        });
 
-        valid = this.records.length > 2;   // require min three records to be valid
-        if (!valid) return valid;
-
-        valid = head(this.records)?.status === 'MEETING_ACTIVE_TRUE';
-        if (!valid) return valid;
-
-        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')
-        if (!valid) return valid;
-
-        valid = last(this.records)?.status === 'MEETING_ACTIVE_FALSE';
-        return valid;
+        // doctorAttendance() depends on this specific ordering of checks
+        if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
+        if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
+        if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
+        if (this.records.length < 3) throw new Error('invalid record length');
+        return true;
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
