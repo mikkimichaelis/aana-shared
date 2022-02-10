@@ -1,7 +1,6 @@
-import { head, isEmpty, isNil, last } from 'lodash';
+import { head, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
-import { Observable } from 'rxjs/internal/Observable';
-import { of } from 'rxjs/internal/observable/of';
+import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
@@ -94,6 +93,7 @@ export interface IAttendance extends IId {
 
 
     isValid(): boolean;
+    repair(): Promise<IAttendance>
     update(): void;
     process(): Promise<boolean>;
 }
@@ -137,11 +137,10 @@ export class Attendance extends Id implements IAttendance {
     toObject(): IAttendance {
         // list properties that are static or computed or attached and
         // should not be serialized into the database with this document
-        const exclude: string[] = ['user', 'meeting', 'records'];
+        const exclude: string[] = ['user', 'meeting', 'records', 'reentry'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
-    // TODO don't really like this much at all.....could move all this into setters to auto update the strings
     public update() {
         if (this.start > 0) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
         if (this.end > 0) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
@@ -157,12 +156,53 @@ export class Attendance extends Id implements IAttendance {
         // order records by timestamp
         this.sort();
 
-        // doctorAttendance() depends on this specific ordering of checks
+        // diagnostics() depends on this specific ordering to diagnosis.
         if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
-        if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
+        if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         if (this.records.length < 3) throw new Error('invalid records length');
         return true;
+    }
+
+    private reentry = false;
+    public async repair() {
+        try {
+            this.isValid(); // throws diagnostic error message 
+            // note 'invalid records length' must be throw last (let other fixable errors be thrown first :-))
+            return this;
+        } catch (error) {
+            switch (error.message) {
+                case 'invalid MEETING_ACTIVE_TRUE':
+                    // return null to discard this attendance
+                    return null;
+                case 'invalid MEETING_STATUS_INMEETING':
+                    return null;
+                case 'invalid MEETING_ACTIVE_FALSE':
+                    let _last = last(this.records);                     // get last record to use as template for missing MEETING_ACTIVE_FALSE
+                    _last = new AttendanceRecord({ ...last, ...{ status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } })
+                    this.records.push(_last);                           // replace missing record
+                                                                        // this is what repairs a power loss while in meeting
+                    if (!this.reentry) {
+                        this.reentry = true;                            // going to reenter
+                        try {
+                            if (this === await this.repair()) throw (this);   // throw (this) to caller to signify return of repaired this
+                            this.reentry = false;
+                            return null;                                // tell caller repair failed
+                        } catch {
+                            this.reentry = false;
+                            return null;                                // tell caller repair failed
+                        }
+                    } else {
+                        // we went in a loop, tell caller repair failed
+                        this.reentry = false;
+                        return null;
+                    }
+                case 'invalid record length':
+                    return null;
+                default:
+                    return null
+            }
+        }
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
