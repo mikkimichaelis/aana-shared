@@ -92,7 +92,7 @@ export interface IAttendance extends IId {
     records: IAttendanceRecord[];   // [attached]
 
 
-    isValid(): boolean;
+    isValid(): Promise<boolean>;
     repair(): Promise<IAttendance>
     update(): void;
     process(): Promise<boolean>;
@@ -152,11 +152,16 @@ export class Attendance extends Id implements IAttendance {
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
     }
 
-    public isValid(): boolean {
+    /*
+        returns true if valid
+        otherwise throws reason invalid
+    */
+    public async isValid(): Promise<boolean> {
         // order records by timestamp
         this.sort();
 
-        // diagnostics() depends on this specific ordering to diagnosis.
+        // repair() depends on this specific ordering to diagnosis.
+        // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
         if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
         if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
         if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
@@ -164,45 +169,57 @@ export class Attendance extends Id implements IAttendance {
         return true;
     }
 
+    /*
+        if isValid return this
+        if! attempt to repair issue
+            if throw repaired this (doing this allows caller to differentiate between a valid this return or a repaired this throw)
+            if! rethrow original isValid error (so caller knows the failure reason (and can log it properly))
+    */
     private reentry = false;
     public async repair() {
-        try {
-            this.isValid(); // throws diagnostic error message 
-            // note 'invalid records length' must be throw last (let other fixable errors be thrown first :-))
-            return this;
-        } catch (error) {
+        await this.isValid().catch(async error => { // throws diagnostic error message 
             switch (error.message) {
                 case 'invalid MEETING_ACTIVE_TRUE':
-                    // return null to discard this attendance
-                    return null;
+                    // 
+                    throw error;
+
                 case 'invalid MEETING_STATUS_INMEETING':
-                    return null;
-                case 'invalid MEETING_ACTIVE_FALSE':
-                    let _last = last(this.records);                     // get last record to use as template for missing MEETING_ACTIVE_FALSE
+                    throw error;
+                    
+                case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
+                    let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
                     _last = new AttendanceRecord({ ...last, ...{ status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } })
-                    this.records.push(_last);                           // replace missing record
-                                                                        // this is what repairs a power loss while in meeting
-                    if (!this.reentry) {
-                        this.reentry = true;                            // going to reenter
-                        try {
-                            if (this === await this.repair()) throw (this);   // throw (this) to caller to signify return of repaired this
-                            this.reentry = false;
-                            return null;                                // tell caller repair failed
-                        } catch {
-                            this.reentry = false;
-                            return null;                                // tell caller repair failed
-                        }
-                    } else {
-                        // we went in a loop, tell caller repair failed
-                        this.reentry = false;
-                        return null;
-                    }
+                    this.records.push(_last);                       // replace missing record
+                    throw this;
+
+                    // wip...
+                    // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
+                    // if (!this.reentry) {
+                    //     this.reentry = true;                            // going to reenter
+                    //     try {
+                    //         // if this returned unmodified (since repair), throw (this) back to caller to signify return of repaired this
+                    //         if (this === await this.repair().catch(() => null)) throw (this);   
+                    //         this.reentry = false;                       // reset reentry to allow to repair be called again
+                    //         throw error;                                // tell caller repair failed
+                    //     } catch {
+                    //         this.reentry = false;
+                    //         throw error;                               // tell caller repair failed
+                    //     }
+                    // } else {
+                    //     // we went in a loop..., tell caller repair failed
+                    //     this.reentry = false;
+                    //     throw error;
+                    // }
+
                 case 'invalid record length':
-                    return null;
+                    throw error;
+
                 default:
-                    return null
+                    debugger;
+                    throw error;
             }
-        }
+        });
+        return this;
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
@@ -212,7 +229,7 @@ export class Attendance extends Id implements IAttendance {
             this.log = [];                  // be sure to clear running lists.....
             this.credit = <any>null;        // and counters!
             this.duration = <any>null;
-            this.valid = this.isValid();    // sort and kinda validate records.....
+            this.valid = await this.isValid().catch(() => false);   // I love this code!
             if (!this.valid) {
                 // @ts-ignore
                 this.end = last(this.records).timestamp;
