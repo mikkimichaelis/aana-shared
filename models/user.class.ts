@@ -51,7 +51,6 @@ export class UserProfile extends Base implements IUserProfile {
 }
 
 export interface IUserStats {
-    last_meeting_date: number;      // updated by joinMeeting()
     app_runs_total: number;         // updated every time the app starts +1
     app_runs_today: number;         // updated ever app start, reset to 0 by nightly process to use in calculating running averages
     app_runs_avg_7: number;
@@ -75,6 +74,8 @@ export interface IUserStats {
     //     date$: string;
     //     timestamp: number;
     // }[];
+    meeting_timestamp_last: number;
+    meeting_date_last: string;       // updated by joinMeeting()
     meeting_count_total: number;     // updated by joinMeetings()
     meeting_count_today: number;     // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
     meeting_count_avg_7: number,     // 7 day running average meetings per day
@@ -89,7 +90,6 @@ export interface IUserStats {
 }
 
 export class UserStats extends Id implements IUserStats {
-    last_meeting_date = 0;
     app_runs_total = 0;
     app_runs_today = 0;
     app_runs_avg_7 = 0;
@@ -99,6 +99,8 @@ export class UserStats extends Id implements IUserStats {
     app_runs_avg_4m = 0
     app_runs_avg_6m = 0;
 
+    meeting_timestamp_last = null;
+    meeting_date_last = null;
     meeting_count_total = 0;
     meeting_count_today = 0;
     meeting_count_avg_7 = 0;
@@ -108,6 +110,8 @@ export class UserStats extends Id implements IUserStats {
     meeting_count_avg_4m = 0;
     meeting_count_avg_6m = 0;
 
+    timestamp = DateTime.now().toMillis();
+
     constructor(userStats?: any) {
         super(userStats);
         this.initialize(this, userStats);
@@ -116,17 +120,15 @@ export class UserStats extends Id implements IUserStats {
     appRun() {
         this.app_runs_total += 1;
         this.app_runs_today += 1;
+        this.timestamp = DateTime.now().toMillis();
     }
 
-     meetingCount(meeting: IMeeting) {
+    meetingCount(meeting: IMeeting) {
+        this.meeting_timestamp_last = DateTime.now().toMillis();
+        this.meeting_date_last = DateTime.now().toLocaleString();
         this.meeting_count_total += 1;
         this.meeting_count_today += 1;
-        // this.meetings.push({
-        //     mid: meeting.id,
-        //     name: meeting.name,
-        //     date$: DateTime.now().toLocaleString(),
-        //     timestamp: DateTime.now().toMillis()
-        // })
+        this.timestamp = DateTime.now().toMillis();
     }
 }
 
@@ -245,18 +247,6 @@ export class User extends UserBase implements IUser {
     public get isHomeMeeting(): boolean {
         return this.id === this.homeMeeting;
     }
-
-    // public get isHomeGroup(): boolean {
-    //     return this.id === get(this, 'homeGroup.id', false);
-    // }
-
-    // public isFavorite(group: IGroup): boolean {
-    //     const rv = -1 !== findIndex( this.favGroups, (fg => {
-    //         return (fg.gid === group.id) // TODO add schedule logic && (!has(fg, 'sid') || fg.sid === data.sid)
-    //     }))
-
-    //     return rv;
-    // }
 
     public isFavoriteMeeting(mid: string): boolean {
         return -1 !== findIndex(this.favMeetings, (id => {
