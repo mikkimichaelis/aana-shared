@@ -1,7 +1,5 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
-// import * as geofirex from 'geofirex';
 import { DateTime } from 'luxon';
-
 import { IUserBase, UserBase } from './userBase.class';
 import { Base } from './base.class';
 import { IUserMember, UserMember } from './userMember.class';
@@ -9,9 +7,9 @@ import { IUserFavorite } from './userFavorite.class';
 import { IUserFriend } from './userFriend.class';
 import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
-import { IMeeting, Meeting } from '.';
+import { IMeeting } from '../listings/imeeting';
+import { Id } from './id.class';
 
-// this data never goes to !uid
 export interface IUserProfile {
     anonymous: boolean;
     name: string;
@@ -49,6 +47,86 @@ export class UserProfile extends Base implements IUserProfile {
         super();
 
         this.initialize(this, profile)
+    }
+}
+
+export interface IUserStats {
+    last_meeting_date: number;      // updated by joinMeeting()
+    app_runs_total: number;         // updated every time the app starts +1
+    app_runs_today: number;         // updated ever app start, reset to 0 by nightly process to use in calculating running averages
+    app_runs_avg_7: number;
+    app_runs_avg_14: number;
+    app_runs_avg_28: number;
+    app_runs_avg_2m: number;
+    app_runs_avg_4m: number;
+    app_runs_avg_6m: number;
+
+    // this subcollection holds the users meeting history
+    //
+    // I want to collect data points on a users individual meeting history
+    // ie meeting[x].attendance_avg_7   // 7 day running average of attendance for meeting x   
+    //
+    // I also want to collect data point across all users meetings collections.  So meetings must be a user document subcollection (or root collection)
+    //
+    // The same process will calc the running avg values.
+    // meetings: { 
+    //     mid: string;
+    //     name: string;
+    //     date$: string;
+    //     timestamp: number;
+    // }[];
+    meeting_count_total: number;     // updated by joinMeetings()
+    meeting_count_today: number;     // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
+    meeting_count_avg_7: number,     // 7 day running average meetings per day
+    meeting_count_avg_14: number,    // 14 day
+    meeting_count_avg_28: number,    // 27 day
+    meeting_count_avg_2m: number,    // 2 month
+    meeting_count_avg_4m: number,    // 4 month
+    meeting_count_avg_6m: number,    // 6 month running average meetings per day
+
+    appRun();
+    meetingCount(meeting: IMeeting);
+}
+
+export class UserStats extends Id implements IUserStats {
+    last_meeting_date = 0;
+    app_runs_total = 0;
+    app_runs_today = 0;
+    app_runs_avg_7 = 0;
+    app_runs_avg_14 = 0;
+    app_runs_avg_28 = 0;
+    app_runs_avg_2m = 0;
+    app_runs_avg_4m = 0
+    app_runs_avg_6m = 0;
+
+    meeting_count_total = 0;
+    meeting_count_today = 0;
+    meeting_count_avg_7 = 0;
+    meeting_count_avg_14 = 0;
+    meeting_count_avg_28 = 0;
+    meeting_count_avg_2m = 0;
+    meeting_count_avg_4m = 0;
+    meeting_count_avg_6m = 0;
+
+    constructor(userStats?: any) {
+        super(userStats);
+        this.initialize(this, userStats);
+    }
+
+    appRun() {
+        this.app_runs_total += 1;
+        this.app_runs_today += 1;
+    }
+
+     meetingCount(meeting: IMeeting) {
+        this.meeting_count_total += 1;
+        this.meeting_count_today += 1;
+        // this.meetings.push({
+        //     mid: meeting.id,
+        //     name: meeting.name,
+        //     date$: DateTime.now().toLocaleString(),
+        //     timestamp: DateTime.now().toMillis()
+        // })
     }
 }
 
