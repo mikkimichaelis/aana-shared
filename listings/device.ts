@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { Base } from '../models/base.class';
 import { Id, IId } from '../models/id.class';
 export interface IDevice extends IId {
     uid: string
@@ -32,8 +33,9 @@ export interface IDevice extends IId {
     update(): IDevice;
 }
 
-export class Device extends Id implements IDevice {
-    uid: string = ''
+export class Device extends Base implements IDevice {
+    id: string = null;
+    uid: string = '';
     timezone: string = DateTime.now().zoneName;
     updated: number = 0;                // update() populated millis
     updated$: string = '';              // update() populated local tz datetime string
@@ -61,10 +63,16 @@ export class Device extends Id implements IDevice {
     vendorSub: any = null;
 
     constructor(device?: any) {
-        super(device);
+        super();
         this.initialize(this, device);
-        if (device.uuid) {
-            this.id = device.uuid;
+        if (!this.id) {
+            if (device.id) {
+                this.id = device.id;
+            } else if (device.uuid) {
+                this.id = device.uuid;
+            } else if (device.userAgent) {
+                this.id = device.userAgent;
+            }
         }
     }
 
