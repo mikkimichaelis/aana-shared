@@ -1,8 +1,11 @@
 import { DateTime } from 'luxon';
-import { Base } from '../models/base.class';
+import { Base, IBase } from '../models/base.class';
 import { Id, IId } from '../models/id.class';
-export interface IDevice extends IId {
-    uid: string
+export interface IDevice extends IBase {
+    id: string;
+    uid: string;
+    platform: string;
+    design: string;
     timezone: string;       // tz of user at time of attendance
     updated: number;        // server utc millis last updated
     updated$: string;
@@ -18,7 +21,7 @@ export interface IDevice extends IId {
     manufacturer: any;
     isVirtual: any;
     serial: any;
-    platform: any;          // shared in both Device and Browser
+    platform_: any;          // shared in both Device and Browser
 
     // Browser values
     appCodeName: any;
@@ -37,6 +40,8 @@ export interface IDevice extends IId {
 export class Device extends Base implements IDevice {
     id: string = <any>null;
     uid: string = '';
+    platform: string = '';
+    design: string = '';
     timezone: string = DateTime.now().zoneName;
     updated: number = 0;                // update() populated millis
     updated$: string = '';              // update() populated local tz datetime string
@@ -46,7 +51,7 @@ export class Device extends Base implements IDevice {
 
     cordova: any = null;
     model: any = null;
-    platform: any = null;
+    platform_: any = null;
     uuid: any = null;
     version: any = null;
     manufacturer: any = null;
