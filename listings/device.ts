@@ -8,6 +8,7 @@ export interface IDevice extends IId {
     updated$: string;
     created: number;        // server utc millis created
     created$: string;
+    count: number;
 
     // Device values
     cordova: any;
@@ -41,6 +42,7 @@ export class Device extends Base implements IDevice {
     updated$: string = '';              // update() populated local tz datetime string
     created: number = DateTime.now().toMillis();
     created$: string = DateTime.now().toISO();
+    count: number = 0;
 
     cordova: any = null;
     model: any = null;
@@ -78,6 +80,7 @@ export class Device extends Base implements IDevice {
 
     // server side call only...
     public update(): IDevice {
+        this.count += 1;
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
         this.created$ = DateTime.fromMillis(this.created).setZone(this.timezone).toFormat('FFF');
