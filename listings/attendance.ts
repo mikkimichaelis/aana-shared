@@ -158,13 +158,13 @@ export class Attendance extends Id implements IAttendance {
         valid = this.records.length > 2;   // require min three records to be valid
         if (!valid) return valid;
 
-        valid = head(this.records)?.status === 'MEETING_ACTIVE_TRUE';
+        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')
         if (!valid) return valid;
 
         valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')
         if (!valid) return valid;
 
-        valid = last(this.records)?.status === 'MEETING_ACTIVE_FALSE';
+        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')
         return valid;
     }
 
@@ -178,6 +178,7 @@ export class Attendance extends Id implements IAttendance {
             this.credit = <any>null;    // and counters!
             this.duration = <any>null;
 
+            //  sort records by timestamp
             this.records = this.records.sort((x, y) => {
                 if (x.timestamp < y.timestamp) return -1;
                 if (x.timestamp > y.timestamp) return 1;

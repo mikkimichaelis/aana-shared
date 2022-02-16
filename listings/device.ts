@@ -1,8 +1,7 @@
 import { DateTime } from 'luxon';
 import { Id, IId } from '../models/id.class';
-
-
 export interface IDevice extends IId {
+    uid: string
     timezone: string;       // tz of user at time of attendance
     updated: number;        // server utc millis last updated
     updated$: string;
@@ -34,11 +33,12 @@ export interface IDevice extends IId {
 }
 
 export class Device extends Id implements IDevice {
-    timezone: string = DateTime.now().zoneName;                 // server populated......TODO fix this
-    created: number = DateTime.now().toMillis();                // server populated millis
+    uid: string = ''
+    timezone: string = DateTime.now().zoneName;
+    updated: number = 0;                // update() populated millis
+    updated$: string = '';              // update() populated local tz datetime string
+    created: number = DateTime.now().toMillis();
     created$: string = DateTime.now().toISO();
-    updated: number = 0;                // server populated millis
-    updated$: string = '';              // server populated local tz datetime string
 
     cordova: any = null;
     model: any = null;
