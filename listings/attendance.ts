@@ -1,11 +1,12 @@
-import { head, isEmpty, isNil, last } from 'lodash';
+import { head, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
+import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
 import { IMeeting } from './imeeting';
 export interface IAttendanceRecord extends IId {
     aid: string;
-    
+
     local: string;      // client populated
     timestamp: number;  // UTC Millis from device
 
@@ -52,14 +53,14 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    invalid     = 'invalid',        // failed processing
-    unknown     = 'unknown',        
-    active      = 'active',         // meeting is active
-    pending     = 'pending',        // attendance is pending upload
-    uploading   = 'uploading',      // attendance is uploading
-    uploaded    = 'uploaded',       // attendance is uploaded
-    processing  = 'processing',     // attendance is processing
-    processed   = 'processed'       // attendance is processed
+    invalid = 'invalid',        // failed processing
+    unknown = 'unknown',
+    active = 'active',         // meeting is active
+    pending = 'pending',        // attendance is pending upload
+    uploading = 'uploading',      // attendance is uploading
+    uploaded = 'uploaded',       // attendance is uploaded
+    processing = 'processing',     // attendance is processing
+    processed = 'processed'       // attendance is processed
 }
 export interface IAttendance extends IId {
     uid: string;            // User.id
@@ -91,7 +92,8 @@ export interface IAttendance extends IId {
     records: IAttendanceRecord[];   // [attached]
 
 
-    isValid(): boolean;
+    isValid(): Promise<boolean>;
+    repair(): Promise<IAttendance>
     update(): void;
     process(): Promise<boolean>;
 }
@@ -135,11 +137,10 @@ export class Attendance extends Id implements IAttendance {
     toObject(): IAttendance {
         // list properties that are static or computed or attached and
         // should not be serialized into the database with this document
-        const exclude: string[] = ['user', 'meeting', 'records'];
+        const exclude: string[] = ['user', 'meeting', 'records', 'reentry'];
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
-    // TODO don't really like this much at all.....could move all this into setters to auto update the strings
     public update() {
         if (this.start > 0) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
         if (this.end > 0) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
@@ -151,59 +152,100 @@ export class Attendance extends Id implements IAttendance {
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
     }
 
-    // TODO validate based on length of attendance
-    public isValid(): boolean {
-        let valid = true;
+    /*
+        returns true if valid
+        otherwise throws reason invalid
+    */
+    public async isValid(): Promise<boolean> {
+        // order records by timestamp
+        this.sort();
 
-        valid = this.records.length > 2;   // require min three records to be valid
-        if (!valid) return valid;
+        // repair() depends on this specific ordering to diagnosis.
+        // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
+        if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
+        if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
+        if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
+        if (this.records.length < 3) throw new Error('invalid records length');
+        return true;
+    }
 
-        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')
-        if (!valid) return valid;
+    /*
+        if isValid return this
+        if! attempt to repair issue
+            if throw repaired this (doing this allows caller to differentiate between a valid this return or a repaired this throw)
+            if! rethrow original isValid error (so caller knows the failure reason (and can log it properly))
+    */
+    private reentry = false;
+    public async repair() {
+        await this.isValid().catch(async error => { // throws diagnostic error message 
+            switch (error.message) {
+                case 'invalid MEETING_ACTIVE_TRUE':
+                    // 
+                    throw error;
 
-        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')
-        if (!valid) return valid;
+                case 'invalid MEETING_STATUS_INMEETING':
+                    throw error;
+                    
+                case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
+                    let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
+                    _last = new AttendanceRecord({ ...last, ...{ status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } })
+                    this.records.push(_last);                       // replace missing record
+                    throw this;
 
-        valid = -1 !== this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')
-        return valid;
+                    // wip...
+                    // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
+                    // if (!this.reentry) {
+                    //     this.reentry = true;                            // going to reenter
+                    //     try {
+                    //         // if this returned unmodified (since repair), throw (this) back to caller to signify return of repaired this
+                    //         if (this === await this.repair().catch(() => null)) throw (this);   
+                    //         this.reentry = false;                       // reset reentry to allow to repair be called again
+                    //         throw error;                                // tell caller repair failed
+                    //     } catch {
+                    //         this.reentry = false;
+                    //         throw error;                               // tell caller repair failed
+                    //     }
+                    // } else {
+                    //     // we went in a loop..., tell caller repair failed
+                    //     this.reentry = false;
+                    //     throw error;
+                    // }
+
+                case 'invalid record length':
+                    throw error;
+
+                default:
+                    debugger;
+                    throw error;
+            }
+        });
+        return this;
     }
 
     // TODO ADD MASSIVE ERROR CHECKING!!!
     public async process(): Promise<boolean> {
-        // @ts-ignore
         return new Promise<boolean>(async (resolve, reject) => {
-            // try {
             this.updated = DateTime.now().toMillis();
-            this.log = [];      // be sure to clear running lists.....
-            this.credit = <any>null;    // and counters!
+            this.log = [];                  // be sure to clear running lists.....
+            this.credit = <any>null;        // and counters!
             this.duration = <any>null;
-
-            //  sort records by timestamp
-            this.records = this.records.sort((x, y) => {
-                if (x.timestamp < y.timestamp) return -1;
-                if (x.timestamp > y.timestamp) return 1;
-                return 0;
-            });
-
-            this.valid = this.isValid();
+            this.valid = await this.isValid().catch(() => false);   // I love this code!
             if (!this.valid) {
                 // @ts-ignore
                 this.end = last(this.records).timestamp;
             } else {
-                // @ts-ignore
-                // we know records.length > 2
-                this.duration = last(this.records).timestamp - head(this.records).timestamp;
+                this.duration = (<any>last(this.records)).timestamp - (<any>head(this.records)).timestamp;
 
-                // here we create a log entry for each period (intended for support viewing)
+                // here we create a log entry for each period (human readable)
                 // a period is the time between validity changes
                 let period_start: any = null;
 
                 this.records.forEach((r, index, records) => {
                     let log = ``;
-                    if (r.status === 'MEETING_ACTIVE_TRUE') {
-                        period_start = r.timestamp;
+                    if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
+                        period_start = r.timestamp;             // start a period
 
-                        if (index > 0) {
+                        if (index > 0) {    // This should never happen
                             const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
                             this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
                         } else {
@@ -212,10 +254,10 @@ export class Attendance extends Id implements IAttendance {
                     } else if (r.status === 'MEETING_ACTIVE_FALSE') {
                         if (period_start) {
                             const duration = Duration.fromMillis(r.timestamp - period_start);
-                            this.credit = this.credit + duration.toMillis();
+                            this.credit += duration.toMillis();
                             this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
                         } else {
-                            // invalid
+                            // invalid Attendance
                         }
                         period_start = null;
                     } else if (r.status === 'MEETING_STATUS_INMEETING') {
@@ -227,7 +269,7 @@ export class Attendance extends Id implements IAttendance {
                             log = log + '!AUDIO ';
                         }
 
-                        if (r.volume < .4) {
+                        if (r.volume < .4) {    // TODO WTF?
                             log = log + '!VOLUME ';
                         }
 
@@ -269,6 +311,14 @@ export class Attendance extends Id implements IAttendance {
                 resolve(true);
             }
         })
+    }
+
+    public sort() {
+        this.records = this.records.sort((x, y) => {
+            if (x.timestamp < y.timestamp) return -1;
+            if (x.timestamp > y.timestamp) return 1;
+            return 0;
+        });
     }
 
     // public addRecord(record: any) {
