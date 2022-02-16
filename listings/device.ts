@@ -76,6 +76,7 @@ export class Device extends Base implements IDevice {
         }
     }
 
+    // server side call only...
     public update(): IDevice {
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(this.timezone).toFormat('FFF');
