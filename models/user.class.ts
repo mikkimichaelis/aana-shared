@@ -125,7 +125,7 @@ export class UserStats extends Id implements IUserStats {
 
     meetingCount(meeting: IMeeting) {
         this.meeting_timestamp_last = DateTime.now().toMillis();
-        this.meeting_date_last = DateTime.now().toLocaleString();
+        this.meeting_date_last = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
         this.meeting_count_total += 1;
         this.meeting_count_today += 1;
         this.timestamp = DateTime.now().toMillis();
