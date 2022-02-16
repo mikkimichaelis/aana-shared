@@ -85,8 +85,8 @@ export interface IUserStats {
     meeting_count_avg_4m: number,    // 4 month
     meeting_count_avg_6m: number,    // 6 month running average meetings per day
 
-    appRun();
-    meetingCount(meeting: IMeeting);
+    appRun(): void;
+    meetingCount(meeting: IMeeting): void;
 }
 
 export class UserStats extends Id implements IUserStats {
@@ -99,8 +99,8 @@ export class UserStats extends Id implements IUserStats {
     app_runs_avg_4m = 0
     app_runs_avg_6m = 0;
 
-    meeting_timestamp_last = null;
-    meeting_date_last = null;
+    meeting_timestamp_last = <any>null;
+    meeting_date_last = <any>null;
     meeting_count_total = 0;
     meeting_count_today = 0;
     meeting_count_avg_7 = 0;

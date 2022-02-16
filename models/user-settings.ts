@@ -1,4 +1,3 @@
-import { LargeNumberLike } from 'crypto';
 import { SettingsBase } from './settings-base';
 export interface IUserSettings {
     version: number;

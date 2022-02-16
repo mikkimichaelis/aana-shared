@@ -34,7 +34,7 @@ export interface IDevice extends IId {
 }
 
 export class Device extends Base implements IDevice {
-    id: string = null;
+    id: string = <any>null;
     uid: string = '';
     timezone: string = DateTime.now().zoneName;
     updated: number = 0;                // update() populated millis
