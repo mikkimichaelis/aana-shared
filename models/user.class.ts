@@ -1,5 +1,5 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 import { IUserBase, UserBase } from './userBase.class';
 import { Base } from './base.class';
 import { IUserMember, UserMember } from './userMember.class';
@@ -9,6 +9,7 @@ import { IUserActivity, UserActivity } from './userActivity.class';
 import { HomeGroup, IGroup, IHomeGroup } from './group.class';
 import { IMeeting } from '../listings/imeeting';
 import { Id } from './id.class';
+import { IUserRating } from './user-rating';
 
 export interface IUserProfile {
     anonymous: boolean;
@@ -51,8 +52,23 @@ export class UserProfile extends Base implements IUserProfile {
 }
 
 export interface IUserStats {
-    app_runs_total: number;         // updated every time the app starts +1
-    app_runs_today: number;         // updated ever app start, reset to 0 by nightly process to use in calculating running averages
+    run_duration: number;               // total app use ms
+    run_duration$: string;              // time string display of duration
+    created: number;                    // created ts
+    created$: string;                   // created date time string
+    timestamp: number;                  // last update ts
+
+    rating_prompts: number;
+    rating_enjoys: number;
+    rating_ratings: number;
+    rating_reminds: number;
+    rating_feedback: number;
+    rating_feedback_decline: number;
+
+    app_runs_total: number;             // updated every time the app starts +1
+    app_runs_today: number;             // updated ever app start, reset to 0 by nightly process to use in calculating running averages
+    app_runs_data: number[];            // array of previous app_runs_today values
+
     app_runs_avg_7: number;
     app_runs_avg_14: number;
     app_runs_avg_28: number;
@@ -60,38 +76,42 @@ export interface IUserStats {
     app_runs_avg_4m: number;
     app_runs_avg_6m: number;
 
-    // this subcollection holds the users meeting history
-    //
-    // I want to collect data points on a users individual meeting history
-    // ie meeting[x].attendance_avg_7   // 7 day running average of attendance for meeting x   
-    //
-    // I also want to collect data point across all users meetings collections.  So meetings must be a user document subcollection (or root collection)
-    //
-    // The same process will calc the running avg values.
-    // meetings: { 
-    //     mid: string;
-    //     name: string;
-    //     date$: string;
-    //     timestamp: number;
-    // }[];
     meeting_timestamp_last: number;
-    meeting_date_last: string;       // updated by joinMeeting()
-    meeting_count_total: number;     // updated by joinMeetings()
-    meeting_count_today: number;     // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
-    meeting_count_avg_7: number,     // 7 day running average meetings per day
-    meeting_count_avg_14: number,    // 14 day
-    meeting_count_avg_28: number,    // 27 day
-    meeting_count_avg_2m: number,    // 2 month
-    meeting_count_avg_4m: number,    // 4 month
-    meeting_count_avg_6m: number,    // 6 month running average meetings per day
+    meeting_date_last: string;          // updated by joinMeeting()
+    meeting_count_total: number;        // updated by joinMeetings()
+    meeting_count_today: number;        // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
+    meeting_count_data: number[];       // array of previous meeting_count_today values
+    
+    meeting_count_avg_7: number;        // 7 day running average meetings per day
+    meeting_count_avg_14: number;       // 14 day
+    meeting_count_avg_28: number;       // 27 day
+    meeting_count_avg_2m: number;       // 2 month
+    meeting_count_avg_4m: number;       // 4 month
+    meeting_count_avg_6m: number;       // 6 month running average meetings per day
 
     appRun(): void;
+    appRatingPrompt(rating: IUserRating): void;
     meetingCount(meeting: IMeeting): void;
 }
 
 export class UserStats extends Id implements IUserStats {
+    run_duration = 0;
+    run_duration$ = '';
+    created = DateTime.now().toMillis();
+    created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+    timestamp = DateTime.now().toMillis();  // last update ts
+
+    rating_prompts = 0;
+    rating_enjoys = 0;
+    rating_ratings = 0;
+    rating_reminds = 0;
+    rating_feedback = 0;
+    rating_feedback_decline = 0;
+    
     app_runs_total = 0;
     app_runs_today = 0;
+    app_runs_data: number[] = [];
+
     app_runs_avg_7 = 0;
     app_runs_avg_14 = 0;
     app_runs_avg_28 = 0;
@@ -103,6 +123,8 @@ export class UserStats extends Id implements IUserStats {
     meeting_date_last = <any>null;
     meeting_count_total = 0;
     meeting_count_today = 0;
+    meeting_count_data: number[] = [];
+
     meeting_count_avg_7 = 0;
     meeting_count_avg_14 = 0;
     meeting_count_avg_28 = 0;
@@ -110,25 +132,38 @@ export class UserStats extends Id implements IUserStats {
     meeting_count_avg_4m = 0;
     meeting_count_avg_6m = 0;
 
-    timestamp = DateTime.now().toMillis();
-
     constructor(userStats?: any) {
         super(userStats);
         this.initialize(this, userStats);
     }
 
     appRun() {
+        this.timestamp = DateTime.now().toMillis();
         this.app_runs_total += 1;
         this.app_runs_today += 1;
+    }
+
+    duration(ms: number) {
+        this.run_duration += ms;
+        this.run_duration$ = Duration.fromMillis(this.run_duration).toFormat('yy:dd:hh:mm:ss');
+    }
+
+    appRatingPrompt(rating: IUserRating) {
         this.timestamp = DateTime.now().toMillis();
+        this.rating_prompts += 1;
+        if (rating.rate) this.rating_ratings += 1;
+        if (rating.enjoy) this.rating_enjoys += 1;
+        if (rating.remind) this.rating_reminds += 1;
+        if (rating.feedback) this.rating_feedback += 1;
+        if (rating.feedback_declined) this.rating_feedback_decline += 1;
     }
 
     meetingCount(meeting: IMeeting) {
+        this.timestamp = DateTime.now().toMillis();
         this.meeting_timestamp_last = DateTime.now().toMillis();
         this.meeting_date_last = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
         this.meeting_count_total += 1;
         this.meeting_count_today += 1;
-        this.timestamp = DateTime.now().toMillis();
     }
 }
 
