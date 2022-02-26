@@ -142,11 +142,11 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public update() {
-        if (this.start > 0) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
-        if (this.end > 0) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
-        if (this.duration > 0) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        if (this.credit > 0) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-        if (this.processed > 0) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
+        if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
+        if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
+        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
@@ -185,31 +185,31 @@ export class Attendance extends Id implements IAttendance {
 
                 case 'invalid MEETING_STATUS_INMEETING':
                     throw error;
-                    
+
                 case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
                     let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
                     _last = new AttendanceRecord({ ...last, ...{ status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } })
                     this.records.push(_last);                       // replace missing record
                     throw this;
 
-                    // wip...
-                    // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
-                    // if (!this.reentry) {
-                    //     this.reentry = true;                            // going to reenter
-                    //     try {
-                    //         // if this returned unmodified (since repair), throw (this) back to caller to signify return of repaired this
-                    //         if (this === await this.repair().catch(() => null)) throw (this);   
-                    //         this.reentry = false;                       // reset reentry to allow to repair be called again
-                    //         throw error;                                // tell caller repair failed
-                    //     } catch {
-                    //         this.reentry = false;
-                    //         throw error;                               // tell caller repair failed
-                    //     }
-                    // } else {
-                    //     // we went in a loop..., tell caller repair failed
-                    //     this.reentry = false;
-                    //     throw error;
-                    // }
+                // wip...
+                // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
+                // if (!this.reentry) {
+                //     this.reentry = true;                            // going to reenter
+                //     try {
+                //         // if this returned unmodified (since repair), throw (this) back to caller to signify return of repaired this
+                //         if (this === await this.repair().catch(() => null)) throw (this);   
+                //         this.reentry = false;                       // reset reentry to allow to repair be called again
+                //         throw error;                                // tell caller repair failed
+                //     } catch {
+                //         this.reentry = false;
+                //         throw error;                               // tell caller repair failed
+                //     }
+                // } else {
+                //     // we went in a loop..., tell caller repair failed
+                //     this.reentry = false;
+                //     throw error;
+                // }
 
                 case 'invalid record length':
                     throw error;
@@ -225,90 +225,97 @@ export class Attendance extends Id implements IAttendance {
     // TODO ADD MASSIVE ERROR CHECKING!!!
     public async process(): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
-            this.updated = DateTime.now().toMillis();
-            this.log = [];                  // be sure to clear running lists.....
-            this.credit = <any>null;        // and counters!
-            this.duration = <any>null;
-            this.valid = await this.isValid().catch(() => false);   // I love this code!
-            if (!this.valid) {
-                // @ts-ignore
-                this.end = last(this.records).timestamp;
-            } else {
-                this.duration = (<any>last(this.records)).timestamp - (<any>head(this.records)).timestamp;
+            try {   // massive error checking.....shh.....
+                this.updated = DateTime.now().toMillis();
+                this.log = [];                  // be sure to clear running lists.....
+                this.credit = <any>null;        // and counters!
+                this.valid = await this.isValid().catch(() => false);
+                if (!this.valid) {
+                    // @ts-ignore
+                    this.end = last(this.records)?.timestamp;
+                    this.duration = this.end - this.start;
+                    this.credit = 0;
+                    this.valid  = false;
+                    this.status = AttendanceStatus.invalid;
+                } else {
+                    this.duration = (<any>last(this.records)).timestamp - (<any>head(this.records)).timestamp;
 
-                // here we create a log entry for each period (human readable)
-                // a period is the time between validity changes
-                let period_start: any = null;
+                    // here we create a log entry for each period (human readable)
+                    // a period is the time between validity changes
+                    let period_start: any = null;
 
-                this.records.forEach((r, index, records) => {
-                    let log = ``;
-                    if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
-                        period_start = r.timestamp;             // start a period
+                    this.records.forEach((r, index, records) => {
+                        let log = ``;
+                        if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
+                            period_start = r.timestamp;             // start a period
 
-                        if (index > 0) {    // This should never happen
-                            const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                            this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
-                        } else {
-                            this.log.push(`${r.local} START`)
-                        }
-                    } else if (r.status === 'MEETING_ACTIVE_FALSE') {
-                        if (period_start) {
-                            const duration = Duration.fromMillis(r.timestamp - period_start);
-                            this.credit += duration.toMillis();
-                            this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                        } else {
-                            // invalid Attendance
-                        }
-                        period_start = null;
-                    } else if (r.status === 'MEETING_STATUS_INMEETING') {
-                        if (!r.visible) {
-                            log = log + '!VISIBLE ';
-                        }
+                            if (index > 0) {    // This should never happen
+                                const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                                this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                            } else {
+                                this.log.push(`${r.local} START`)
+                            }
+                        } else if (r.status === 'MEETING_ACTIVE_FALSE') {
+                            if (period_start) {
+                                const duration = Duration.fromMillis(r.timestamp - period_start);
+                                this.credit += duration.toMillis();
+                                this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                            } else {
+                                // invalid Attendance
+                            }
+                            period_start = null;
+                        } else if (r.status === 'MEETING_STATUS_INMEETING') {
+                            if (!r.visible) {
+                                log = log + '!VISIBLE ';
+                            }
 
-                        if (!r.audio) {
-                            log = log + '!AUDIO ';
-                        }
+                            if (!r.audio) {
+                                log = log + '!AUDIO ';
+                            }
 
-                        if (r.volume < .4) {    // TODO WTF?
-                            log = log + '!VOLUME ';
-                        }
+                            if (r.volume < .4) {    // TODO WTF?
+                                log = log + '!VOLUME ';
+                            }
 
-                        if (log === '') {
-                            if (!period_start) {
-                                period_start = r.timestamp; // start a period
+                            if (log === '') {
+                                if (!period_start) {
+                                    period_start = r.timestamp; // start a period
 
-                                if (index > 0) {
-                                    const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                                    this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                                    if (index > 0) {
+                                        const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+                                        this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+                                    } else {
+                                        this.log.push(`${r.local} START`)
+                                    }
                                 } else {
-                                    this.log.push(`${r.local} START`)
+                                    // skip this MEETING_STATUS_INMEETING .. we are already in a period
                                 }
                             } else {
-                                // skip this MEETING_STATUS_INMEETING .. we are already in a period
+                                if (period_start) {
+                                    // end existing period
+                                    const duration = Duration.fromMillis(r.timestamp - period_start);
+                                    this.credit = this.credit + duration.toMillis();
+                                    this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+                                    period_start = null;
+                                } else {
+                                    // skip this MEETING_STATUS_INMEETING .. this record is not valid & we're not in a period anyway
+                                }
                             }
                         } else {
-                            if (period_start) {
-                                // end existing period
-                                const duration = Duration.fromMillis(r.timestamp - period_start);
-                                this.credit = this.credit + duration.toMillis();
-                                this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                                period_start = null;
-                            } else {
-                                // skip this MEETING_STATUS_INMEETING .. this record is not valid & we're not in a period anyway
-                            }
+                            throw new Error(`UNKNOWN STATUS: ${r.status}`);
                         }
-                    } else {
-                        throw new Error(`UNKNOWN STATUS: ${r.status}`);
-                    }
 
-                    this.end = r.timestamp;
-                });
+                        this.end = r.timestamp;
+                    });
+                }
 
                 this.processed = DateTime.now().toMillis();
                 this.update();
                 this.log.push(`${DateTime.fromMillis(this.processed).setZone(<any>this.timezone).toFormat('ttt')} PROCESSED ${this.valid ? 'VALID' : 'INVALID'} ${this.credit$}s CREDIT`)
 
                 resolve(true);
+            } catch (error) {
+                resolve(false);
             }
         })
     }
