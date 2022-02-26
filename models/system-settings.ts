@@ -5,9 +5,9 @@ export interface ISystemSettings {
 
     app_version: string,
     first_run: boolean;
-    // run_count: number;
-    // meeting_count: number;
-    // last_meeting: number;
+
+    last_run: number;           // ts of last time app was last run
+    last_tick: number;          // ts of last run tick used to determine how long app was used last run
 
     show_slides: boolean,
     show_help: boolean,
@@ -20,6 +20,9 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
     app_version = <any>null;    // set app_version value of this build in SettingsService 
                                 // can't import version.js here, we are a shared lib
     first_run = true;
+
+    last_run = 0;
+    last_tick = 0;
 
     show_slides = true;
     show_help = true;
