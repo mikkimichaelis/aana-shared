@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { IUserStats, UserStats } from ".";
+import { IUserStats } from ".";
 import { Id, IId } from "./id.class";
 
 export enum UserRatingStatus {
@@ -13,6 +13,7 @@ export enum UserRatingStatus {
 }
 
 export interface IUserRating extends IId {
+    uid: string;                    // user id
     enjoy: boolean;                 // is user enjoying the app?
     rate: boolean;                  // does user want to rate the app?
     remind: boolean;                // if not, does user want a reminder?
@@ -24,6 +25,7 @@ export interface IUserRating extends IId {
 }
 
 export class UserRating extends Id implements IUserRating {
+    uid = '';
     enjoy = false;
     rate = false;
     remind = false;

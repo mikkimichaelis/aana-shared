@@ -52,6 +52,8 @@ export class UserProfile extends Base implements IUserProfile {
 }
 
 export interface IUserStats {
+    uid: string;                        // user id
+    
     run_duration: number;               // total app use ms
     run_duration$: string;              // time string display of duration
     created: number;                    // created ts
@@ -95,6 +97,8 @@ export interface IUserStats {
 }
 
 export class UserStats extends Id implements IUserStats {
+    uid = '';
+    
     run_duration = 0;
     run_duration$ = '';
     created = DateTime.now().toMillis();
