@@ -116,9 +116,10 @@ export class Attendance extends Id implements IAttendance {
     meetingDuration$: string = <any>null;
 
     start: number = DateTime.now().toMillis(); start$: string = <any>null;  // server populated millis
-    end: number = <any>null; end$: string = <any>null;                      // server populated millis
-    duration: number = <any>null; duration$: string = <any>null;            // server populated millis
-    credit: number = <any>null; credit$: string = <any>null;                // server populated millis
+    end: number = 0; end$: string = <any>null;                              // server populated millis
+    duration: number = 0; duration$: string = <any>null;                    // server populated millis
+    credit: number = 0; credit$: string = <any>null;                        // server populated millis
+
     processed: number = <any>null; processed$: string = <any>null;          // server populated millis
     updated: number = <any>null; updated$: string = <any>null;              // server populated millis
 
@@ -142,11 +143,12 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public update() {
-        if (this.start) this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
-        if (this.end) this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
-        if (this.duration) this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        if (this.credit) this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-        if (this.processed) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
+        this.start$ = DateTime.fromMillis(this.start).setZone(<any>this.timezone).toFormat('FFF');
+        this.end$ = DateTime.fromMillis(this.end).setZone(<any>this.timezone).toFormat('FFF');
+        this.duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        this.credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+
+        if (this.processed > 0) this.processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.fromMillis(this.updated).setZone(<any>this.timezone).toFormat('FFF');
@@ -154,7 +156,7 @@ export class Attendance extends Id implements IAttendance {
 
     /*
         returns true if valid
-        otherwise throws reason invalid
+        otherwise throws invalid reason
     */
     public async isValid(): Promise<boolean> {
         // order records by timestamp
@@ -171,9 +173,9 @@ export class Attendance extends Id implements IAttendance {
 
     /*
         if isValid return this
-        if! attempt to repair issue
-            if throw repaired this (doing this allows caller to differentiate between a valid this return or a repaired this throw)
-            if! rethrow original isValid error (so caller knows the failure reason (and can log it properly))
+        if ! attempt to repair issue
+            if repaired throw this (doing this allows caller to differentiate between a valid this return or a repaired this throw)
+            if ! rethrow original isValid error (so caller knows the failure reason (and can log it properly))
     */
     private reentry = false;
     public async repair() {
