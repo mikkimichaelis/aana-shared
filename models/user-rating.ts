@@ -30,7 +30,7 @@ export class UserRating extends Id implements IUserRating {
     feedback = false;
     feedback_declined = false;
     status = UserRatingStatus.NONE;
-    stats = null;
+    stats = <any>null;
     timestamp: number = DateTime.now().toMillis();
 
     constructor(userRating?: any) {
