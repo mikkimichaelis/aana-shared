@@ -137,16 +137,16 @@ export class Group extends Id implements IGroup {
     }
   }
 
-  public get membersOnline(): number {
-    if (Array.isArray(this.members)) {
-      // TODO check algorithm
-      return sum(map(this.members, (member: UserMember) => {
-        return member.isOnline ? 1 : 0;
-      }));
-    } else {
-      return 0;
-    }
-  }
+//   public get membersOnline(): number {
+//     if (Array.isArray(this.members)) {
+//       // TODO check algorithm
+//       return sum(map(this.members, (member: UserMember) => {
+//         return member.isOnline ? 1 : 0;
+//       }));
+//     } else {
+//       return 0;
+//     }
+//   }
 
   constructor(group?: any) {
     super(group)

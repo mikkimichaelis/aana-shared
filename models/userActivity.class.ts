@@ -8,11 +8,11 @@ export interface IUserActivity extends IUserBase {
 
     url: string;
 
-    lastAppRun: number;
-    lastAppRun$: string;
+    app_run_last: number;
+    app_run_last$: string;
 
-    lastResume: number;
-    lastResume$: string;
+    resume_last: number;
+    resume_last$: string;
 
     timestamp: number;
     timestamp$: string;
@@ -25,17 +25,17 @@ export class UserActivity extends UserBase implements IUserActivity {
     uid = '';
     url = '';
 
-    lastAppRun = 0;
-    lastAppRun$ = '';
+    app_run_last = 0;
+    app_run_last$ = '';
 
-    lastResume = 0;
-    lastResume$ = '';
+    resume_last = 0;
+    resume_last$ = '';
 
     timestamp = 0;
     timestamp$ = '';
 
     Aster_Michael = 'Go Away, Tickle Couch!';
-    Arlen_Remi = 'Princess Love (✿ ♥‿♥)'
+    Arlen_Remi = 'Princess Love (✿ ♥‿♥)';
 
     constructor(data?: any) {
         super();

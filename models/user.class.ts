@@ -67,6 +67,7 @@ export interface IUserStats {
     rating_feedback: number;
     rating_feedback_decline: number;
 
+    app_run_last: number;
     app_runs_total: number;             // updated every time the app starts +1
     app_runs_today: number;             // updated ever app start, reset to 0 by nightly process to use in calculating running averages
     app_runs_data: number[];            // array of previous app_runs_today values
@@ -112,6 +113,7 @@ export class UserStats extends Id implements IUserStats {
     rating_feedback = 0;
     rating_feedback_decline = 0;
     
+    app_run_last = 0;
     app_runs_total = 0;
     app_runs_today = 0;
     app_runs_data: number[] = [];
@@ -143,6 +145,7 @@ export class UserStats extends Id implements IUserStats {
 
     appRun() {
         this.timestamp = DateTime.now().toMillis();
+        this.app_run_last  = DateTime.now().toMillis();
         this.app_runs_total += 1;
         this.app_runs_today += 1;
     }
@@ -226,10 +229,10 @@ export class User extends UserBase implements IUser {
     created: string = DateTime.utc().toISO();
     attendance: string[] = [];
 
-    public get isOnline(): boolean {
-        const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
-        return DateTime.utc().diff(lastActivity).minutes < ONLINE_ACTIVITY;
-    }
+    // public get isOnline(): boolean {
+    //     const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
+    //     return DateTime.utc().diff(lastActivity).minutes < ONLINE_ACTIVITY;
+    // }
 
     public get daysSinceBday() {
         const bday: DateTime = DateTime.fromISO(this.profile.bday);
