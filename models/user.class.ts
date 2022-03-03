@@ -184,7 +184,6 @@ export class UserStats extends Id implements IUserStats {
 
         this.processed = DateTime.now().toMillis();
         this.processed$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
-        this.timestamp = DateTime.now().toMillis();
     }
 
     appRun() {
