@@ -1,17 +1,11 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
-import { IUserBase, UserBase } from './userBase.class';
-import { Base } from './base.class';
-import { IUserMember, UserMember } from './userMember.class';
-import { IUserFavorite } from './userFavorite.class';
-import { IUserFriend } from './userFriend.class';
-import { IUserActivity, UserActivity } from './userActivity.class';
-import { HomeGroup, IGroup, IHomeGroup } from './group.class';
+import { max, mean } from 'mathjs';
 import { IMeeting } from '../listings/imeeting';
+import { Base } from './base.class';
 import { Id } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';
-import { max, mean } from 'mathjs';
-
+import { IUserBase, UserBase } from './userBase.class';
 export interface IUserProfile {
     anonymous: boolean;
     name: string;
@@ -32,7 +26,6 @@ export interface IUserPreferences {
     location: boolean;
     location_value: string;
 }
-
 export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean = true;
     name: string = 'Anonymous A';
@@ -51,7 +44,6 @@ export class UserProfile extends Base implements IUserProfile {
         this.initialize(this, profile)
     }
 }
-
 export interface IUserStats {
     uid: string;                        // user id
 
@@ -105,7 +97,6 @@ export interface IUserStats {
     meetingCount(meeting: IMeeting): void;
     process(): void;
 }
-
 export class UserStats extends Id implements IUserStats {
     uid = '';
 
@@ -217,25 +208,14 @@ export class UserStats extends Id implements IUserStats {
         this.meeting_count_today += 1;
     }
 }
-
 export interface IUser extends IUserBase {
     preferences: IUserPreferences,
-    email: string;
-    emailVerified: boolean;
-    zoomUser: boolean;
     profile: IUserProfile;
-    activity: IUserActivity;
-    member: IUserMember;
-    homeMeeting: string;
-    homeGroup: IHomeGroup;
-    favGroups: IUserFavorite[];
     favMeetings: string[];
     blkMeetings: string[];
-    friends: IUserFriend[];
-    attendance: string[];
 
-    chatUser: any;
-    created: string;
+    created: number;
+    created$: string;
 
     addFavoriteMeeting(mid: string): boolean;
     removeFavoriteMeeting(mid: string): boolean;
@@ -257,34 +237,16 @@ export class User extends UserBase implements IUser {
         location: false,
         location_value: '',
     }
-    email: string = '';
-    emailVerified: boolean = false;
-    zoomUser: boolean = false;
     profile: IUserProfile = <any>null;
-    activity: IUserActivity = <any>null;
-    member: IUserMember = <any>null;    // TODO ???
     homeMeeting: string = <any>null;
-    homeGroup: IHomeGroup = <any>null;
-    favGroups: IUserFavorite[] = [];
     favMeetings: any[] = [];
     blkMeetings: any[] = [];
-    friends: IUserFriend[] = [];
-    chatUser: any = null;
-    created: string = DateTime.utc().toISO();
-    attendance: string[] = [];
 
-    // public get isOnline(): boolean {
-    //     const lastActivity: DateTime = DateTime.fromISO(this.activity.lastTime);
-    //     return DateTime.utc().diff(lastActivity).minutes < ONLINE_ACTIVITY;
-    // }
-
-    public get daysSinceBday() {
-        const bday: DateTime = DateTime.fromISO(this.profile.bday);
-        return DateTime.utc().diff(bday).days;
-    }
+    created = DateTime.now().toMillis();
+    created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
 
     constructor(user?: any) {
-        super(user);    // pass to super user?
+        super(user);
 
         // This is the BaseClass (root) initialize()
         // parm1: subclass instance (this)
@@ -303,31 +265,10 @@ export class User extends UserBase implements IUser {
 
             this.setUserAuthNames(user.name);
         }
-        if (has(user, 'activity') && !isEmpty(user.activity)) {
-            this.activity = new UserActivity(user.activity);
-        } else {
-            user.activity = new UserActivity({
-                id: this.id,
-                name: this.profile.name,
-                avatar: this.avatar,
-                lastLogon: DateTime.utc().toISO(),
-                lastTime: DateTime.utc().toISO(),
-                point: null,
-            });
-        }
-        if (has(user, 'member') && !isEmpty(user.member)) this.member = new UserMember(user.member);
-        if (has(user, 'homeGroup') && !isEmpty(user.homeGroup)) this.homeGroup = new HomeGroup(user.homeGroup);
     }
 
     toObject(): IUser {
-        return super.toObject(['isOnline', 'daysSinceBday'])
-    }
-
-    toGeoObject(geo?: any): IUser {
-        const activity = this.activity;
-        const obj = super.toGeoObject(geo);
-        obj.activity = activity.toGeoObject(geo);
-        return obj;
+        return super.toObject([]);
     }
 
     public get isHomeMeeting(): boolean {
@@ -380,14 +321,6 @@ export class User extends UserBase implements IUser {
         this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}` + (this.profile.lastInitial.length === 1 ? '.' : '');
         this.name = this.profile.name;
         return true;
-    }
-
-    public setHomeGroup(group: IGroup) {
-        this.homeGroup = new HomeGroup(group);
-    }
-
-    public removeHomeGroup() {
-        this.homeGroup = <any>null;
     }
 }
 
