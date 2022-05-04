@@ -77,8 +77,8 @@ export interface IUserStats {
     app_runs_avg_6m: number;
     app_runs_avg_1y: number;
 
-    meeting_timestamp_last: number;
-    meeting_date_last: string;          // updated by joinMeeting()
+    meeting_last: number;
+    meeting_last$: string;              // updated by joinMeeting()
     meeting_count_total: number;        // updated by joinMeetings()
     meeting_count_today: number;        // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
     meeting_count_data: number[];       // array of previous meeting_count_today values
@@ -130,8 +130,9 @@ export class UserStats extends Id implements IUserStats {
     app_runs_avg_6m = 0;
     app_runs_avg_1y = 0;
 
-    meeting_timestamp_last = <any>null;
-    meeting_date_last = <any>null;
+    meeting_last = <any>null;
+    meeting_last$ = <any>null;
+
     meeting_count_total = 0;
     meeting_count_today = 0;
 
@@ -202,8 +203,8 @@ export class UserStats extends Id implements IUserStats {
 
     meetingCount(meeting: IMeeting) {
         this.timestamp = DateTime.now().toMillis();
-        this.meeting_timestamp_last = DateTime.now().toMillis();
-        this.meeting_date_last = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+        this.meeting_last = DateTime.now().toMillis();
+        this.meeting_last$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
         this.meeting_count_total += 1;
         this.meeting_count_today += 1;
     }
