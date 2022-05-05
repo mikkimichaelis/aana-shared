@@ -116,9 +116,9 @@ export class Attendance extends Id implements IAttendance {
     ___valid: boolean = false;
     log: string[] = [];
 
-    _meetingStartTime$: string = <any>null;  // time meeting started
-    _meetingDuration$: string = <any>null;
-    _meetingName$: string = <any>null;
+    _meetingStartTime$: string = <any>undefined; 
+    _meetingDuration$: string = <any>undefined;
+    _meetingName$: string = <any>undefined;
 
     start: number = DateTime.now().toMillis(); __start$: string = <any>null;  // server populated millis
     end: number = 0; __end$: string = <any>null;                              // server populated millis
