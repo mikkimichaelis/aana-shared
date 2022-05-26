@@ -172,9 +172,9 @@ export class Attendance extends Id implements IAttendance {
         // repair() depends on this specific ordering to diagnosis.
         // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
         // TODO may be old comments above, update to find vs head/last
-        if (head(this.records)?.status !== 'MEETING_ACTIVE_TRUE') throw new Error('invalid MEETING_ACTIVE_TRUE');
-        if (last(this.records)?.status !== 'MEETING_ACTIVE_FALSE') throw new Error('invalid MEETING_ACTIVE_FALSE');
-        if (-1 === this.records.findIndex(record => record.status !== 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
+        if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')) throw new Error('invalid MEETING_ACTIVE_TRUE');
+        if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
+        if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')) throw new Error('invalid MEETING_ACTIVE_FALSE');
         if (this.records.length < 3) debugger; // throw new Error('invalid records length');
         return true;
     }
@@ -192,17 +192,18 @@ export class Attendance extends Id implements IAttendance {
                 case 'invalid MEETING_ACTIVE_TRUE':
                     // 
                     throw error;
-
+                    break;
                 case 'invalid MEETING_STATUS_INMEETING':
                     throw error;
-
+                    break;
                 case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
                     let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
                     let repair: any =  { ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } };
                     repair = new AttendanceRecord(repair)
                     this.records.push(repair);                       // replace missing record
-                    throw this;
-
+                    let repaired = null;
+                    if (repaired = this.isValid().catch(error => { throw error; })) throw repaired;
+                    break;
                 // wip...
                 // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
                 // if (!this.reentry) {
@@ -254,18 +255,12 @@ export class Attendance extends Id implements IAttendance {
                     // here we create a log entry for each period (human readable)
                     // a period is the time between validity changes
                     let period_start: any = null;
-
+                    // this.sort()                                     // in isValid() above
                     this.records.forEach((r, index, records) => {
                         let log = ``;
                         if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
                             period_start = r.timestamp;             // start a period
-
-                            if (index > 0) {    // This should never happen
-                                const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                                this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
-                            } else {
-                                this.log.push(`${r.local} START`)
-                            }
+                            this.log.push(`${r.local} START`)
                         } else if (r.status === 'MEETING_ACTIVE_FALSE') {
                             if (period_start) {
                                 const duration = Duration.fromMillis(r.timestamp - period_start);
@@ -276,17 +271,17 @@ export class Attendance extends Id implements IAttendance {
                             }
                             period_start = null;
                         } else if (r.status === 'MEETING_STATUS_INMEETING') {
-                            if (!r.visible) {
-                                log = log + '!VISIBLE ';
-                            }
+                            // if (!r.visible) {
+                            //     log = log + '!VISIBLE ';
+                            // }
 
-                            if (!r.audio) {
-                                log = log + '!AUDIO ';
-                            }
+                            // if (!r.audio) {
+                            //     log = log + '!AUDIO ';
+                            // }
 
-                            if (r.volume < .4) {    // TODO WTF?
-                                log = log + '!VOLUME ';
-                            }
+                            // if (r.volume < .4) {    // TODO WTF?
+                            //     log = log + '!VOLUME ';
+                            // }
 
                             if (log === '') {
                                 if (!period_start) {
