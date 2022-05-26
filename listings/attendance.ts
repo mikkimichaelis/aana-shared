@@ -173,16 +173,16 @@ export class Attendance extends Id implements IAttendance {
         // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
         // TODO may be old comments above, update to find vs head/last
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')) throw new Error('invalid MEETING_ACTIVE_TRUE');
-        if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')) throw new Error('invalid MEETING_ACTIVE_FALSE');
-        if (this.records.length < 3) debugger; // throw new Error('invalid records length');
+        // if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
+        // if (this.records.length < 3) debugger; // throw new Error('invalid records length');
         return true;
     }
 
     /*
         if isValid return this
         if ! attempt to repair issue
-            if repaired throw this (doing this allows caller to differentiate between a ___valid this return or a repaired this throw)
+            if repaired throw this (doing this allows caller to differentiate between a valid this return or a repaired this throw)
             if ! rethrow original isValid error (so caller knows the failure reason (and can log it properly))
     */
     private reentry = false;
@@ -198,34 +198,15 @@ export class Attendance extends Id implements IAttendance {
                     break;
                 case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
                     let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
+                                                                    // getting last is valid due to sort() in above isValid()
                     let repair: any =  { ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } };
-                    repair = new AttendanceRecord(repair)
+                    repair = new AttendanceRecord(repair);
                     this.records.push(repair);                       // replace missing record
                     let repaired = null;
-                    if (repaired = this.isValid().catch(error => { throw error; })) throw repaired;
+                    if (repaired = await this.isValid().catch(error => { throw error; })) throw repaired;
                     break;
-                // wip...
-                // // call self to verify we are repaired (isValid only throws the *first* error found, there may be more ;-())
-                // if (!this.reentry) {
-                //     this.reentry = true;                            // going to reenter
-                //     try {
-                //         // if this returned unmodified (since repair), throw (this) back to caller to signify return of repaired this
-                //         if (this === await this.repair().catch(() => null)) throw (this);   
-                //         this.reentry = false;                       // reset reentry to allow to repair be called again
-                //         throw error;                                // tell caller repair failed
-                //     } catch {
-                //         this.reentry = false;
-                //         throw error;                               // tell caller repair failed
-                //     }
-                // } else {
-                //     // we went in a loop..., tell caller repair failed
-                //     this.reentry = false;
-                //     throw error;
-                // }
-
                 case 'invalid record length':
                     throw error;
-
                 default:
                     debugger;
                     throw error;
