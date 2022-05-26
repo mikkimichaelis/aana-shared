@@ -55,14 +55,14 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    invalid = 'invalid',        // failed processing
+    invalid = 'invalid',            // failed processing
     unknown = 'unknown',
-    active = 'active',         // meeting is active
-    pending = 'pending',        // attendance is pending upload
-    uploading = 'uploading',      // attendance is uploading
-    uploaded = 'uploaded',       // attendance is uploaded
-    processing = 'processing',     // attendance is processing
-    processed = 'processed'       // attendance is processed
+    active = 'active',              // meeting is active
+    pending = 'pending',            // attendance is pending upload
+    uploading = 'uploading',        // attendance is uploading
+    uploaded = 'uploaded',          // attendance is uploaded
+    processing = 'processing',      // attendance is processing
+    processed = 'processed'         // attendance is processed
 }
 export interface IAttendance extends IId {
     uid: string;            // User.id
