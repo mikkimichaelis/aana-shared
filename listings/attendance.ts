@@ -198,8 +198,9 @@ export class Attendance extends Id implements IAttendance {
 
                 case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
                     let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
-                    _last = new AttendanceRecord({ ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } })
-                    this.records.push(_last);                       // replace missing record
+                    let repair: any =  { ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } };
+                    repair = new AttendanceRecord(repair)
+                    this.records.push(repair);                       // replace missing record
                     throw this;
 
                 // wip...
