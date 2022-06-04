@@ -116,7 +116,7 @@ export class Attendance extends Id implements IAttendance {
     ___valid: boolean = false;
     log: string[] = [];
 
-    _meetingStartTime$: string = <any>undefined; 
+    _meetingStartTime$: string = <any>undefined;
     _meetingDuration$: string = <any>undefined;
     _meetingName$: string = <any>undefined;
 
@@ -173,7 +173,7 @@ export class Attendance extends Id implements IAttendance {
         // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
         // TODO may be old comments above, update to find vs head/last
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')) throw new Error('invalid MEETING_ACTIVE_TRUE');
-        if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')) throw new Error('invalid MEETING_ACTIVE_FALSE');
+        if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         // if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         // if (this.records.length < 3) debugger; // throw new Error('invalid records length');
         return true;
@@ -187,6 +187,7 @@ export class Attendance extends Id implements IAttendance {
     */
     private reentry = false;
     public async repair(): Promise<IAttendance> {
+        this.sort();
         await this.isValid().catch(async error => { // throws diagnostic error message 
             switch (error.message) {
                 case 'invalid MEETING_ACTIVE_TRUE':
@@ -198,8 +199,8 @@ export class Attendance extends Id implements IAttendance {
                     break;
                 case 'invalid MEETING_ACTIVE_FALSE':                // this is what repairs a power loss while in meeting   
                     let _last = last(this.records);                 // get last record to use as template for missing MEETING_ACTIVE_FALSE
-                                                                    // getting last is valid due to sort() in above isValid()
-                    let repair: any =  { ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } };
+                    // getting last is valid due to sort() in above isValid()
+                    let repair: any = { ...last, ...{ ___status: 'MEETING_ACTIVE_FALSE', id: uuidv4() } };
                     repair = new AttendanceRecord(repair);
                     this.records.push(repair);                       // replace missing record
                     let repaired = null;
@@ -215,85 +216,23 @@ export class Attendance extends Id implements IAttendance {
         return this;
     }
 
-    // TODO ADD MASSIVE ERROR CHECKING!!!
     public async process(): Promise<boolean> {
+        this.sort();
         return new Promise<boolean>(async (resolve, reject) => {
-            try {   // massive error checking.....shh.....
+            try {
                 this.updated = DateTime.now().toMillis();
-                this.log = [];                  // be sure to clear running lists.....
-                this.credit = <any>null;        // and counters!
+                this.log = [];
                 this.___valid = await this.isValid().catch(() => false);
                 if (!this.___valid) {
                     // @ts-ignore
                     this.end = last(this.records)?.timestamp;
                     this.duration = this.end - this.start;
                     this.credit = 0;
-                    this.___valid  = false;
                     this.___status = AttendanceStatus.invalid;
                 } else {
-                    this.duration = (<any>last(this.records)).timestamp - (<any>head(this.records)).timestamp;
-
-                    // here we create a log entry for each period (human readable)
-                    // a period is the time between validity changes
-                    let period_start: any = null;
-                    // this.sort()                                     // in isValid() above
-                    this.records.forEach((r, index, records) => {
-                        let log = ``;
-                        if (r.status === 'MEETING_ACTIVE_TRUE') {   // signals start of meeting
-                            period_start = r.timestamp;             // start a period
-                            this.log.push(`${r.local} START`)
-                        } else if (r.status === 'MEETING_ACTIVE_FALSE') {
-                            if (period_start) {
-                                const duration = Duration.fromMillis(r.timestamp - period_start);
-                                this.credit += duration.toMillis();
-                                this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                            } else {
-                                // invalid Attendance
-                            }
-                            period_start = null;
-                        } else if (r.status === 'MEETING_STATUS_INMEETING') {
-                            // if (!r.visible) {
-                            //     log = log + '!VISIBLE ';
-                            // }
-
-                            // if (!r.audio) {
-                            //     log = log + '!AUDIO ';
-                            // }
-
-                            // if (r.volume < .4) {    // TODO WTF?
-                            //     log = log + '!VOLUME ';
-                            // }
-
-                            if (log === '') {
-                                if (!period_start) {
-                                    period_start = r.timestamp; // start a period
-
-                                    if (index > 0) {
-                                        const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
-                                        this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
-                                    } else {
-                                        this.log.push(`${r.local} START`)
-                                    }
-                                } else {
-                                    // skip this MEETING_STATUS_INMEETING .. we are already in a period
-                                }
-                            } else {
-                                if (period_start) {
-                                    // end existing period
-                                    const duration = Duration.fromMillis(r.timestamp - period_start);
-                                    this.credit = this.credit + duration.toMillis();
-                                    this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
-                                    period_start = null;
-                                } else {
-                                    // skip this MEETING_STATUS_INMEETING .. this record is not ___valid & we're not in a period anyway
-                                }
-                            }
-                        } else {
-                            throw new Error(`UNKNOWN STATUS: ${r.status}`);
-                        }
-
-                        this.end = r.timestamp;
-                    });
+                    this.end =(<any>last(this.records)).timestamp;
+                    this.credit = this.duration = this.end - (<any>head(this.records)).timestamp;
+                    this.___status = AttendanceStatus.processed;
                 }
 
                 this.processed = DateTime.now().toMillis();
@@ -328,4 +267,55 @@ export class Attendance extends Id implements IAttendance {
     //     }
     //     this.records.push(new AttendanceRecord(record));
     // }
+
+
+    // this.records.forEach((r, index, records) => {
+    //     let log = '';
+    //     switch (r.status) {
+    //         case 'MEETING_ACTIVE_TRUE':
+    //             period_start = r.timestamp;             // start a period
+    //             this.log.push(`${r.local} START`)
+    //             break;
+    //         case 'MEETING_ACTIVE_FALSE':
+    //             if (period_start) {
+    //                 const duration = Duration.fromMillis(r.timestamp - period_start);
+    //                 this.credit += duration.toMillis();
+    //                 this.log.push(`${r.local} END ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+    //             } else {
+    //                 // invalid Attendance
+    //             }
+    //             period_start = null;
+    //             break;
+    //         case 'MEETING_STATUS_INMEETING':
+    //             if (log === '') {
+    //                 if (!period_start) {
+    //                     period_start = r.timestamp; // start a period
+
+    //                     if (index > 0) {
+    //                         const duration = Duration.fromMillis(r.timestamp - records[index - 1].timestamp);
+    //                         this.log.push(`${r.local} START ${duration.toFormat('hh:mm:ss')}s SKIPPED`);
+    //                     } else {
+    //                         this.log.push(`${r.local} START`)
+    //                     }
+    //                 } else {
+    //                     // skip this MEETING_STATUS_INMEETING .. we are already in a period
+    //                 }
+    //             } else {
+    //                 if (period_start) {
+    //                     // end existing period
+    //                     const duration = Duration.fromMillis(r.timestamp - period_start);
+    //                     this.credit = this.credit + duration.toMillis();
+    //                     this.log.push(`${r.local} END ${log} ${duration.toFormat('hh:mm:ss')}s CREDIT`);
+    //                     period_start = null;
+    //                 } else {
+    //                     // skip this MEETING_STATUS_INMEETING .. this record is not ___valid & we're not in a period anyway
+    //                 }
+    //             }
+    //             break;
+    //         default:
+    //             throw new Error(`UNKNOWN STATUS: ${r.status}`);
+    //     }
+
+    //     this.end = r.timestamp;
+    // });
 }
