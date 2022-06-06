@@ -55,22 +55,30 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    invalid = 'invalid',            // failed processing
+    invalid = 'invalid',                // failed processing
     unknown = 'unknown',
-    active = 'active',              // meeting is active
-    pending = 'pending',            // attendance is pending upload
-    uploading = 'uploading',        // attendance is uploading
-    uploaded = 'uploaded',          // attendance is uploaded
-    processing = 'processing',      // attendance is processing
-    processed = 'processed'         // attendance is processed
+    active = 'active',                  // meeting is active
+    pending = 'pending',                // attendance is pending upload
+    uploading = 'uploading',            // attendance is uploading
+    uploaded = 'uploaded',              // attendance is uploaded
+    processing = 'processing',          // attendance is processing
+    processed = 'processed',            // attendance is processed
+    credit_repaired = 'credit_repaired' // attendance credit was repaired by user
 }
 export interface IAttendance extends IId {
+    version: number;                            // attendance algorithm version
+
     uid: string;            // User.id
     mid: string;            // Meeting.id
     zid: string;            // Zoom meeting number (same as Meeting.zid)
     uzid: string;           // Unique Zoom Meeting id for this occurrence
     zpid: string;           // Zoom Participant id
     zuid: string;           // Zoom User ID
+
+    __submit: boolean;
+    produced: number;
+    __produced$: string;
+    __deleted: boolean;
 
     _timezone: string;       // tz of user at time of attendance
     timestamp: number;
@@ -94,7 +102,6 @@ export interface IAttendance extends IId {
     meeting: IMeeting;      // [attached] Set server side when processed
     records: IAttendanceRecord[];   // [attached]
 
-    version: number;                            // attendance algorithm version
 
     isValid(): Promise<boolean>;
     repair(): Promise<IAttendance>
@@ -102,38 +109,42 @@ export interface IAttendance extends IId {
     process(): Promise<boolean>;
 }
 export class Attendance extends Id implements IAttendance {
-    uid: string = <any>null;
-    mid: string = <any>null;
-    zid: string = <any>null;
-    uzid: string = <any>null;
-    zpid: string = <any>null;
-    zuid: string = <any>null;
+    version: number = 71;
 
-    _timezone: string = DateTime.now().zoneName;
+    uid: string = <any>'';
+    mid: string = <any>'';
+    zid: string = <any>'';
+    uzid: string = <any>'';
+    zpid: string = <any>'';
+    zuid: string = <any>'';
+
+    __submit: boolean = false;
+    produced: number = 0;  __produced$: string = '';
+    __deleted: boolean = false;
+
+    _timezone: string = <any>'';
     timestamp: number = DateTime.now().toMillis();
 
     ___status: AttendanceStatus = AttendanceStatus.unknown;
     ___valid: boolean = false;
     log: string[] = [];
 
-    _meetingStartTime$: string = <any>undefined;
-    _meetingDuration$: string = <any>undefined;
-    _meetingName$: string = <any>undefined;
+    _meetingStartTime$: string = <any>'';
+    _meetingDuration$: string = <any>'';
+    _meetingName$: string = <any>'';
 
-    start: number = DateTime.now().toMillis(); __start$: string = <any>null;  // server populated millis
+    start: number = DateTime.now().toMillis(); __start$: string = <any>null;                // server populated millis
     end: number = 0; __end$: string = <any>null;                              // server populated millis
     duration: number = 0; __duration$: string = <any>null;                    // server populated millis
     credit: number = 0; __credit$: string = <any>null;                        // server populated millis
 
-    processed: number = <any>null; _processed$: string = <any>null;          // server populated millis
-    updated: number = <any>null; _updated$: string = <any>null;              // server populated millis
+    processed: number = 0; _processed$: string = <any>null;          // server populated millis
+    updated: number = 0; _updated$: string = <any>null;              // server populated millis
 
     // EXCLUDED!
     user: IUser = <any>null;
     meeting: IMeeting = <any>null;
     records: IAttendanceRecord[] = [];
-
-    version: number = 1;
 
     // server side called constructor only!
     constructor(attendance: any) {
@@ -150,11 +161,11 @@ export class Attendance extends Id implements IAttendance {
     }
 
     public update() {
-        this.__start$ = DateTime.fromMillis(this.start).setZone(<any>this._timezone).toFormat('FFF');
-        this.__end$ = DateTime.fromMillis(this.end).setZone(<any>this._timezone).toFormat('FFF');
-        this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
-
+        if (this.start > 0) this.__start$ = DateTime.fromMillis(this.start).setZone(<any>this._timezone).toFormat('FFF');
+        if (this.end > 0) this.__end$ = DateTime.fromMillis(this.end).setZone(<any>this._timezone).toFormat('FFF');
+        if (this.duration > 0) this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (this.credit > 0) this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+        if (this.produced > 0) this.__produced$ = Duration.fromMillis(this.produced).toFormat('FFF');
         if (this.processed > 0) this._processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.updated = DateTime.now().toMillis();
@@ -173,6 +184,7 @@ export class Attendance extends Id implements IAttendance {
         // specifically 'invalid records length' must be throw last (let other possibly fixable errors be thrown first :-))
         // TODO may be old comments above, update to find vs head/last
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_TRUE')) throw new Error('invalid MEETING_ACTIVE_TRUE');
+        if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')) throw new Error('invalid MEETING_ACTIVE_FALSE');
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         // if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         // if (this.records.length < 3) debugger; // throw new Error('invalid records length');
@@ -231,7 +243,8 @@ export class Attendance extends Id implements IAttendance {
                     this.___status = AttendanceStatus.invalid;
                 } else {
                     this.end =(<any>last(this.records)).timestamp;
-                    this.credit = this.duration = this.end - (<any>head(this.records)).timestamp;
+                    this.duration = this.end - this.start;
+                    this.credit = this.duration;
                     this.___status = AttendanceStatus.processed;
                 }
 
