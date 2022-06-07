@@ -28,7 +28,7 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
     aid: string = <any>null;
 
     local: string = <any>null;
-    timestamp: number = <any>null;
+    timestamp: number = DateTime.now().toMillis();
 
     // Zoom data
     status: string = <any>null;
@@ -49,8 +49,10 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
     constructor(record: any) {
         super(record);
 
-        this.initialize(this, record);
         this.local = DateTime.fromMillis(this.timestamp).toFormat('ttt');
+
+        // overwrite with record
+        this.initialize(this, record);
     }
 }
 
@@ -164,9 +166,10 @@ export class Attendance extends Id implements IAttendance {
         if (this.start > 0) this.__start$ = DateTime.fromMillis(this.start).setZone(<any>this._timezone).toFormat('FFF');
         if (this.end > 0) this.__end$ = DateTime.fromMillis(this.end).setZone(<any>this._timezone).toFormat('FFF');
         if (this.duration > 0) this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
-        if (this.credit > 0) this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
         if (this.produced > 0) this.__produced$ = Duration.fromMillis(this.produced).toFormat('FFF');
         if (this.processed > 0) this._processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
+
+        this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
 
         this.updated = DateTime.now().toMillis();
         this._updated$ = DateTime.fromMillis(this.updated).setZone(<any>this._timezone).toFormat('FFF');
