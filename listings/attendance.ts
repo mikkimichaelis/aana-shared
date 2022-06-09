@@ -72,6 +72,7 @@ export interface IAttendance extends IId {
 
     uid: string;            // User.id
     mid: string;            // Meeting.id
+    arid: string;           // AttendanceReport.id
     zid: string;            // Zoom meeting number (same as Meeting.zid)
     uzid: string;           // Unique Zoom Meeting id for this occurrence
     zpid: string;           // Zoom Participant id
@@ -115,6 +116,7 @@ export class Attendance extends Id implements IAttendance {
 
     uid: string = <any>'';
     mid: string = <any>'';
+    arid: string = <any>'';
     zid: string = <any>'';
     uzid: string = <any>'';
     zpid: string = <any>'';
