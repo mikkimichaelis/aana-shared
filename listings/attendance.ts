@@ -103,7 +103,7 @@ export interface IAttendance extends IId {
 
     isValid(): Promise<boolean>;
     repair(): Promise<IAttendance>
-    update(): void;
+    update(meeting?: IMeeting): void;
     process(): Promise<boolean>;
 }
 export class Attendance extends Id implements IAttendance {
@@ -118,7 +118,7 @@ export class Attendance extends Id implements IAttendance {
     zuid: string = <any>'';
 
     __submit: boolean = false;
-    produced: number = 0;  __produced$: string = '';
+    produced: number = 0; __produced$: string = '';
     __deleted: boolean = false;
 
     _timezone: string = <any>'';
@@ -159,7 +159,7 @@ export class Attendance extends Id implements IAttendance {
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
     }
 
-    public update() {
+    public update(meeting?: IMeeting) {
         if (this.start > 0) this.__start$ = DateTime.fromMillis(this.start).setZone(<any>this._timezone).toFormat('FFF');
         if (this.end > 0) this.__end$ = DateTime.fromMillis(this.end).setZone(<any>this._timezone).toFormat('FFF');
         if (this.duration > 0) this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
@@ -167,6 +167,12 @@ export class Attendance extends Id implements IAttendance {
         if (this.processed > 0) this._processed$ = DateTime.fromMillis(this.processed).toUTC().toFormat('FFF');
 
         this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+
+        if (meeting) {
+            this._meetingName$ = meeting.name;
+            this._meetingStartTime$ = meeting.startTime$;
+            this._meetingDuration$ = meeting.continuous ? 'Continuous' : Duration.fromObject({ minutes: meeting.duration }).toFormat('hh:mm:ss');
+        }
 
         this.updated = DateTime.now().toMillis();
         this._updated$ = DateTime.fromMillis(this.updated).setZone(<any>this._timezone).toFormat('FFF');
@@ -242,7 +248,7 @@ export class Attendance extends Id implements IAttendance {
                     this.credit = 0;
                     this.___status = AttendanceStatus.invalid;
                 } else {
-                    this.end =(<any>last(this.records)).timestamp;
+                    this.end = (<any>last(this.records)).timestamp;
                     this.duration = this.end - this.start;
                     this.credit = this.duration;
                     this.___status = AttendanceStatus.processed;
