@@ -57,15 +57,10 @@ export class AttendanceRecord extends Id implements IAttendanceRecord {
 }
 
 export enum AttendanceStatus {
-    invalid = 'invalid',                // failed processing
-    unknown = 'unknown',
+    unknown = '',
     active = 'active',                  // meeting is active
-    pending = 'pending',                // attendance is pending upload
-    uploading = 'uploading',            // attendance is uploading
-    uploaded = 'uploaded',              // attendance is uploaded
-    processing = 'processing',          // attendance is processing
     processed = 'processed',            // attendance is processed
-    credit_repaired = 'credit_repaired' // attendance credit was repaired by user
+    invalid = 'invalid',                // failed processing
 }
 export interface IAttendance extends IId {
     version: number;                            // attendance algorithm version
