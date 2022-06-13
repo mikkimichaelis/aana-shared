@@ -8,6 +8,8 @@ export interface IAttendanceReport extends IId {
     created$: string;
 
     attendances: string[];
+
+    email: string; // recipient
     html: string;
     messageId: string;
     data: any;
@@ -20,6 +22,8 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     created$: string = '';
 
     attendances: string[] = [];
+
+    email: string = <any>null;
     html: string = '<html></html>';
     messageId: string = '';
     data: any = null;
