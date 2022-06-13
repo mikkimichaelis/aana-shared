@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { Base, IBase } from '../models/base.class';
 import { Id, IId } from '../models/id.class';
 export interface IAttendanceReport extends IId {
-    arid: string;
+    uid: string;
     timezone: string;       // tz of user at time of attendance
     created: number;        // server utc millis created
     created$: string;
@@ -14,7 +14,7 @@ export interface IAttendanceReport extends IId {
 }
 
 export class AttendanceReport extends Id implements IAttendanceReport {
-    arid: string = '';
+    uid: string = '';
     timezone: string = DateTime.now().zoneName;
     created: number = DateTime.now().toMillis();
     created$: string = '';
