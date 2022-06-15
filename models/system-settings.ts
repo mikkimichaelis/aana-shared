@@ -9,6 +9,7 @@ export interface ISystemSettings {
     last_run: number;           // ts of last time app was last run
     last_tick: number;          // ts of last run tick used to determine how long app was used last run
 
+    // TODO DEPRICATED
     show_slides: boolean,
     show_help: boolean,
     show_web_req: boolean,
