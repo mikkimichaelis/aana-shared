@@ -36,7 +36,7 @@ export interface ISearchSettings {
     live: boolean,					// Include live meetings in search results
     continuous: boolean,			// Include continuous meetings in search results
 
-    zid: string,						// TODO change to zid
+    zid: string,
     name: string,					// TODO expand to name_word[] matching
     zipcode: string,				// TODO
     language: string,
