@@ -569,7 +569,7 @@ export class Meeting extends Id implements IMeeting {
 
         try {
             // @ts-ignore
-            let day: any = isNil(iso_weekday) ? Meeting.iso_weekday_2_70s_dow[dt.weekdayLong] : Meeting.iso_weekday_2_70s_dow[iso_weekday]
+            let day: any = iso_weekday? iso_weekday : Meeting.iso_weekday_2_70s_dow[dt.weekdayLong];
             dt = DateTime.fromObject({
                 year: 1970,
                 month: 1,
