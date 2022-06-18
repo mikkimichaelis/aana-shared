@@ -1,10 +1,24 @@
-export interface IReminder {
+import { Id, IId } from './id.class';
+
+export interface IReminder extends IId {
     uid: string;
-    sid: string;
     mid: string;
     created: string;
     active: boolean;
-    next: string;
     recurring: boolean;
-    message: string;
+    atMillis: number;
+}
+
+export class Reminder extends Id implements IReminder {
+    uid: string;
+    mid: string;
+    created: string;
+    active: boolean;
+    recurring: boolean;
+    atMillis: number;
+
+    constructor(reminder: IReminder) {
+        super(reminder);
+        this.initialize(this, reminder);
+    }
 }
