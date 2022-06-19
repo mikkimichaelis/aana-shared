@@ -11,6 +11,9 @@ export interface IReminder extends IId {
     deleted: boolean;
     atDayTime$: string;
     atMillis: number;
+    name: string;
+    startTime$: string;
+    message: string;
 }
 
 export class Reminder extends Id implements IReminder {
@@ -23,6 +26,9 @@ export class Reminder extends Id implements IReminder {
     deleted: boolean = false;
     atDayTime$: string = '';
     atMillis: number = 0;
+    name: string = '';
+    startTime$: string = '';
+    message: string = '';
 
     constructor(reminder: IReminder) {
         super(reminder);
