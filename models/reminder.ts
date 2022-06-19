@@ -30,7 +30,7 @@ export class Reminder extends Id implements IReminder {
     }
 
     update() {
-        this.atMillis = Math.floor(this.atMillis / 1000) * 1000;    // Strip milliseconds from atMillis leaving an even second time
+        this.atMillis = Math.floor(this.atMillis / 1000 * 60) * 1000 * 60;    // Strip any seconds from atMillis
         this.atDayTime$ = DateTime.fromMillis(this.atMillis).setZone(this.timezone).toFormat('EEEE t');
     }
 }
