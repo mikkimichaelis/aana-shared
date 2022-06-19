@@ -7,8 +7,8 @@ export interface IReminder extends IId {
     created: string;
     timezone: string;
     active: boolean;
-    recurring: boolean;
-    deleted: boolean;
+    paused: boolean;
+    recurring: boolean; // is a one time reminder?
     atDayTime$: string;
     atMillis: number;
     name: string;
@@ -22,8 +22,8 @@ export class Reminder extends Id implements IReminder {
     created: string = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
     timezone: string = DateTime.now().zoneName;
     active: boolean = true;
+    paused: boolean = false;
     recurring: boolean = true;
-    deleted: boolean = false;
     atDayTime$: string = '';
     atMillis: number = 0;
     name: string = '';
