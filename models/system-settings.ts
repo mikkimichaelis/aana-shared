@@ -13,6 +13,8 @@ export interface ISystemSettings {
     show_slides: boolean,
     show_help: boolean,
     show_web_req: boolean,
+
+    show_use_zoom_req: boolean
 }
 
 export class SystemSettings extends SettingsBase implements ISystemSettings {
@@ -28,6 +30,8 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
     show_slides = true;
     show_help = true;
     show_web_req = true;
+
+    show_use_zoom_req = true;
 
     constructor(settings?: ISystemSettings) {
         super();
