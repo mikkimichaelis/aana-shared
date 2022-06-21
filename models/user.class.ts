@@ -97,6 +97,123 @@ export interface IUserStats {
     meetingCount(meeting: IMeeting): void;
     process(): void;
 }
+
+export interface IUser extends IUserBase {
+    preferences: IUserPreferences,
+    profile: IUserProfile;
+    favMeetings: string[];
+    blkMeetings: string[];
+
+    created: number;
+    created$: string;
+
+    addFavoriteMeeting(mid: string): boolean;
+    removeFavoriteMeeting(mid: string): boolean;
+
+    setUserAuthNames(displayName?: string): boolean;
+    setUserNames(firstName: string, lastInitial: string): boolean;
+}
+
+declare const ONLINE_ACTIVITY = 15;
+export class User extends UserBase implements IUser {
+    preferences: IUserPreferences = {
+        apptag: true,
+        homemeeting: false,
+        pronouns: false,
+        pronouns_value: '',
+        sobriety: false,
+        sobriety_value: '',
+        sobriety_days: false,
+        location: false,
+        location_value: '',
+    }
+    profile: IUserProfile = <any>null;
+    homeMeeting: string = <any>null;
+    favMeetings: any[] = [];
+    blkMeetings: any[] = [];
+
+    _created = DateTime.now().toMillis();   // Because the below is somehow showing up as an ISO time in the cloud
+    created = DateTime.now().toMillis();
+    created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+
+    constructor(user?: any) {
+        super(user);
+
+        // This is the BaseClass (root) initialize()
+        // parm1: subclass instance (this)
+        // parm2: constructor parameters
+        this.initialize(this, user);
+
+        // Create Custom Object Properties
+        if (has(user, 'profile') && !isEmpty(user.profile)) {
+            this.profile = new UserProfile(user.profile);
+        } else {
+            this.profile = new UserProfile(
+                merge(user, {
+                    anonymous: false,
+                    avatar: this.avatar
+                }));
+
+            this.setUserAuthNames(user.name);
+        }
+    }
+
+    toObject(): IUser {
+        return super.toObject([]);
+    }
+
+    public get isHomeMeeting(): boolean {
+        return this.id === this.homeMeeting;
+    }
+
+    public isFavoriteMeeting(mid: string): boolean {
+        return -1 !== findIndex(this.favMeetings, (id => {
+            return (id === mid);
+        }))
+    }
+
+    public addFavoriteMeeting(mid: string): boolean {
+        if (!this.isFavoriteMeeting(mid)) {
+            this.favMeetings.push(mid);
+            return this.isFavoriteMeeting(mid);
+        } else {
+            return false;
+        }
+    }
+
+    public removeFavoriteMeeting(mid: string): boolean {
+        if (this.isFavoriteMeeting(mid)) {
+            const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
+                return value === mid;
+            });
+            return !this.isFavoriteMeeting(mid);
+        } else {
+            return false;
+        }
+    }
+
+    public setUserAuthNames(name?: string): boolean {
+        const random_li = ''; // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+        const names = <string[]>name?.split(' ');
+        this.profile.firstName = names[0];
+        this.profile.lastInitial = (names.length === 1) ? random_li
+            : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
+        return this.setUserNames(this.profile.firstName, this.profile.lastInitial);
+    }
+
+    public setUserNames(firstName: string, lastInitial: string): boolean {
+        if (!firstName
+            || firstName.length > 25
+            || lastInitial.length > 25) {
+            return false;
+        }
+        this.profile.firstName = firstName;
+        this.profile.lastInitial = lastInitial ? lastInitial : '';
+        this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}` + (this.profile.lastInitial.length === 1 ? '.' : '');
+        this.name = this.profile.name;
+        return true;
+    }
+}
 export class UserStats extends Id implements IUserStats {
     uid = '';
 
@@ -209,119 +326,3 @@ export class UserStats extends Id implements IUserStats {
         this.meeting_count_today += 1;
     }
 }
-export interface IUser extends IUserBase {
-    preferences: IUserPreferences,
-    profile: IUserProfile;
-    favMeetings: string[];
-    blkMeetings: string[];
-
-    created: number;
-    created$: string;
-
-    addFavoriteMeeting(mid: string): boolean;
-    removeFavoriteMeeting(mid: string): boolean;
-
-    setUserAuthNames(displayName?: string): boolean;
-    setUserNames(firstName: string, lastInitial: string): boolean;
-}
-
-declare const ONLINE_ACTIVITY = 15;
-export class User extends UserBase implements IUser {
-    preferences: IUserPreferences = {
-        apptag: true,
-        homemeeting: false,
-        pronouns: false,
-        pronouns_value: '',
-        sobriety: false,
-        sobriety_value: '',
-        sobriety_days: false,
-        location: false,
-        location_value: '',
-    }
-    profile: IUserProfile = <any>null;
-    homeMeeting: string = <any>null;
-    favMeetings: any[] = [];
-    blkMeetings: any[] = [];
-
-    created = DateTime.now().toMillis();
-    created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
-
-    constructor(user?: any) {
-        super(user);
-
-        // This is the BaseClass (root) initialize()
-        // parm1: subclass instance (this)
-        // parm2: constructor parameters
-        this.initialize(this, user);
-
-        // Create Custom Object Properties
-        if (has(user, 'profile') && !isEmpty(user.profile)) {
-            this.profile = new UserProfile(user.profile);
-        } else {
-            this.profile = new UserProfile(
-                merge(user, {
-                    anonymous: false,
-                    avatar: this.avatar
-                }));
-
-            this.setUserAuthNames(user.name);
-        }
-    }
-
-    toObject(): IUser {
-        return super.toObject([]);
-    }
-
-    public get isHomeMeeting(): boolean {
-        return this.id === this.homeMeeting;
-    }
-
-    public isFavoriteMeeting(mid: string): boolean {
-        return -1 !== findIndex(this.favMeetings, (id => {
-            return (id === mid);
-        }))
-    }
-
-    public addFavoriteMeeting(mid: string): boolean {
-        if (!this.isFavoriteMeeting(mid)) {
-            this.favMeetings.push(mid);
-            return this.isFavoriteMeeting(mid);
-        } else {
-            return false;
-        }
-    }
-
-    public removeFavoriteMeeting(mid: string): boolean {
-        if (this.isFavoriteMeeting(mid)) {
-            const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
-                return value === mid;
-            });
-            return !this.isFavoriteMeeting(mid);
-        } else {
-            return false;
-        }
-    }
-
-    public setUserAuthNames(name?: string): boolean {
-        const random_li = ''; // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-        const names = <string[]>name?.split(' ');
-        this.profile.firstName = names[0];
-        this.profile.lastInitial = (names.length === 1) ? random_li
-            : (names[1].length > 0) ? names[1].substr(0, 1).toUpperCase() : random_li;
-        return this.setUserNames(this.profile.firstName, this.profile.lastInitial);
-    }
-
-    public setUserNames(firstName: string, lastInitial: string): boolean {
-        if (!firstName
-            || firstName.length > 25
-            || lastInitial.length > 25) {
-            return false;
-        }
-        this.profile.firstName = firstName;
-        this.profile.lastInitial = lastInitial ? lastInitial : '';
-        this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}` + (this.profile.lastInitial.length === 1 ? '.' : '');
-        this.name = this.profile.name;
-        return true;
-    }
-}
-
