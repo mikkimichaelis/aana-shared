@@ -1,12 +1,14 @@
 // import { FirePoint } from 'geofirex';
 import { DateTime } from 'luxon';
-
+import { version } from '../../../version.js';
 import { IUserBase, UserBase } from './userBase.class';
 
 export interface IUserActivity extends IUserBase {
     uid: string;
 
     url: string;
+
+    app_version: string;
 
     app_run_last: number;
     app_run_last$: string;
@@ -24,6 +26,8 @@ export interface IUserActivity extends IUserBase {
 export class UserActivity extends UserBase implements IUserActivity {
     uid = '';
     url = '';
+
+    app_version = version;
 
     app_run_last = 0;
     app_run_last$ = '';
