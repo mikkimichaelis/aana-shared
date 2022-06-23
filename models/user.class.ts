@@ -157,6 +157,7 @@ export interface IUserStats {
 }
 
 export interface IUser extends IUserBase {
+    uaid: string,
     preferences: IUserPreferences,
     profile: IUserProfile;
     favMeetings: string[];
@@ -174,6 +175,7 @@ export interface IUser extends IUserBase {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
+    uaid: string = '';
     preferences: IUserPreferences = {
         apptag: true,
         homemeeting: false,
