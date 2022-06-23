@@ -7,7 +7,7 @@ export interface IUserActivity extends IUserBase {
 
     url: string;
 
-    app_version: string;
+    version: string;
 
     app_run_last: number;
     app_run_last$: string;
@@ -26,7 +26,7 @@ export class UserActivity extends UserBase implements IUserActivity {
     uid = '';
     url = '';
 
-    app_version = '';
+    version = '';
 
     app_run_last = 0;
     app_run_last$ = '';
