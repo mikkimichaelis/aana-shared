@@ -1,11 +1,69 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
+import { basename } from 'path';
 import { IMeeting } from '../listings/imeeting';
 import { Base } from './base.class';
-import { Id } from './id.class';
+import { Id, IId } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';
 import { IUserBase, UserBase } from './userBase.class';
+
+
+export enum UserAuthorizationEnum {
+    NONE = 'NONE',
+    ADMIN = 'ADMIN',
+    FREE = 'FREE',
+    MAKER = 'MAKER',
+    ATTENDANCE = 'ATTENDANCE'
+}
+export interface IUserAuthorization extends IId {
+    uid: string;
+
+    admin: boolean;
+    free: boolean;
+    attendance: boolean;
+    maker: boolean;
+
+    value: UserAuthorizationEnum;
+
+    updated$: string;
+    updated: number;
+}
+
+export class UserAuthorization extends Id implements IUserAuthorization {
+    uid: string = '';
+
+    admin: boolean = false;
+    free: boolean = false;
+    attendance: boolean = false;
+    maker: boolean = false;
+
+    public get value(): UserAuthorizationEnum {
+        // ordering here is important
+        if (this.admin) return UserAuthorizationEnum.ADMIN;
+        if (this.free) return UserAuthorizationEnum.FREE;
+        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
+        if (this.maker) return UserAuthorizationEnum.MAKER;
+
+        return UserAuthorizationEnum.NONE;
+    }
+
+    updated$: string = ''
+    updated: number = <any>null;
+
+    constructor(data?: IUserAuthorization) {
+        super(data);
+        this.initialize(this, data);
+        this.update();
+    }
+
+    update() {
+        this.updated = DateTime.now().toMillis();
+        this.updated$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+    }
+}
+
+
 export interface IUserProfile {
     anonymous: boolean;
     name: string;
