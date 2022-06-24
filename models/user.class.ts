@@ -10,11 +10,11 @@ import { IUserBase, UserBase } from './userBase.class';
 
 
 export enum UserAuthorizationEnum {
-    NONE = 'NONE',
-    ADMIN = 'ADMIN',
-    FREE = 'FREE',
-    MAKER = 'MAKER',
-    ATTENDANCE = 'ATTENDANCE'
+    NONE = 0,
+    MAKER,
+    ATTENDANCE,
+    FREE,
+    ADMIN
 }
 export interface IUserAuthorization extends IId {
     uid: string;

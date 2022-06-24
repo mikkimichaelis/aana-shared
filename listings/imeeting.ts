@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { User } from "../models";
+import { IUser } from "../models";
 import { IId } from "../models/id.class";
 import { IRecurrence } from "./recurrence";
 
@@ -45,14 +45,14 @@ export interface IMeeting extends IId {
     name: string;
     description: string;
     description_links: string[];    // url/email 
-    
+
     tags_custom: string[];
 
-    tags_custom_: string[];        
+    tags_custom_: string[];
     tags_description_: string[];
     tags_name_: string[];           // toLower()
     tags_location_: string[];
-    
+
     tags_: string[];                // meetingTypes + tags_description_ + tags_name_ + tags_custom_ + tags_location_
 
     continuous: boolean;
@@ -60,7 +60,7 @@ export interface IMeeting extends IId {
     parent: string;
     recurrence: IRecurrence;
     siblings: string[];
-    
+
     timezone: string;
     time24h: string;                // HH:MM
     duration: number;
@@ -94,11 +94,11 @@ export interface IMeeting extends IId {
     weekday: number;
     tags: string[];
     // makeLocalStartDateTime: DateTime;
-    
+
     updateDayTime(): void;
     updateTags(): void;
 
-    isHome(user: User): boolean;       // TODO remove
+    isHome(user: IUser): boolean;       // TODO remove
     refresh(): void;
 
     // destroy(): void;
