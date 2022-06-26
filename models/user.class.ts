@@ -25,18 +25,13 @@ export interface IUserAuthorization extends IId {
     maker: boolean;
 
     value: UserAuthorizationEnum;
+    subscriber: boolean;
 
     updated$: string;
     updated: number;
 }
 
 export class UserAuthorization extends Id implements IUserAuthorization {
-    uid: string = '';
-
-    admin: boolean = false;
-    free: boolean = false;
-    attendance: boolean = false;
-    maker: boolean = false;
 
     public get value(): UserAuthorizationEnum {
         // ordering here is important
@@ -47,6 +42,17 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
         return UserAuthorizationEnum.NONE;
     }
+
+    public get subscriber(): boolean {
+        return this.value !== UserAuthorizationEnum.NONE;
+    }
+
+    uid: string = '';
+
+    admin: boolean = false;
+    free: boolean = false;
+    attendance: boolean = false;
+    maker: boolean = false;
 
     updated$: string = ''
     updated: number = <any>null;
