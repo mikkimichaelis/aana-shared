@@ -107,7 +107,7 @@ export interface IAttendance extends IId {
     process(): Promise<boolean>;
 }
 export class Attendance extends Id implements IAttendance {
-    version: number = 71;
+    version: number = 72;
 
     uid: string = <any>'';
     mid: string = <any>'';
