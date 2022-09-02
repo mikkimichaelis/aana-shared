@@ -6,16 +6,18 @@ export interface IUserSettings {
     useZoomApp: boolean;
     liveSearchLanguage: boolean;
     liveSearchType: boolean;
+    showTimerPage: boolean;
 }
 
 export class UserSettings extends SettingsBase implements IUserSettings {
     // Default Values
-    version = 6;
+    version = 7;
     theme = 'dark-pink-toes';
     darkTheme = true;
     useZoomApp = true;
     liveSearchLanguage = false;
     liveSearchType = false;
+    showTimerPage = true;
 
     constructor(settings?: IUserSettings) {
         super();
