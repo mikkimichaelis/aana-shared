@@ -89,6 +89,9 @@ export interface IUserPreferences {
     sobriety_days: boolean;
     location: boolean;
     location_value: string;
+    nintey_start: number;   // date to start 90/90
+    nintey_mtgs: number;    // in person count
+    nintey_mins: number;    // minutes of in person
 }
 export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean = true;
@@ -192,6 +195,10 @@ export class User extends UserBase implements IUser {
         sobriety_days: false,
         location: false,
         location_value: '',
+        nintey_start: null,
+        nintey_mtgs: 0,
+        nintey_mins: 0
+
     }
     profile: IUserProfile = <any>null;
     homeMeeting: string = <any>null;
