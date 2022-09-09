@@ -191,11 +191,11 @@ export class User extends UserBase implements IUser {
         pronouns: false,
         pronouns_value: '',
         sobriety: false,
-        sobriety_value: DateTime.now().toMillis(),
+        sobriety_value: DateTime.now().startOf('day').toMillis(),
         sobriety_days: false,
         location: false,
         location_value: '',
-        nintey_start: null,
+        nintey_start: DateTime.now().startOf('day').toMillis(),
         nintey_mtgs: 0,
         nintey_mins: 0
 
