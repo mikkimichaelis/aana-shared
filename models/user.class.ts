@@ -191,7 +191,7 @@ export class User extends UserBase implements IUser {
         pronouns: false,
         pronouns_value: '',
         sobriety: false,
-        sobriety_value: null,
+        sobriety_value: DateTime.now().toMillis(),
         sobriety_days: false,
         location: false,
         location_value: '',
