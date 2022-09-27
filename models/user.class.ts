@@ -281,15 +281,19 @@ export class User extends UserBase implements IUser {
     }
 }
 export class UserStats extends Id implements IUserStats {
+    version = 1;    // TODO add version upgrade code 
+
     uid = '';
 
-    run_duration = 0;
-    run_duration$ = '';
     created = DateTime.now().toMillis();
     created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+
     processed = -1;
     processed$ = '';
     timestamp = DateTime.now().toMillis();  // last update ts
+
+    run_duration = 0;
+    run_duration$ = '';
 
     rating_status = UserRatingStatus.NONE;
     rating_prompts = 0;
@@ -313,11 +317,8 @@ export class UserStats extends Id implements IUserStats {
     app_runs_avg_6m = 0;
     app_runs_avg_1y = 0;
 
-    meeting_last = <any>null;
-    meeting_last$ = <any>null;
-
-    meeting_count_total = 0;
     meeting_count_today = 0;
+    meeting_count_total = 0;
 
     meeting_count_data: number[] = [];
     meeting_count_max = 0;
@@ -328,6 +329,9 @@ export class UserStats extends Id implements IUserStats {
     meeting_count_avg_4m = 0;
     meeting_count_avg_6m = 0;
     meeting_count_avg_1y = 0;
+
+    meeting_last = <any>null;
+    meeting_last$ = <any>null;
 
     constructor(userStats?: any) {
         super(userStats);
