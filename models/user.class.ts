@@ -2,6 +2,7 @@ import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
 import { basename } from 'path';
+import { environment } from 'src/environments/environment';
 import { IMeeting } from '../listings/imeeting';
 import { Base } from './base.class';
 import { Id, IId } from './id.class';
@@ -44,7 +45,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     }
 
     public get subscriber(): boolean {
-        return this.value !== UserAuthorizationEnum.NONE;
+        return environment.platform === 'spa' || this.value !== UserAuthorizationEnum.NONE;
     }
 
     uid: string = '';
