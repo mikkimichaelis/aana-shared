@@ -1,14 +1,12 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
-import { basename } from 'path';
 import { environment } from 'src/environments/environment';
 import { IMeeting } from '../listings/imeeting';
 import { Base } from './base.class';
 import { Id, IId } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';
 import { IUserBase, UserBase } from './userBase.class';
-
 
 export enum UserAuthorizationEnum {
     NONE = 0,
@@ -23,7 +21,6 @@ export interface IUserAuthorization extends IId {
     admin: boolean;
     free: boolean;
     attendance: boolean;
-    maker: boolean;
 
     value: UserAuthorizationEnum;
     subscriber: boolean;
@@ -39,7 +36,6 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
         if (this.free) return UserAuthorizationEnum.FREE;
         if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
-        if (this.maker) return UserAuthorizationEnum.MAKER;
 
         return UserAuthorizationEnum.NONE;
     }
@@ -69,7 +65,6 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         this.updated$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
     }
 }
-
 
 export interface IUserProfile {
     anonymous: boolean;
