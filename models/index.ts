@@ -21,6 +21,7 @@ export * from './user-settings';
 export * from './system-settings';
 export * from './search-settings';
 export * from './report-settings';
+export * from './timer-settings';
 
 export * from '../listings/meeting';
 export * from '../listings/imeeting';
