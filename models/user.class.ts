@@ -1,7 +1,6 @@
 import { findIndex, has, isEmpty, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
-import { environment } from 'src/environments/environment';
 import { IMeeting } from '../listings/imeeting';
 import { Base } from './base.class';
 import { Id, IId } from './id.class';
@@ -23,7 +22,6 @@ export interface IUserAuthorization extends IId {
     attendance: boolean;
 
     value: UserAuthorizationEnum;
-    subscriber: boolean;
 
     updated$: string;
     updated: number;
@@ -38,10 +36,6 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
         return UserAuthorizationEnum.NONE;
-    }
-
-    public get subscriber(): boolean {
-        return environment.platform === 'spa' || this.value !== UserAuthorizationEnum.NONE;
     }
 
     uid: string = '';
