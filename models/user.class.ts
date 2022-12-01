@@ -208,7 +208,7 @@ export class User extends UserBase implements IUser {
         this.initialize(this, user);
 
         // Create Custom Object Properties
-        if (has(user, 'profile') && !isEmpty(user.profile)) {
+        if (user?.profile) {
             this.profile = new UserProfile(user.profile);
         } else {
             this.profile = new UserProfile(
