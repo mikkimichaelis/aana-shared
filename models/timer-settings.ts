@@ -5,8 +5,8 @@ export interface ITimerSettings {
 }
 
 export class TimerSettings extends SettingsBase implements ITimerSettings {
-    public startMillis: number = null;
-    public meetingId: string = null;
+    public startMillis: number | null = null;
+    public meetingId: string | null = null;
 
     version = 0;
     constructor(settings?: ITimerSettings) {
