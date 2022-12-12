@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { Md5 } from 'ts-md5/dist/md5';
+import { Md5 } from 'ts-md5';
 import { Id, IId } from './id.class';
 
 export interface IUserBase extends IId {

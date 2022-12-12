@@ -1,5 +1,5 @@
 import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
-import { DateTime } from 'luxon';
+import { DateTime, LocaleOptions } from 'luxon';
 import { User } from '../models/user.class';
 import { Id } from '../models/id.class';
 import { IRecurrence, Recurrence } from './recurrence';
@@ -257,9 +257,8 @@ export class Meeting extends Id implements IMeeting {
             try {
                 const start = DateTime.fromObject({
                     hour: Number.parseInt(this.time24h.split(':')[0]),
-                    minute: Number.parseInt(this.time24h.split(':')[1]),
-                    zone: this.timezone,
-                }).setZone('local');
+                    minute: Number.parseInt(this.time24h.split(':')[1])
+                }, { zone: this.timezone }).setZone('local');
                 this._startTimeFormatLocal = start;
             } catch (error) {
                 // console.error(error);
@@ -504,7 +503,7 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
-                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
+                this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt');
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = -1;
                 this.endDateTime = -1;
@@ -513,7 +512,7 @@ export class Meeting extends Id implements IMeeting {
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
                 this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
                 this.startDateTime = <any>Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
-                this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
+                this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt');
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = -1;
                 this.endTime = -1;
@@ -570,7 +569,7 @@ export class Meeting extends Id implements IMeeting {
 
         try {
             // @ts-ignore
-            let day: any = iso_weekday? iso_weekday : Meeting.iso_weekday_2_70s_dow[dt.weekdayLong];
+            let day: any = iso_weekday ? iso_weekday : Meeting.iso_weekday_2_70s_dow[dt.weekdayLong];
             dt = DateTime.fromObject({
                 year: 1970,
                 month: 1,
@@ -578,8 +577,7 @@ export class Meeting extends Id implements IMeeting {
                 hour: dt.hour ? dt.hour : 0,
                 minute: dt.minute ? dt.minute : 0,
                 second: dt.second ? dt.second : 0,
-                zone: dt.zoneName ? dt.zoneName : 'local',
-            });
+            }, {zone: dt.zoneName ? dt.zoneName : 'local'});
             // console.log(dt.toISO());
             return dt;
         } catch (error) {
@@ -597,9 +595,8 @@ export class Meeting extends Id implements IMeeting {
                 month: 1,
                 day: day,
                 hour: hour,
-                minute: minute,
-                zone: timezone,
-            });
+                minute: minute
+            }, { zone: timezone });
         } catch (error) {
             // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
