@@ -492,12 +492,12 @@ export class Meeting extends Id implements IMeeting {
             if (this.recurrence.type === 'Continuous') {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = [];
-                this.startTime = 0;
+                this.startTime = -1;
+                this.endTime = -1;
+                this.startDateTime = -1;
+                this.endDateTime = -1;
                 this.startTime$ = '24/7';
                 this.time24h = '00:00';
-                this.endTime = 0;
-                this.startDateTime = 0;
-                this.endDateTime = 0;
             } else if (this.recurrence.type === 'Daily') {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
@@ -506,8 +506,8 @@ export class Meeting extends Id implements IMeeting {
                 this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
                 this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
-                this.startDateTime = 0;
-                this.endDateTime = 0;
+                this.startDateTime = -1;
+                this.endDateTime = -1;
             } else {
                 // @ts-ignore
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
@@ -515,8 +515,8 @@ export class Meeting extends Id implements IMeeting {
                 this.startDateTime = <any>Meeting._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
                 this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt', { timeZone: this.timezone });
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
-                this.startTime = 0;
-                this.endTime = 0;
+                this.startTime = -1;
+                this.endTime = -1;
             }
 
         } catch (error) {
