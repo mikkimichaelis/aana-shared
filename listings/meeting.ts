@@ -246,7 +246,7 @@ export class Meeting extends Id implements IMeeting {
     private _startTimeFormat?: string | null = null;
     get startTimeFormat(): string | null {
         if (isNil(this._startTimeFormat)) {
-            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:MM a"));
+            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:mm a"));
         }
         return <any>this._startTimeFormat;
     }
@@ -494,7 +494,8 @@ export class Meeting extends Id implements IMeeting {
                 this.recurrence.weekly_days = [];
                 this.startTime = 0;
                 this.startTime$ = '24/7';
-                this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
+                this.time24h = '00:00';
+                this.endTime = 0;
                 this.startDateTime = 0;
                 this.endDateTime = 0;
             } else if (this.recurrence.type === 'Daily') {
