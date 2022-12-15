@@ -3,7 +3,7 @@ import { DateTime, Duration } from 'luxon';
 import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../models';
 import { Id, IId } from '../models/id.class';
-import { IMeeting } from './imeeting';
+import { IMeeting } from './imeeting'
 export interface IAttendanceRecord extends IId {
     aid: string;
 
