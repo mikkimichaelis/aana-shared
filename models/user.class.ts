@@ -82,6 +82,7 @@ export interface IUserPreferences {
     nintey_start: number;   // date to start 90/90
     nintey_mtgs: number;    // in person count
     nintey_mins: number;    // minutes of in person
+    meetingMinutesChartDuration: any;
 }
 export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean = true;
@@ -187,7 +188,8 @@ export class User extends UserBase implements IUser {
         location_value: '',
         nintey_start: DateTime.now().startOf('day').toMillis(),
         nintey_mtgs: 0,
-        nintey_mins: 0
+        nintey_mins: 0,
+        meetingMinutesChartDuration: 7
 
     }
     profile: IUserProfile = <any>null;
