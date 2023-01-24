@@ -37,8 +37,8 @@ export interface ISearchSettings {
     continuous: boolean,			// Include continuous meetings in search results
 
     zid: string,
-    name: string,					// TODO expand to name_word[] matching
-    zipcode: string,				// TODO
+    name: string,					
+    zipcode: string,			
     language: string,
     groupType: string,
     meetingType: string,
