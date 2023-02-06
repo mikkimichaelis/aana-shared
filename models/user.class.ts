@@ -21,7 +21,8 @@ export interface IUserAuthorization extends IId {
     free: boolean;
     attendance: boolean;
 
-    value: UserAuthorizationEnum;
+    // value: UserAuthorizationEnum;
+    auth(platform): UserAuthorizationEnum;
 
     updated$: string;
     updated: number;
@@ -29,14 +30,13 @@ export interface IUserAuthorization extends IId {
 
 export class UserAuthorization extends Id implements IUserAuthorization {
 
-    public get value(): UserAuthorizationEnum {
-        // ordering here is important
-        if (this.admin) return UserAuthorizationEnum.ADMIN;
-        if (this.free) return UserAuthorizationEnum.FREE;
-        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
+    // public get value(): UserAuthorizationEnum {
+    //     if (this.admin) return UserAuthorizationEnum.ADMIN;
+    //     if (this.free) return UserAuthorizationEnum.FREE;
+    //     if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
-        return UserAuthorizationEnum.NONE;
-    }
+    //     return UserAuthorizationEnum.NONE;
+    // }
 
     uid: string = '';
 
@@ -50,13 +50,29 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
     constructor(data?: IUserAuthorization) {
         super(data);
-        this.initialize(this, data);
+        this.deepCopy(this, data, [], false);
         this.update();
     }
 
     update() {
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+    }
+
+    auth(platform: string): UserAuthorizationEnum {
+        switch(platform) {
+            case '':
+                break;
+            default:
+                break;
+        }
+
+        // ordering here is important
+        if (this.admin) return UserAuthorizationEnum.ADMIN;
+        if (this.free) return UserAuthorizationEnum.FREE;
+        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
+
+        return UserAuthorizationEnum.NONE;
     }
 }
 

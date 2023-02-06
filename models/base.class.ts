@@ -15,7 +15,7 @@ export class Base implements IBase {
         this.deepCopy(object, source, [], true);
     }
 
-    private deepCopy(destination: any, source: any, exclude?: string[], existing?: boolean): any {
+    public deepCopy(destination: any, source: any, exclude?: string[], existing?: boolean): any {
         // const sourceKeys = source ? Object.keys(source): [];
         // const defaultKeys = defaults ? Object.keys(defaults): [];
         // const excludeKeys = exclude ? Object.keys(exclude): [];
