@@ -11,7 +11,7 @@ export class Base implements IBase {
     //     this.deepCopy(this, source, Object.keys(defaults), exclude);
     // }
 
-    public initialize(object: any, source: any) {
+    public initialize(object: any, source?: any) {
         this.deepCopy(object, source, [], true);
     }
 

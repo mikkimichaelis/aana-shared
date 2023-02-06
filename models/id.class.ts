@@ -13,9 +13,9 @@ export class Id extends Base implements IId {
     //createdAt = firebase.firestore.FieldValue.serverTimestamp();
     //updatedAt = firebase.firestore.FieldValue.serverTimestamp();
 
-    constructor(id?: any) { // IId
+    constructor(data?: any) { // IId
         super();
-        this.initialize(this, id);
+        this.initialize(this, data);
 
         // if (!this.createdAt) {
             // this.createdAt = firebase.firestore.FieldValue.serverTimestamp();
