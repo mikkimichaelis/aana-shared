@@ -22,7 +22,6 @@ export interface IUserAuthorization extends IId {
     attendance: boolean;
 
     value: UserAuthorizationEnum;
-    auth(platform): UserAuthorizationEnum;
 
     updated$: string;
     updated: number;
@@ -33,6 +32,19 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     public get value(): UserAuthorizationEnum {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
         if (this.free) return UserAuthorizationEnum.FREE;
+
+        if (this.environment.platform === 'device') {
+            if (this.environment.design === 'ios') {
+                if (this['apple:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
+            } else {    // md
+                if (this['google:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
+                if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
+                if (this['google:live.meetingmaker.app.maker_sub:owned'] === true) return UserAuthorizationEnum.MAKER;
+            }
+        } else {        // spa
+            return UserAuthorizationEnum.ATTENDANCE;
+        }
+
         if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
         return UserAuthorizationEnum.NONE;
@@ -48,31 +60,18 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     updated$: string = ''
     updated: number = <any>null;
 
-    constructor(data?: IUserAuthorization) {
+    private environment: any;
+
+    constructor(environment: any, data?: IUserAuthorization) {
         super(data);
         this.deepCopy(this, data, [], false);
         this.update();
+        this.environment = environment;
     }
 
     update() {
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
-    }
-
-    auth(platform: string): UserAuthorizationEnum {
-        switch(platform) {
-            case '':
-                break;
-            default:
-                break;
-        }
-
-        // ordering here is important
-        if (this.admin) return UserAuthorizationEnum.ADMIN;
-        if (this.free) return UserAuthorizationEnum.FREE;
-        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
-
-        return UserAuthorizationEnum.NONE;
     }
 }
 
