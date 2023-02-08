@@ -21,7 +21,7 @@ export interface IUserAuthorization extends IId {
     free: boolean;
     attendance: boolean;
 
-    // value: UserAuthorizationEnum;
+    value: UserAuthorizationEnum;
     auth(platform): UserAuthorizationEnum;
 
     updated$: string;
@@ -30,13 +30,13 @@ export interface IUserAuthorization extends IId {
 
 export class UserAuthorization extends Id implements IUserAuthorization {
 
-    // public get value(): UserAuthorizationEnum {
-    //     if (this.admin) return UserAuthorizationEnum.ADMIN;
-    //     if (this.free) return UserAuthorizationEnum.FREE;
-    //     if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
+    public get value(): UserAuthorizationEnum {
+        if (this.admin) return UserAuthorizationEnum.ADMIN;
+        if (this.free) return UserAuthorizationEnum.FREE;
+        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
-    //     return UserAuthorizationEnum.NONE;
-    // }
+        return UserAuthorizationEnum.NONE;
+    }
 
     uid: string = '';
 
