@@ -256,8 +256,8 @@ export class Meeting extends Id implements IMeeting {
         if (isNil(this._startTimeFormatLocal)) {
             try {
                 const start = DateTime.fromObject({
-                    hour: Number.parseInt(this.time24h.split(':')[0]),
-                    minute: Number.parseInt(this.time24h.split(':')[1])
+                    hour: Number.parseInt(this.time24h?.split(':')[0]),
+                    minute: Number.parseInt(this.time24h?.split(':')[1])
                 }, { zone: this.timezone }).setZone('local');
                 this._startTimeFormatLocal = start;
             } catch (error) {
@@ -541,8 +541,8 @@ export class Meeting extends Id implements IMeeting {
                 case 'string':  // 'hh:mm'
                     t = time.length !== 5 ? DateTime.fromISO(time)
                         : Meeting.makeFrom24h_That70sDateTime(
-                            Number.parseInt(time.split(':')[0]),
-                            Number.parseInt(time.split(':')[1]),
+                            Number.parseInt(time?.split(':')[0]),
+                            Number.parseInt(time?.split(':')[1]),
                             // @ts-ignore
                             timezone,
                             'Thursday');
@@ -604,8 +604,8 @@ export class Meeting extends Id implements IMeeting {
     }
 
     static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime | null {
-        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h.split(':')[0]),
-            Number.parseInt(time24h.split(':')[1]),
+        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h?.split(':')[0]),
+            Number.parseInt(time24h?.split(':')[1]),
             timezone,
             weekday);
     }
