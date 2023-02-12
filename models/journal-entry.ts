@@ -25,10 +25,10 @@ export interface IDiaryEntry {
 }
 
 export class JournalEntry extends Id implements IJournalEntry {
-    uid: string;
+    uid: string = '';
 
-    feelings: IFeeling [];
-    diary: IDiaryEntry [];
+    feelings: IFeeling [] = [];
+    diary: IDiaryEntry [] = [];
 
     public gratitude = { "time": 1675158624793, blocks: [{ id: JournalEntry.newId(), type: "paragraph", data: { text: 'tap here to edit' } }], "version": "2.26.4" };
     public great = { "time": 1675158624793, blocks: [{ id: JournalEntry.newId(), type: "paragraph", data: { text: 'tap here to edit' } }], "version": "2.26.4" };
@@ -37,8 +37,8 @@ export class JournalEntry extends Id implements IJournalEntry {
     public better = { "time": 1675158624793, blocks: [{ id: JournalEntry.newId(), type: "paragraph", data: { text: 'tap here to edit' } }], "version": "2.26.4" };
     public accomplishments  = { "time": 1675158624793, blocks: [{ id: JournalEntry.newId(), type: "paragraph", data: { text: 'tap here to edit' } }], "version": "2.26.4" };
 
-    date: number;
-    date$: string;
+    date: number = 0;
+    date$: string = '';
 
     constructor(entry?: IJournalEntry) {
         super(entry);

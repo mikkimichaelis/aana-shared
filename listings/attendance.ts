@@ -222,7 +222,7 @@ export class Attendance extends Id implements IAttendance {
                     repair = new AttendanceRecord(repair);
                     this.records.push(repair);                       // replace missing record
                     let repaired = null;
-                    if (repaired = await this.isValid().catch(error => { throw error; })) throw repaired;
+                    // if (repaired = await this.isValid().catch(error => { throw error; })) throw repaired;
                     break;
                 case 'invalid record length':
                     throw error;
