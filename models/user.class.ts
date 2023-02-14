@@ -1,4 +1,4 @@
-import { findIndex, has, isEmpty, merge, remove } from 'lodash';
+import { findIndex, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
 import { IMeeting } from '../listings/imeeting';
@@ -33,6 +33,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
         if (this.free) return UserAuthorizationEnum.FREE;
 
+        // use the running app environment to determine which subscriptions to validate for
         if (this.environment.platform === 'device') {
             if (this.environment.design === 'ios') {
                 if (this['apple:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
@@ -62,7 +63,8 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
     private environment: any;
 
-    constructor(environment: any, data?: IUserAuthorization) {
+    // pass in running app environment to determine attendance platform
+    constructor(data: IUserAuthorization = <any>{}, environment?: any, ) {
         super(data);
         this.deepCopy(this, data, [], false);
         this.update();
