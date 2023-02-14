@@ -192,7 +192,7 @@ export interface IUser extends IUserBase {
 
 declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
-    uaid: string = '';
+    uaid: string = '';  // depreciated
     preferences: IUserPreferences = {
         apptag: true,
         homemeeting: false,
