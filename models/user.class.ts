@@ -64,7 +64,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     private environment: any;
 
     // pass in running app environment to determine attendance platform
-    constructor(data: IUserAuthorization = <any>{}, environment?: any, ) {
+    constructor(data: IUserAuthorization = <any>{}, environment?: any,) {
         super(data);
         this.deepCopy(this, data, [], false);
         this.update();
@@ -96,9 +96,12 @@ export interface IUserPreferences {
     sobriety_days: boolean;
     location: boolean;
     location_value: string;
+    // deprecated due to spelling error 
     nintey_start: number;   // date to start 90/90
     nintey_mtgs: number;    // in person count
     nintey_mins: number;    // minutes of in person
+
+    ninety_start: number;   // date to start 90/90
     meetingMinutesChartDuration: any;
 }
 export class UserProfile extends Base implements IUserProfile {
@@ -203,9 +206,14 @@ export class User extends UserBase implements IUser {
         sobriety_days: false,
         location: false,
         location_value: '',
+
+        // deprecated
         nintey_start: DateTime.now().startOf('day').toMillis(),
         nintey_mtgs: 0,
         nintey_mins: 0,
+
+        ninety_start: null,
+
         meetingMinutesChartDuration: 7
 
     }

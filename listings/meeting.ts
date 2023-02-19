@@ -1,10 +1,10 @@
 import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
-import { DateTime, LocaleOptions } from 'luxon';
-import { User } from '../models/user.class';
+import { DateTime } from 'luxon';
 import { Id } from '../models/id.class';
-import { IRecurrence, Recurrence } from './recurrence';
 import { SpecificDay } from '../models/search-settings';
+import { User } from '../models/user.class';
 import { IMeeting } from './imeeting';
+import { IRecurrence, Recurrence } from './recurrence';
 // import { environment } from 'src/environments/environment';
 export class Meeting extends Id implements IMeeting {
 
@@ -236,7 +236,6 @@ export class Meeting extends Id implements IMeeting {
                 } else {
                     this._nextTime = next.plus({ weeks: 1 });
                 }
-
             }
         }
 
@@ -577,7 +576,7 @@ export class Meeting extends Id implements IMeeting {
                 hour: dt.hour ? dt.hour : 0,
                 minute: dt.minute ? dt.minute : 0,
                 second: dt.second ? dt.second : 0,
-            }, {zone: dt.zoneName ? dt.zoneName : 'local'});
+            }, { zone: dt.zoneName ? dt.zoneName : 'local' });
             // console.log(dt.toISO());
             return dt;
         } catch (error) {
