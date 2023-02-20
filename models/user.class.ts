@@ -22,12 +22,17 @@ export interface IUserAuthorization extends IId {
     attendance: boolean;
 
     value: UserAuthorizationEnum;
+    authorized: boolean;
 
     updated$: string;
     updated: number;
 }
 
 export class UserAuthorization extends Id implements IUserAuthorization {
+
+    public get authorized(): boolean {
+        return this.value > UserAuthorizationEnum.NONE;
+    }
 
     public get value(): UserAuthorizationEnum {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
@@ -74,6 +79,10 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     update() {
         this.updated = DateTime.now().toMillis();
         this.updated$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+    }
+
+    toObject(): IUser {
+        return super.toObject(['authorized', 'value', 'environment']);
     }
 }
 
