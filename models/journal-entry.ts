@@ -3,12 +3,17 @@ import { Id, IId } from "./id.class";
 export interface IJournalEntry extends IId {
     uid: string;
 
-    gratitude: any;
-    great: any;
-    affirmations: any;
-    highlights: any;
-    better: any;
-    accomplishments: any;
+    rating: number;
+    feelings: IFeeling[];
+
+    title: string;
+
+    gratitude: string;
+    great: string;
+    affirmations: string;
+    highlights: string;
+    better: string;
+    accomplishments: string;
 
     date: number;
     date$: string;
@@ -19,17 +24,13 @@ export interface IFeeling {
     time: number;
 }
 
-export interface IDiaryEntry {
-    data: any;
-    time: number;
-}
-
 export class JournalEntry extends Id implements IJournalEntry {
     uid: string = '';
 
+    rating: number = 0;
     feelings: IFeeling [] = [];
-    diary: IDiaryEntry [] = [];
 
+    public title = '';
     public gratitude = '';
     public great = '';
     public affirmations = '';
