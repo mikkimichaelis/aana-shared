@@ -44,9 +44,4 @@ export class JournalEntry extends Id implements IJournalEntry {
         super(entry);
         this.initialize(this, entry);
     }
-
-    public static newId(): string { 
-        var id = Math.random().toString(36).slice(2); 
-        return id.length >= 10 ? id.slice(0, 9) : this.newId(); 
-    }
 }
