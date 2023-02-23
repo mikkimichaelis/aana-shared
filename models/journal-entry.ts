@@ -1,22 +1,19 @@
+import { DateTime } from "luxon";
 import { Id, IId } from "./id.class";
 
 export interface IJournalEntry extends IId {
-    uid: string;
-
-    rating: number;
-    feelings: IFeeling[];
-
+    // uid: string;
+    // rating: number;
+    // feelings: IFeeling[];
+    key: number;
+    emoji: string;
     title: string;
-
     gratitude: string;
     great: string;
     affirmations: string;
     highlights: string;
     better: string;
     accomplishments: string;
-
-    date: number;
-    date$: string;
 }
 
 export interface IFeeling {
@@ -25,11 +22,16 @@ export interface IFeeling {
 }
 
 export class JournalEntry extends Id implements IJournalEntry {
-    uid: string = '';
+    // uid: string = '';
 
-    rating: number = 0;
-    feelings: IFeeling [] = [];
+    // rating: number = 0;
+    // feelings: IFeeling [] = [];
 
+    public get key(): number {
+        return Number.parseInt(this.id);
+    }
+
+    public emoji = '';
     public title = '';
     public gratitude = '';
     public great = '';
@@ -38,11 +40,13 @@ export class JournalEntry extends Id implements IJournalEntry {
     public better = '';
     public accomplishments  = '';
 
-    date: number = 0;
-    date$: string = '';
-
     constructor(entry?: IJournalEntry) {
-        super(entry);
+        // construct from entry otherwise construct a blank one with a proper id for today
+        super(entry ? entry : { id: DateTime.now().setZone('utc').startOf('day').toMillis().toString() });
         this.initialize(this, entry);
+    }
+
+    public toObject() {
+        return super.toObject(['key']);
     }
 }
