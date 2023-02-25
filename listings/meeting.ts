@@ -292,20 +292,6 @@ export class Meeting extends Id implements IMeeting {
         this.initialize(this, meeting);
 
         this.updateCounters();
-
-        // this.backgroundUpdate();
-
-        // console.log(JSON.stringify({
-        //     tMinus: this.tMinus,
-        //     endsIn: this.endsIn,
-        //     isLive: this.isLive,
-        //     nextTime: this.nextTime,
-        //     nextTimeEnd: this.nextTimeEnd,
-        //     startTimeFormat: this.startTimeFormat,
-        //     startTimeFormatLocal: this.startTimeFormatLocal,
-        //     startTimeString: this.startTimeString,
-        //     daytimeString: this.daytimeString
-        // }, null, 3))
     }
 
     refresh() {
