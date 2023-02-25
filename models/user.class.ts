@@ -41,10 +41,14 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         // use the running app environment to determine which subscriptions to validate for
         if (this.environment.platform === 'device') {
             if (this.environment.design === 'ios') {
+                // @ts-ignore
                 if (this['apple:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
             } else {    // md
+                // @ts-ignore
                 if (this['google:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
+                // @ts-ignore
                 if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
+                // @ts-ignore
                 if (this['google:live.meetingmaker.app.maker_sub:owned'] === true) return UserAuthorizationEnum.MAKER;
             }
         } else {        // spa
@@ -221,7 +225,7 @@ export class User extends UserBase implements IUser {
         nintey_mtgs: 0,
         nintey_mins: 0,
 
-        ninety_start: null,
+        ninety_start: <any>null,
 
         meetingMinutesChartDuration: 7
 
