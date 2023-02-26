@@ -572,17 +572,18 @@ export class Meeting extends Id implements IMeeting {
 
     static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime | null {
         try {
-            // @ts-ignore
             let day: number = Meeting.iso_weekday_2_70s_dow[weekday];
-            return DateTime.fromObject({
+            // @ts-ignore
+            return DateTime.now().setZone(timezone).set({
                 year: 1970,
                 month: 1,
                 day: day,
                 hour: hour,
-                minute: minute
-            }, { zone: timezone });
+                minute: minute,
+                second: 0,
+                millisecond: 0
+            });
         } catch (error) {
-            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
