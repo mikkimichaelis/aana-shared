@@ -302,12 +302,12 @@ export class Meeting extends Id implements IMeeting {
 
                 const now = DateTime.now();
                 const nextTime = DateTime
-                    .fromMillis(this.startTime)
+                    .fromMillis(this.startTime).setZone(this.timezone)
                     .set({
                         year: now.year,
                         month: now.month,
                         day: now.day
-                    });
+                    }).setZone('local'); 
 
                 // Daily meetings use startTime to compare with now time
                 // const now = Meeting.makeThat70sTime();
