@@ -24,7 +24,6 @@ export * from './report-settings';
 export * from './timer-settings';
 
 export * from '../listings/meeting';
-export * from '../listings/imeeting';
 export * from '../listings/device';
 
 

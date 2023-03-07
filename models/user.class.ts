@@ -1,7 +1,7 @@
 import { findIndex, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { max, mean } from 'mathjs';
-import { IMeeting } from '../listings/imeeting';
+import { IMeeting } from '../listings';
 import { Base } from './base.class';
 import { Id, IId } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';

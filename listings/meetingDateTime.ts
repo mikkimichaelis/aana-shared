@@ -1,186 +1,57 @@
+import { DateTime } from "luxon";
+import { IMeeting, IUser } from "../models";
+import { IId } from "../models/id.class";
+import { IRecurrence, Recurrence } from "./recurrence";
 import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
-import { DateTime } from 'luxon';
-import { Id, IId } from '../models/id.class';
+import { Id } from '../models/id.class';
 import { SpecificDay } from '../models/search-settings';
-import { IUser, User } from '../models/user.class';
-import { IRecurrence, Recurrence } from './recurrence';
+import { User } from '../models/user.class';
+import { Base, IBase } from "../models/base.class";
 
-export interface IMeeting extends IId {
-
-    iid: string;    // import id (populated during import from unique source identifier)
-    uid: string;    // user id of meeting owner
-
-    active: boolean;
-    verified: boolean;
-    authorized: boolean;
-
-    verified_count: number;
-    password_count: number;
-    waiting_count: number;
-    nothing_count: number;
-
-    isVerified: boolean;
-
-    meetingUrl: string;
-    homeUrl: string;
-    sourceUrl: string;
-
-    zid: string;
-    password: string;
-    requiresLogin: boolean;
-    closed: boolean;
-    restricted: boolean;
-    restrictedDescription: string;
-
-    language: string;
-    postal: string;
-    location: string;
-
-    group: string;
-    groupType: string;
-
-    meetingTypes: string[];         // tags[]
-
-    name: string;
-    description: string;
-    description_links: string[];    // url/email 
-
-    tags_custom: string[];
-
-    tags_custom_: string[];
-    tags_description_: string[];
-    tags_name_: string[];           // toLower()
-    tags_location_: string[];
-
-    tags_: string[];                // meetingTypes + tags_description_ + tags_name_ + tags_custom_ + tags_location_
-
-    continuous: boolean;
-
-    parent: string;
-    recurrence: IRecurrence;
-    siblings: string[];
-
-    timezone: string;
-    time24h: string;                // HH:MM
+export interface IMeetingDateTime extends IBase {
+   
     duration: number;
 
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time 
     // this is used to search where specificDay is any
     startTime: number;              // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
     startTime$: string;             // 'ffff' formatted startTime in timezone
-    endTime: number;                // startTime + duration
 
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
     // this is used to search for meetings withing a specific day
     startDateTime: number;          // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
-    endDateTime: number;            // that70sDateTime
-
-    buymeacoffee: string;
 
     // Non serialized getter properties
     isLive: boolean | null;
-    tMinus: any;    // TODO
+    tMinus: any;
     endsIn: any;
     startTimeString: string | null;
-    daytimeString: string | null;
-    nextTimeEnd: DateTime | null;
     nextTime: DateTime | null;
-    startTimeFormat: string | null;
-    startTimeFormatLocal: DateTime | null;
-    meetingTypesString: string;
-    tagsString: string;
-    meetingSub: string;
-    weekday: number;
-    tags: string[];
-    // makeLocalStartDateTime: DateTime;
-
-    updateDayTime(): void;
-    updateTags(): void;
-
-    refresh(): void;
+    recurrence: IRecurrence;
 }
 
-export class Meeting extends Id implements IMeeting {
+export class MeetingDateTime extends Base implements IMeetingDateTime {
+    
+    public recurrence: IRecurrence;
 
-    iid: string = '';
-    uid: string = '';
-
-    active: boolean = true;
-    verified: boolean = true;
-    authorized: boolean = true;
-
-    verified_count: number = 0;
-    password_count: number = 0;
-    waiting_count: number = 0;
-    nothing_count: number = 0;
-
-    isVerified: boolean = false;
-
-    meetingUrl: string = '';
-    homeUrl: string = '';
-    sourceUrl: string = '';
-
-    zid: string = '';
-    password: string = '';
-    requiresLogin: boolean = false;
-    closed: boolean = false;
-    restricted: boolean = false;
-    restrictedDescription: string = '';
-
-    language: string = 'en';
-    postal: string = '';
-    location: string = '';
-
-    group: string = '';
-    name: string = '';
-
-    groupType: string = '';
-    meetingTypes: string[] = [];        // add to tags
-
-    description: string = '';
-    description_links: string[] = [];
-
-    tags_custom: string[] = [];
-
-    // trailing _ indicates toLower()
-    tags_description_: string[] = [];
-    tags_location_: string[] = [];
-    tags_custom_: string[] = [];        // Secretary added tags
-    tags_name_: string[] = [];
-    tags_: string[] = [];
-
-    parent: string = '';
-    recurrence: IRecurrence = new Recurrence();
-    siblings: string[] = [];
-
-    timezone: string = "America/New_York";
-    time24h: string = "00:00";
-    duration: number = 60;
-    continuous: boolean = false;
+    public duration: number = 60;
+    public continuous: boolean = false;
 
     // these fields should only be populated by Daily meetings
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time on any day 
     // this is used to search where meetings are at a specific time on any day
-    startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
-    startTime$: string = '';
-    endTime: number = 0;        // startTime + duration
+    public startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
+    public startTime$: string = '';
 
     // these fields should only be populated by Weekly meetings
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
     // this is used to search for meetings within a specific day
-    startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
-    endDateTime: number = Meeting.oneWeekMillis;
-
-    buymeacoffee: string = '';
-
-    get tags(): string[] {
-        return this.tags_;
-    }
+    public startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
 
     // - Mills till isLive ends
     // + Mills till isLive starts
     private _tminus?: number | null = null;
-    get tMinus(): number | null {
+    public get tMinus(): number | null {
         if (isNil(this._tminus)) {
             if (this.continuous) {
                 this._tminus = 0;
@@ -198,18 +69,18 @@ export class Meeting extends Id implements IMeeting {
     }
 
     private _endsIn?: number | null = null;
-    get endsIn(): number {    // TODO make Duration
+    public get endsIn(): number {    // TODO make Duration
         if (isNil(this._endsIn)) {
             if (this.continuous) {
                 this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
                 if (this.recurrence.type === 'Daily') {
-                    const now = Meeting.makeThat70sTime().toMillis();
+                    const now = MeetingDateTime.makeThat70sTime().toMillis();
                     this._endsIn = this.endTime - now;
                     // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
                     // console.log(`$(this._isLiveEnd: ${this._endsIn}`)
                 } else {
-                    const now = <any>Meeting.makeThat70sDateTime()?.toMillis();
+                    const now = <any>MeetingDateTime.makeThat70sDateTime()?.toMillis();
                     this._endsIn = this.endDateTime - now;
                 }
             } else {
@@ -220,13 +91,13 @@ export class Meeting extends Id implements IMeeting {
     }
 
     private _isLive?: boolean | null = null;
-    get isLive(): boolean | null {
+    public get isLive(): boolean | null {
         if (isNil(this._isLive)) {
             if (this.recurrence.type === 'Daily') {
-                const now = Meeting.makeThat70sTime().toMillis();
+                const now = MeetingDateTime.makeThat70sTime().toMillis();
                 this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
             } else {
-                const now = <any>Meeting.makeThat70sDateTime()?.toMillis();
+                const now = <any>MeetingDateTime.makeThat70sDateTime()?.toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
 
@@ -235,7 +106,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     private _startTimeString?: string | null = null;
-    get startTimeString(): string | null {
+    public get startTimeString(): string | null {
         if (isNil(this._startTimeString)) {
             // if (this.isLive) return 'Live';
 
@@ -248,8 +119,83 @@ export class Meeting extends Id implements IMeeting {
         return this._startTimeString;
     }
 
+    // Determine the next DateTime that this meeting occurs
+    // returned DateTime will be in local timezone
+    private _nextTime: DateTime | null = null;
+    public get nextTime(): DateTime {
+        if (isNil(this._nextTime)) {
+            if (this.recurrence.type === 'Daily') {
+                // Daily meetings use startTime to compare with now time
+                const now = MeetingDateTime.makeThat70sTime();
+                const startTime = DateTime.fromMillis(this.startTime);
+                const next = DateTime.now().set({
+                    hour: startTime.hour,
+                    minute: startTime.minute
+                });
+                if (startTime > now) {
+                    // this meeting happens later today, adjust now to upcoming hh:mm
+                    this._nextTime = next;
+                } else {
+                    // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
+                    this._nextTime = next.plus({ days: 1 });
+                }
+            } else {
+                // Weekly meetings use startDateTime to compare with now
+                const now = MeetingDateTime.makeThat70sDateTime();
+                const startDateTime = DateTime.fromMillis(this.startDateTime);
+                const next = DateTime.now().set({
+                    hour: startDateTime.hour,
+                    minute: startDateTime.minute,
+                    weekday: startDateTime.weekday
+                });
+                if (startDateTime > now) {
+                    this._nextTime = next;
+                } else {
+                    this._nextTime = next.plus({ weeks: 1 });
+                }
+            }
+        }
+
+        return <any>this._nextTime;
+    }
+
+    private _startTimeFormat?: string | null = null;
+    private get startTimeFormat(): string | null {
+        if (isNil(this._startTimeFormat)) {
+            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:mm a"));
+        }
+        return <any>this._startTimeFormat;
+    }
+
+    // defunct
+    private _startTimeFormatLocal?: DateTime | null = null;
+    private get startTimeFormatLocal(): DateTime | null {
+        if (isNil(this._startTimeFormatLocal)) {
+            try {
+                const start = DateTime.fromObject({
+                    hour: Number.parseInt(this.time24h?.split(':')[0]),
+                    minute: Number.parseInt(this.time24h?.split(':')[1])
+                }, { zone: this.timezone }).setZone('local');
+                this._startTimeFormatLocal = start;
+            } catch (error) {
+                // console.error(error);
+                // TODO
+                // return;
+                this._startTimeFormatLocal = <any>null;
+            }
+        }
+        return <any>this._startTimeFormatLocal;
+    }
+
+    // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
+    private get weekday(): number {
+        // @ts-ignore
+        return Meeting.iso_weekday_2_70s_dow[this.recurrence.weekly_day];
+    }
+
+    // defunct
     private _daytimeString?: string | null = null;
-    get daytimeString(): string | null {
+    private get daytimeString(): string | null {
         // TODO https://moment.github.io/luxon/api-docs/index.html#datetimetorelativecalendar
         if (isNil(this._daytimeString)) {
             const nowMeridiem = DateTime.now().toFormat('a');
@@ -286,113 +232,22 @@ export class Meeting extends Id implements IMeeting {
     }
 
     private _nextTimeEnd: DateTime | null = null;
-    get nextTimeEnd(): DateTime | null {
+    private get nextTimeEnd(): DateTime | null {
         if (isNil(this._nextTimeEnd)) {
             this._nextTimeEnd = <any>this.nextTime?.plus({ minutes: this.duration });
         }
         return this._nextTimeEnd;
     }
 
-    // Determine the next DateTime that this meeting occurs
-    // returned DateTime will be in local timezone
-    private _nextTime: DateTime | null = null;
-    get nextTime(): DateTime {
-        if (isNil(this._nextTime)) {
-            if (this.recurrence.type === 'Daily') {
+    private endDateTime: number = MeetingDateTime.oneWeekMillis;
+    private timezone: string = "America/New_York";
+    private time24h: string = "00:00"; 
+    private endTime: number = 0;        // startTime + duration
 
-                const now = DateTime.now();
-                const nextTime = DateTime
-                    .fromMillis(this.startTime)
-                    .set({
-                        year: now.year,
-                        month: now.month,
-                        day: now.day
-                    });
-
-                // Daily meetings use startTime to compare with now time
-                // const now = Meeting.makeThat70sTime();
-                // const startTime = DateTime.fromMillis(this.startTime);
-                // const next = DateTime.now().set({
-                //     hour: startTime.hour,
-                //     minute: startTime.minute
-                // });
-                if (nextTime > now) {
-                    // this meeting happens later today, adjust now to upcoming hh:mm
-                    this._nextTime = nextTime;
-                } else {
-                    // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
-                    this._nextTime = nextTime.plus({ days: 1 });
-                }
-            } else {
-                // Weekly meetings use startDateTime to compare with now
-                const now = Meeting.makeThat70sDateTime();
-                const startDateTime = DateTime.fromMillis(this.startDateTime);
-                const next = DateTime.now().set({
-                    hour: startDateTime.hour,
-                    minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
-                });
-                if (startDateTime > now) {
-                    this._nextTime = next;
-                } else {
-                    this._nextTime = next.plus({ weeks: 1 });
-                }
-            }
-        }
-
-        return <any>this._nextTime;
-    }
-
-    private _startTimeFormat?: string | null = null;
-    get startTimeFormat(): string | null {
-        if (isNil(this._startTimeFormat)) {
-            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:mm a"));
-        }
-        return <any>this._startTimeFormat;
-    }
-
-    private _startTimeFormatLocal?: DateTime | null = null;
-    get startTimeFormatLocal(): DateTime | null {
-        if (isNil(this._startTimeFormatLocal)) {
-            try {
-                const start = DateTime.fromObject({
-                    hour: Number.parseInt(this.time24h?.split(':')[0]),
-                    minute: Number.parseInt(this.time24h?.split(':')[1])
-                }, { zone: this.timezone }).setZone('local');
-                this._startTimeFormatLocal = start;
-            } catch (error) {
-                // console.error(error);
-                // TODO
-                // return;
-                this._startTimeFormatLocal = <any>null;
-            }
-        }
-        return <any>this._startTimeFormatLocal;
-    }
-
-    get meetingTypesString(): string {
-        return join(this.meetingTypes, ' ').toUpperCase();
-    }
-
-    get tagsString(): string {
-        return join(this.tags_, ',').toLowerCase();
-    }
-
-    get meetingSub(): string {
-        return `${this.location} ${this.description}`;
-    }
-
-    // Meeting ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
-    get weekday(): number {
-        // @ts-ignore
-        return Meeting.iso_weekday_2_70s_dow[this.recurrence.weekly_day];
-    }
-
-    constructor(meeting?: IMeeting) {
-        super(meeting);
+    constructor(meeting: IMeeting) {
+        super();
         this.initialize(this, meeting);
-
-        this.updateCounters();
+        this.updateDayTime();
     }
 
     refresh() {
@@ -405,9 +260,9 @@ export class Meeting extends Id implements IMeeting {
         this._startTimeFormatLocal = null;
         this._startTimeString = null;
         this._daytimeString = null;
-        this.updateCounters();
     }
-    toObject(): IMeeting {
+
+    toObject(): IMeetingDateTime {
         // list properties that are static or computed (not serialized into the database)
         const exclude = ['tMinus', '_tminus',
             'endsIn', '_endsIn',
@@ -419,34 +274,14 @@ export class Meeting extends Id implements IMeeting {
             'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal',
             'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
 
-        // updateDayTime(): void;
-        // updateTags(): void;
-        // isHome(user: User): boolean;       // TODO remove
-
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
-    }
-
-    setFeedback(feedback: any) {
-        if (feedback.success) {
-            this.verified_count++;
-
-            // TODO add logic to set verified taking into account bogus 'nothing' reports
-            this.verified = true;
-        } else if (feedback.nothing) {
-            // TODO this can happen if user tries to join at very end of meeting already ended
-            this.nothing_count++;
-            if (this.nothing_count > this.verified_count) this.verified = false;
-        } else if (feedback.password) {
-            this.password_count++;
-        }
     }
 
     /////////////////////////////////////////////////////////////////////
     // just having fun making structures instead of writing code...... //
     /////////////////////////////////////////////////////////////////////
 
-    // ISO specifies the dow ordering and numbering as 
-    // see https://en.wikipedia.org/wiki/ISO_week_date
+    // ISO specifies the dow ordering and numbering as https://en.wikipedia.org/wiki/ISO_week_date
     // Properties names are WeekdayLong or ISO numeric string index
     // Property values are the corresponding 70's DayOfWeek
     static iso_weekday_2_70s_dow = {
@@ -494,57 +329,11 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.weekdays[DateTime.local().weekday]
     }
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
+    static iso_weekday_2_iso_index(weekday: any) { return MeetingDateTime.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
-    static oneWeekMillis = (7 * (Meeting.oneDayMillis));
+    static oneWeekMillis = (7 * (MeetingDateTime.oneDayMillis));
 
-    // TODO review all these updates...seems some of them are import updates and unnecessary here....
-    public update(): Meeting {
-        this.updateCounters();
-        this.updateProperties();
-        this.updateTags();
-        this.updateDayTime();
-
-        return this;
-    }
-
-    public updateCounters() {
-        this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
-    }
-
-    public updateProperties() {
-        if (this.meetingTypes.find(mt => mt === '24/7')) this.continuous = true;
-        if (this.meetingTypes.find(mt => mt === 'C')) this.closed = true;
-
-        if (this.meetingTypes.find(mt => mt === 'M')) {
-            this.restricted = true;
-            this.restrictedDescription = "Male Only";
-        }
-
-        if (this.meetingTypes.find(mt => mt === 'W')) {
-            this.restricted = true;
-            this.restrictedDescription = "Female Only";
-        }
-    }
-
-    public updateTags() {
-        this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
-
-        // TODO improve this filtering with word filtering
-        const filter = (t: string) => {
-            return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
-        };
-
-        this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
-        this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
-        this.tags_location_ = concat(split(this.location, ', ')).filter(mt => !isNil(mt) && !isEmpty(mt)); // .map(t => t.toLowerCase()).filter(filter);
-
-        this.tags_ = concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_).filter(mt => !isNil(mt) && !isEmpty(mt));
-
-        // this.description_links= [];
-    }
-
-    public updateDayTime() {
+    private updateDayTime() {
         try {
             if (this.recurrence.type === 'Continuous') {
                 this.recurrence.weekly_day = '';
@@ -559,8 +348,8 @@ export class Meeting extends Id implements IMeeting {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
                 this.recurrence.weekly_day = '';
-                this.recurrence.weekly_days = <any>cloneDeep(Meeting.weekdays); // TODO for future possible use Zoom api?
-                this.startTime = Meeting.makeThat70sTime(this.time24h, this.timezone).toMillis();
+                this.recurrence.weekly_days = <any>cloneDeep(MeetingDateTime.weekdays); // TODO for future possible use Zoom api?
+                this.startTime = MeetingDateTime.makeThat70sTime(this.time24h, this.timezone).toMillis();
                 this.startTime$ = DateTime.fromMillis(this.startTime).setZone(this.timezone).toFormat('tttt');
                 this.endTime = this.startTime + this.duration * 60 * 1000;  // TODO config
                 this.startDateTime = -1;
@@ -569,40 +358,31 @@ export class Meeting extends Id implements IMeeting {
                 // @ts-ignore
                 if (!this.recurrence.weekly_day) throw new Error('invalid weekly_day');
                 this.recurrence.weekly_days = [this.recurrence.weekly_day];    // TODO for future possible use Zoom api?
-                this.startDateTime = <any>Meeting.makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
+                this.startDateTime = <any>MeetingDateTime._makeFrom24h_That70sDateTime(this.time24h, this.timezone, this.recurrence.weekly_day)?.toMillis();
                 this.startTime$ = DateTime.fromMillis(this.startDateTime).setZone(this.timezone).toFormat('tttt');
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = -1;
                 this.endTime = -1;
             }
 
-        } catch (error) { }
+        } catch (error) {}
     }
 
-    /*
-        parameters
-        time:   may be a 24h 'hh:mm' string
-                may be a ISO string
-                may be milliseconds
-                may be a DateTime
-
-        timezone: timezone of returned DateTime
-
-        function returns a DateTime constructed from time with date set to 1/1/1970 in UTC
-    */
     static makeThat70sTime(time?: any, timezone?: string): DateTime {
-        let t = DateTime.local();
+        let t: DateTime | null = DateTime.local();
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm' or ISO string
                     t = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
-                        : Meeting.makeFrom24h_That70sDateTime(
-                            time,
+                        : MeetingDateTime.makeFrom24h_That70sDateTime(
+                            Number.parseInt(time?.split(':')[0]),
+                            Number.parseInt(time?.split(':')[1]),
+                            // @ts-ignore
                             timezone,
                             'Thursday');
                     break;
                 case 'number':
-                    t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
+                    t = MeetingDateTime.makeThat70sDateTime(DateTime.fromMillis(time));
                     break;
                 case 'object':
                     t = time;
@@ -611,6 +391,10 @@ export class Meeting extends Id implements IMeeting {
                 // debugger;
             }
         }
+
+        // time only is always on 1/1/1970
+        // @ts-ignore
+        t = t.set({ year: 1970, month: 1, day: 1 });
         return t;
     }
 
@@ -620,47 +404,44 @@ export class Meeting extends Id implements IMeeting {
         try {
             // @ts-ignore
             let day: any = iso_weekday ? iso_weekday : Meeting.iso_weekday_2_70s_dow[dt.weekdayLong];
-
-            return DateTime
-                .fromObject({
-                    hour: dt.hour ? dt.hour : 0,
-                    minute: dt.minute ? dt.minute : 0,
-                    second: 0,
-                    millisecond: 0
-                }, { zone: dt.zoneName ? dt.zoneName : 'local' })
-                .set({
-                    year: 1970,
-                    month: 1,
-                    day
-                })
-                .setZone('UTC');
+            dt = DateTime.fromObject({
+                year: 1970,
+                month: 1,
+                day: day,
+                hour: dt.hour ? dt.hour : 0,
+                minute: dt.minute ? dt.minute : 0,
+                second: dt.second ? dt.second : 0,
+            }, { zone: dt.zoneName ? dt.zoneName : 'local' });
+            // console.log(dt.toISO());
+            return dt;
         } catch (error) {
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
     }
 
-    static makeFrom24h_That70sDateTime(time24h: string, zone: string, weekday: string): DateTime | null {
+    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime | null {
         try {
-            let hour = Number.parseInt(time24h.split(':')[0]);
-            let minute = Number.parseInt(time24h.split(':')[1]);
+            // @ts-ignore
             let day: number = Meeting.iso_weekday_2_70s_dow[weekday];
-
-            return DateTime
-                .fromObject({
-                    hour,
-                    minute,
-                    second: 0,
-                    millisecond: 0
-                }, { zone })
-                .set({
-                    year: 1970,
-                    month: 1,
-                    day
-                })
-                .setZone('UTC');
+            return DateTime.now().setZone(timezone).set({
+                year: 1970,
+                month: 1,
+                day: day,
+                hour: hour,
+                minute: minute
+            });
         } catch (error) {
+            // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
             return null;
         }
+    }
+
+    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime | null {
+        return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h?.split(':')[0]),
+            Number.parseInt(time24h?.split(':')[1]),
+            timezone,
+            weekday);
     }
 
     // Move this search into the appropriate specific weekday of 1/1/1970
@@ -701,9 +482,6 @@ export class Meeting extends Id implements IMeeting {
 
     // https://stackoverflow.com/questions/13898423/javascript-convert-24-hour-time-of-day-string-to-12-hour-time-with-am-pm-and-no/13899011
     tConvert(time: any) {
-
-        // update this to use luxon
-
         // Check correct time format and split into components
         let t = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)?$/) || [time];
 
@@ -714,4 +492,5 @@ export class Meeting extends Id implements IMeeting {
         }
         return t.join(''); // return adjusted time or original string
     }
+
 }
