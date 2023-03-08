@@ -42,7 +42,7 @@ export class JournalEntry extends Id implements IJournalEntry {
 
     constructor(entry?: IJournalEntry) {
         // construct from entry otherwise construct a blank one with a proper id for today
-        super(entry ? entry : { id: DateTime.now().setZone('utc').startOf('day').toMillis().toString() });
+        super(entry ? entry : { id: DateTime.now().startOf('day').toMillis().toString() });
         this.initialize(this, entry);
     }
 
