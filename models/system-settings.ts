@@ -8,6 +8,8 @@ export interface ISystemSettings {
     first_run: boolean;
     first_use_journal: string;
 
+    intro_tutorial: string;     // null: complete, otherwise string at which to start
+
     last_run: number;           // ts of last time app was last run
     last_tick: number;          // ts of last run tick used to determine how long app was used last run
 
@@ -23,6 +25,8 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
 
     // ISO of first day journal free period
     first_use_journal: string = DateTime.now().toISO();
+
+    intro_tutorial = 'welcome';
 
     last_run = 0;
     last_tick = 0;
