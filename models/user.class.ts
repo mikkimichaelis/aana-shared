@@ -225,7 +225,7 @@ export class User extends UserBase implements IUser {
         nintey_mtgs: 0,
         nintey_mins: 0,
 
-        ninety_start: <any>null,
+        ninety_start: 0,
 
         meetingMinutesChartDuration: 7
 
