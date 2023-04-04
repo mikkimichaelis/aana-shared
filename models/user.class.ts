@@ -318,16 +318,17 @@ export class User extends UserBase implements IUser {
     }
 }
 export class UserStats extends Id implements IUserStats {
-    version = 1;    // TODO add version upgrade code 
+    version = 2;    // TODO add version upgrade code 
 
     uid = '';
 
     created = DateTime.now().toMillis();
     created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+    timestamp = DateTime.now().toMillis();  // last update ts
+    timezone = DateTime.local().zoneName;
 
     processed = -1;
     processed$ = '';
-    timestamp = DateTime.now().toMillis();  // last update ts
 
     run_duration = 0;
     run_duration$ = '';
@@ -405,31 +406,31 @@ export class UserStats extends Id implements IUserStats {
     appRun() {
         this.timestamp = DateTime.now().toMillis();
         this.app_run_last = DateTime.now().toMillis();
-        this.app_runs_total += 1;
-        this.app_runs_today += 1;
+        this.app_runs_total = this.app_runs_total + 1;
+        this.app_runs_today = this.app_runs_today + 1;
     }
 
     duration(ms: number) {
-        this.run_duration += ms;
+        this.run_duration = this.run_duration + ms;
         this.run_duration$ = Duration.fromMillis(this.run_duration).toFormat('yy:dd:hh:mm:ss');
     }
 
     appRatingPrompt(rating: IUserRating) {
         this.timestamp = DateTime.now().toMillis();
-        this.rating_prompts += 1;
+        this.rating_prompts = this.rating_prompts + 1;
         this.rating_status = rating.status;
-        if (rating.rate) this.rating_ratings += 1;
-        if (rating.enjoy) this.rating_enjoys += 1;
-        if (rating.remind) this.rating_reminds += 1;
-        if (rating.feedback) this.rating_feedback += 1;
-        if (rating.feedback_declined) this.rating_feedback_decline += 1;
+        if (rating.rate) this.rating_ratings = this.rating_ratings + 1;
+        if (rating.enjoy) this.rating_enjoys = this.rating_enjoys + 11;
+        if (rating.remind) this.rating_reminds = this.rating_reminds + 1;
+        if (rating.feedback) this.rating_feedback = this.rating_feedback + 1;
+        if (rating.feedback_declined) this.rating_feedback_decline = this.rating_feedback_decline + 1;
     }
 
     meetingCount(meeting: IMeeting) {
         this.timestamp = DateTime.now().toMillis();
         this.meeting_last = DateTime.now().toMillis();
         this.meeting_last$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
-        this.meeting_count_total += 1;
-        this.meeting_count_today += 1;
+        this.meeting_count_total = this.meeting_count_total + 1;
+        this.meeting_count_today = this.meeting_count_today + 1;
     }
 }
