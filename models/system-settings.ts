@@ -15,8 +15,13 @@ export interface ISystemSettings {
     last_run: number;           // ts of last time app was last run
     last_tick: number;          // ts of last run tick used to determine how long app was used last run
 
+    // last_run: number;        // ts of last time app was last run
+    // last_tick: number;       // ts of last run tick used to determine how long app was used last run
+
     show_web_req: boolean,
     show_use_zoom_req: boolean
+
+    total_runs: number
 }
 
 export class SystemSettings extends SettingsBase implements ISystemSettings {
@@ -37,6 +42,8 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
 
     show_web_req = true;
     show_use_zoom_req = true;
+
+    total_runs = 0;
 
     constructor(settings?: ISystemSettings) {
         super();
