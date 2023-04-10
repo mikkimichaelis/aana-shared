@@ -157,31 +157,11 @@ export interface IUserStats {
     app_run_last: number;
     app_runs_total: number;             // updated every time the app starts +1
     app_runs_today: number;             // updated ever app start, reset to 0 by nightly process to use in calculating running averages
-    app_runs_data: number[];            // array of previous app_runs_today values
-
-    app_runs_max: number;
-    app_runs_avg_7: number;
-    app_runs_avg_14: number;
-    app_runs_avg_28: number;
-    app_runs_avg_2m: number;
-    app_runs_avg_4m: number;
-    app_runs_avg_6m: number;
-    app_runs_avg_1y: number;
 
     meeting_last: number;
     meeting_last$: string;              // updated by joinMeeting()
     meeting_count_total: number;        // updated by joinMeetings()
     meeting_count_today: number;        // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
-    meeting_count_data: number[];       // array of previous meeting_count_today values
-
-    meeting_count_max: number;          // max daily meeting count
-    meeting_count_avg_7: number;        // 7 day running average meetings per day
-    meeting_count_avg_14: number;       // 14 day
-    meeting_count_avg_28: number;       // 27 day
-    meeting_count_avg_2m: number;       // 2 month
-    meeting_count_avg_4m: number;       // 4 month
-    meeting_count_avg_6m: number;       // 6 month running average meetings per day
-    meeting_count_avg_1y: number;       // 1 year running average meetings per day
 
     appRun(): void;
     appRatingPrompt(rating: IUserRating): void;
@@ -345,28 +325,8 @@ export class UserStats extends Id implements IUserStats {
     app_runs_total = 0;
     app_runs_today = 0;
 
-    app_runs_data: number[] = [];
-    app_runs_max = 0;
-    app_runs_avg_7 = 0;
-    app_runs_avg_14 = 0;
-    app_runs_avg_28 = 0;
-    app_runs_avg_2m = 0;
-    app_runs_avg_4m = 0
-    app_runs_avg_6m = 0;
-    app_runs_avg_1y = 0;
-
     meeting_count_today = 0;
     meeting_count_total = 0;
-
-    meeting_count_data: number[] = [];
-    meeting_count_max = 0;
-    meeting_count_avg_7 = 0;
-    meeting_count_avg_14 = 0;
-    meeting_count_avg_28 = 0;
-    meeting_count_avg_2m = 0;
-    meeting_count_avg_4m = 0;
-    meeting_count_avg_6m = 0;
-    meeting_count_avg_1y = 0;
 
     meeting_last = <any>null;
     meeting_last$ = <any>null;
@@ -377,27 +337,8 @@ export class UserStats extends Id implements IUserStats {
     }
 
     process() {
-        this.app_runs_data = [this.app_runs_today, ...this.app_runs_data].slice(0, 365);
         this.app_runs_today = 0;
-        this.app_runs_max = max(this.app_runs_data);
-        this.app_runs_avg_7 = mean(this.app_runs_data.slice(0, 7));
-        this.app_runs_avg_14 = mean(this.app_runs_data.slice(0, 14));
-        this.app_runs_avg_28 = mean(this.app_runs_data.slice(0, 28));
-        this.app_runs_avg_2m = mean(this.app_runs_data.slice(0, 60));
-        this.app_runs_avg_4m = mean(this.app_runs_data.slice(0, 120));
-        this.app_runs_avg_6m = mean(this.app_runs_data.slice(0, 180));
-        this.app_runs_avg_1y = mean(this.app_runs_data.slice(0, 365));
-
-        this.meeting_count_data = [this.meeting_count_today, ...this.meeting_count_data].slice(0, 365);
         this.meeting_count_today = 0;
-        this.meeting_count_max = max(this.meeting_count_data);
-        this.meeting_count_avg_7 = mean(this.meeting_count_data.slice(0, 7));
-        this.meeting_count_avg_14 = mean(this.meeting_count_data.slice(0, 14));
-        this.meeting_count_avg_28 = mean(this.meeting_count_data.slice(0, 28));
-        this.meeting_count_avg_2m = mean(this.meeting_count_data.slice(0, 60));
-        this.meeting_count_avg_4m = mean(this.meeting_count_data.slice(0, 120));
-        this.meeting_count_avg_6m = mean(this.meeting_count_data.slice(0, 180));
-        this.meeting_count_avg_1y = mean(this.meeting_count_data.slice(0, 365));
 
         this.processed = DateTime.now().toMillis();
         this.processed$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
