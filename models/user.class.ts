@@ -337,6 +337,7 @@ export class UserStats extends Id implements IUserStats {
     }
 
     process() {
+        this.timestamp = DateTime.now().toMillis();
         this.app_runs_today = 0;
         this.meeting_count_today = 0;
 
@@ -352,6 +353,7 @@ export class UserStats extends Id implements IUserStats {
     }
 
     duration(ms: number) {
+        this.timestamp = DateTime.now().toMillis();
         this.run_duration = this.run_duration + ms;
         this.run_duration$ = Duration.fromMillis(this.run_duration).toFormat('yy:dd:hh:mm:ss');
     }
