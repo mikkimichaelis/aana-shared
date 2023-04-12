@@ -9,7 +9,7 @@ export enum UserRatingStatus {
     REMIND_ME_LATER = `Remind Me Later`,
     RATE_IT_NOW = `Rate It Now`,
     FEEDBACK = 'Feedback',
-    FEEDBACK_DECLINE = 'Feedback Decline'
+    FEEDBACK_DECLINE = 'Feedback Declined'
 }
 
 export interface IUserRating extends IId {
@@ -17,8 +17,7 @@ export interface IUserRating extends IId {
     enjoy: boolean;                 // is user enjoying the app?
     rate: boolean;                  // does user want to rate the app?
     remind: boolean;                // if not, does user want a reminder?
-    feedback: boolean;              // doesn't enjoy, provided feedback
-    feedback_declined: boolean;     // doesn't enjoy, declined feedback
+    feedback: boolean;              // doesn't enjoy, provided feedback?
     status: UserRatingStatus;       // verbal description of above flags
     stats: IUserStats;              // UserStats at the time of rating prompt
     timestamp: number;              // utc millis
@@ -30,7 +29,6 @@ export class UserRating extends Id implements IUserRating {
     rate = false;
     remind = false;
     feedback = false;
-    feedback_declined = false;
     status = UserRatingStatus.NONE;
     stats = <any>null;
     timestamp: number = DateTime.now().toMillis();

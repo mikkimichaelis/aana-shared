@@ -152,7 +152,6 @@ export interface IUserStats {
     rating_ratings: number;
     rating_reminds: number;
     rating_feedback: number;
-    rating_feedback_decline: number;
 
     app_run_last: number;
     app_runs_total: number;             // updated every time the app starts +1
@@ -319,7 +318,6 @@ export class UserStats extends Id implements IUserStats {
     rating_ratings = 0;
     rating_reminds = 0;
     rating_feedback = 0;
-    rating_feedback_decline = 0;
 
     app_run_last = 0;
     app_runs_total = 0;
@@ -366,7 +364,6 @@ export class UserStats extends Id implements IUserStats {
         if (rating.enjoy) this.rating_enjoys = this.rating_enjoys + 11;
         if (rating.remind) this.rating_reminds = this.rating_reminds + 1;
         if (rating.feedback) this.rating_feedback = this.rating_feedback + 1;
-        if (rating.feedback_declined) this.rating_feedback_decline = this.rating_feedback_decline + 1;
     }
 
     meetingCount(meeting: IMeeting) {
