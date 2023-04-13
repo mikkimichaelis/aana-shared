@@ -299,7 +299,6 @@ export class Meeting extends Id implements IMeeting {
     get nextTime(): DateTime {
         if (isNil(this._nextTime)) {
             if (this.recurrence.type === 'Daily') {
-
                 const now = DateTime.now();
                 const nextTime = DateTime
                     .fromMillis(this.startTime).setZone(this.timezone)
@@ -308,14 +307,6 @@ export class Meeting extends Id implements IMeeting {
                         month: now.month,
                         day: now.day
                     }).setZone('local'); 
-
-                // Daily meetings use startTime to compare with now time
-                // const now = Meeting.makeThat70sTime();
-                // const startTime = DateTime.fromMillis(this.startTime);
-                // const next = DateTime.now().set({
-                //     hour: startTime.hour,
-                //     minute: startTime.minute
-                // });
                 if (nextTime > now) {
                     // this meeting happens later today, adjust now to upcoming hh:mm
                     this._nextTime = nextTime;
