@@ -209,7 +209,7 @@ export class Meeting extends Id implements IMeeting {
                     // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
                     // console.log(`$(this._isLiveEnd: ${this._endsIn}`)
                 } else {
-                    const now = <any>Meeting.makeThat70sDateTime().toMillis();
+                    const now = Meeting.makeThat70sDateTime().toMillis();
                     this._endsIn = this.endDateTime - now;
                 }
             } else {
@@ -226,7 +226,7 @@ export class Meeting extends Id implements IMeeting {
                 const now = Meeting.makeThat70sTime().toMillis();
                 this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
             } else {
-                const now = <any>Meeting.makeThat70sDateTime().toMillis();
+                const now = Meeting.makeThat70sDateTime().toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
 
@@ -582,14 +582,14 @@ export class Meeting extends Id implements IMeeting {
         function returns a DateTime constructed from time with date set to 1/1/1970 in UTC
     */
     static makeThat70sTime(time?: any, timezone?: string, utc?: boolean): DateTime {
-        let t = DateTime.local().set({year: 1970, month: 1, day: 1});
+        let t: DateTime = DateTime.local().set({year: 1970, month: 1, day: 1});
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm' or ISO string
                     t = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
                         : Meeting.makeFrom24h_That70sDateTime(
                             time,
-                            timezone,
+                            timezone as string,
                             'Thursday',
                             utc);
                     break;
@@ -606,7 +606,7 @@ export class Meeting extends Id implements IMeeting {
         return t;
     }
 
-    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any, utc?: boolean): DateTime | null {
+    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any, utc?: boolean): DateTime {
         let dt = isNil(dateTime) ? DateTime.local() : dateTime;
 
         try {
@@ -629,11 +629,11 @@ export class Meeting extends Id implements IMeeting {
             if (utc) dateTime = dateTime.setZone('UTC');
             return dateTime;
         } catch (error) {
-            return null;
+            throw error;
         }
     }
 
-    static makeFrom24h_That70sDateTime(time24h: string, zone: string, weekday: string, utc?: boolean): DateTime | null {
+    static makeFrom24h_That70sDateTime(time24h: string, zone: string, weekday: string, utc?: boolean): DateTime {
         try {
             let hour = Number.parseInt(time24h.split(':')[0]);
             let minute = Number.parseInt(time24h.split(':')[1]);
@@ -655,7 +655,7 @@ export class Meeting extends Id implements IMeeting {
             if (utc) dateTime = dateTime.setZone('UTC');
             return dateTime;
         } catch (error) {
-            return null;
+            throw error;
         }
     }
 

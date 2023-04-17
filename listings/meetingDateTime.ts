@@ -32,7 +32,7 @@ export interface IMeetingDateTime extends IBase {
 
 export class MeetingDateTime extends Base implements IMeetingDateTime {
     
-    public recurrence: IRecurrence;
+    public recurrence: IRecurrence = {} as IRecurrence;
 
     public duration: number = 60;
     public continuous: boolean = false;
@@ -398,7 +398,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
         return t;
     }
 
-    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime | null {
+    static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime {
         let dt = isNil(dateTime) ? DateTime.local() : dateTime;
 
         try {
@@ -416,11 +416,11 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
             return dt;
         } catch (error) {
             // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
-            return null;
+            throw error;
         }
     }
 
-    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime | null {
+    static makeFrom24h_That70sDateTime(hour: number, minute: number, timezone: string, weekday: string): DateTime {
         try {
             // @ts-ignore
             let day: number = Meeting.iso_weekday_2_70s_dow[weekday];
@@ -433,11 +433,11 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
             });
         } catch (error) {
             // console.log(`makeThat70sDateTime(): ERROR ${error.message}`);
-            return null;
+            throw error;
         }
     }
 
-    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime | null {
+    static _makeFrom24h_That70sDateTime(time24h: string, timezone: string, weekday: string): DateTime {
         return this.makeFrom24h_That70sDateTime(Number.parseInt(time24h?.split(':')[0]),
             Number.parseInt(time24h?.split(':')[1]),
             timezone,
