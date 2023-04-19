@@ -4,7 +4,6 @@ import { Id, IId } from "./id.class";
 
 export enum UserRatingStatus {
     NONE = '',
-    DONT_ENJOY = `Don't Enjoy`,
     NO_THANKS = `No, Thanks`,
     REMIND_ME_LATER = `Remind Me Later`,
     RATE_IT_NOW = `Rate It Now`,
