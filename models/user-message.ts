@@ -19,7 +19,7 @@ export interface IUserMessage extends IId {
 
 export class UserMessage extends Id implements IUserMessage {
     uid = '';
-    type: UserMessageType = null;
+    type = UserMessageType.SUPPORT;
     email: string = '';
     message: string = '';
     reply: boolean = true;
