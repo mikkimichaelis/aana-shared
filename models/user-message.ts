@@ -14,7 +14,7 @@ export interface IUserMessage extends IId {
     message: string;
     reply: boolean;
     public: boolean;
-    send: boolean;
+    sent  : boolean;
     messageId: string;
     timestamp: number;              // utc millis
 }
@@ -26,7 +26,7 @@ export class UserMessage extends Id implements IUserMessage {
     message: string = '';
     reply: boolean = true;
     public: boolean = true;
-    send: boolean = false;
+    sent: boolean = false;
     messageId: string = '';
     timestamp: number = DateTime.now().toMillis();
 
