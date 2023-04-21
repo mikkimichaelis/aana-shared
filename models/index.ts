@@ -16,6 +16,7 @@ export * from './userBlock.class';
 export * from './userFavorite.class';
 export * from './userFriend.class';
 export * from './userMember.class';
+export * from './user-message';
 
 export * from './user-settings';
 export * from './system-settings';
