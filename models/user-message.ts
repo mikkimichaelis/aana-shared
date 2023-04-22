@@ -3,18 +3,22 @@ import { IUserStats } from ".";
 import { Id, IId } from "./id.class";
 
 export enum UserMessageType {
-    FEEDBACK = 'Feedback',
-    SUPPORT = `Support Request`,
+    FEEDBACK = 'User Feedback',
+    SUPPORT = `User Support Request`,
+    ATTENDANCE_REPORT = `Attendance Report`
 }
 
 export interface IUserMessage extends IId {
     uid: string;                    // user id
+
     type: UserMessageType,
-    email: string,
+    to: string,
+    replyTo: string,
+    subject: string,
     message: string;
     reply: boolean;
     public: boolean;
-    sent  : boolean;
+    sent: boolean;
     messageId: string;
     timestamp: number;              // utc millis
 }
@@ -22,7 +26,9 @@ export interface IUserMessage extends IId {
 export class UserMessage extends Id implements IUserMessage {
     uid = '';
     type = UserMessageType.SUPPORT;
-    email: string = '';
+    to: string = '';
+    replyTo: string = '';
+    subject: string = '';
     message: string = '';
     reply: boolean = true;
     public: boolean = true;
