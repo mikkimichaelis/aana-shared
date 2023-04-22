@@ -16,6 +16,7 @@ export interface IUserMessage extends IId {
     replyTo: string,
     subject: string,
     html: string;
+    anonymous: boolean;
     reply: boolean;
     public: boolean;
     sent: boolean;
@@ -30,6 +31,7 @@ export class UserMessage extends Id implements IUserMessage {
     replyTo: string = '';
     subject: string = '';
     html: string = '';
+    anonymous: boolean = false;
     reply: boolean = true;
     public: boolean = true;
     sent: boolean = false;
