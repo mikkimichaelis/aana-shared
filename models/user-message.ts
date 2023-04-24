@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { IUserStats } from ".";
 import { Id, IId } from "./id.class";
+import { IUserRating } from "./user-rating";
 
 export enum UserMessageType {
     FEEDBACK = 'User Feedback',
@@ -9,6 +10,9 @@ export enum UserMessageType {
 }
 
 export interface IUserMessage extends IId {
+    stats: IUserStats;
+    rating: IUserRating;
+
     uid: string;                    // user id
 
     type: UserMessageType,
@@ -25,6 +29,8 @@ export interface IUserMessage extends IId {
 }
 
 export class UserMessage extends Id implements IUserMessage {
+    stats = {} as IUserStats;
+    rating = {} as IUserRating;
     uid = '';
     type = UserMessageType.SUPPORT;
     to: string = '';
