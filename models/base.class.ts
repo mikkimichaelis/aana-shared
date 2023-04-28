@@ -32,7 +32,6 @@ export class Base implements IBase {
                         } else {
                             // if is an array, deepCopy the array non existing 
                             if (Array.isArray(source[key])) {
-                                //destination[key] = cloneDeep(source[key]);
                                 destination[key] = [];
                                 this.deepCopy(destination[key], source[key], exclude, false);
                             } else {

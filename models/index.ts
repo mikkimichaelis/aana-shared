@@ -17,6 +17,7 @@ export * from './userFavorite.class';
 export * from './userFriend.class';
 export * from './userMember.class';
 export * from './user-message';
+export * from './meeting-note';
 
 export * from './user-settings';
 export * from './system-settings';
@@ -26,5 +27,6 @@ export * from './timer-settings';
 
 export * from '../listings/meeting';
 export * from '../listings/device';
+
 
 

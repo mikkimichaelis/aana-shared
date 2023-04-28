@@ -158,9 +158,10 @@ export interface IUserStats {
     app_runs_today: number;             // updated ever app start, reset to 0 by nightly process to use in calculating running averages
 
     meeting_last: number;
-    meeting_last$: string;              // updated by joinMeeting()
-    meeting_count_total: number;        // updated by joinMeetings()
-    meeting_count_today: number;        // updated by joinMeetings(), reset to 0 by nightly process to use in calculating running averages
+    meeting_last$: string;
+    meeting_last_name: string;          
+    meeting_count_total: number;
+    meeting_count_today: number;        // updated by meetingCount(), reset to 0 by nightly process to use in calculating running averages
 
     appRun(): void;
     appRatingPrompt(rating: IUserRating): void;
@@ -328,6 +329,7 @@ export class UserStats extends Id implements IUserStats {
 
     meeting_last = <any>null;
     meeting_last$ = <any>null;
+    meeting_last_name = '';
 
     constructor(userStats?: any) {
         super(userStats);
@@ -370,6 +372,7 @@ export class UserStats extends Id implements IUserStats {
         this.timestamp = DateTime.now().toMillis();
         this.meeting_last = DateTime.now().toMillis();
         this.meeting_last$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+        this.meeting_last_name = meeting.name;
         this.meeting_count_total = this.meeting_count_total + 1;
         this.meeting_count_today = this.meeting_count_today + 1;
     }

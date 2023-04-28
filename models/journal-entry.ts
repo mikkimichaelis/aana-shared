@@ -23,7 +23,6 @@ export interface IFeeling {
 
 export class JournalEntry extends Id implements IJournalEntry {
     // uid: string = '';
-
     // rating: number = 0;
     // feelings: IFeeling [] = [];
 
