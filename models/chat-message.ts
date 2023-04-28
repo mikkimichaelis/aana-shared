@@ -17,6 +17,7 @@ export interface IChatMessage extends IId {
 
 export class ChatMessage extends Id implements IChatMessage {
     uid = '';
+    // @ts-ignore
     type: ChatMessageType = null;
     prompt: boolean = false;
     completion: boolean = false;

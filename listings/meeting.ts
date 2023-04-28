@@ -169,7 +169,7 @@ export class Meeting extends Id implements IMeeting {
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
     // this is used to search for meetings within a specific day
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
-    endDateTime: number = Meeting.oneWeekMillis;
+    endDateTime: number = 0;
 
     buymeacoffee: string = '';
 
