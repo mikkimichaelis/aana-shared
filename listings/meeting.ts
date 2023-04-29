@@ -97,6 +97,8 @@ export interface IMeeting extends IId {
     updateDayTime(): void;
     updateTags(): void;
 
+    isLiveAt(dateTime: DateTime): boolean;
+
     refresh(): void;
 }
 
@@ -224,12 +226,11 @@ export class Meeting extends Id implements IMeeting {
         if (isNil(this._isLive)) {
             if (this.recurrence.type === 'Daily') {
                 const now = Meeting.makeThat70sTime().toMillis();
-                this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
+                this._isLive = this.startTime <= now && now <= this.endTime;      // start <= now <= end
             } else {
                 const now = Meeting.makeThat70sDateTime().toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
-
         }
         return this.continuous || this._isLive;
     }
@@ -398,6 +399,7 @@ export class Meeting extends Id implements IMeeting {
         this._daytimeString = null;
         this.updateCounters();
     }
+
     toObject(): IMeeting {
         // list properties that are static or computed (not serialized into the database)
         const exclude = ['tMinus', '_tminus',
@@ -415,6 +417,19 @@ export class Meeting extends Id implements IMeeting {
         // isHome(user: User): boolean;       // TODO remove
 
         return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
+    }
+
+    public isLiveAt(dateTime: DateTime): boolean {
+
+        let isLive = false;
+        if (this.recurrence.type === 'Daily') {
+            const _dateTime = Meeting.makeThat70sTime(dateTime).toMillis();
+            isLive = this.startTime <= _dateTime && _dateTime <= this.endTime;      // start <= now <= end
+        } else {
+            const _dateTime = Meeting.makeThat70sDateTime(dateTime).toMillis();
+            isLive = (this.continuous) || (this.startDateTime <= _dateTime) && (_dateTime <= this.endDateTime);      // start <= now <= end
+        }
+        return isLive;
     }
 
     setFeedback(feedback: any) {
@@ -597,7 +612,11 @@ export class Meeting extends Id implements IMeeting {
                     t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
                     break;
                 case 'object':
-                    t = time;
+                    t = Meeting.makeFrom24h_That70sDateTime(
+                        time,
+                        timezone as string,
+                        'Thursday',
+                        utc);
                     break;
                 default:
                     debugger;

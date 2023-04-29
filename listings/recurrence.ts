@@ -1,5 +1,13 @@
+export enum RecurrenceType {
+    NONE = '',
+    CONTINUOUS = 'Continuous',
+    DAILY = 'Daily',
+    WEEKLY = 'Weekly',
+    AD_HOC = 'Ad Hoc'
+}
+
 export interface IRecurrence {
-    type:               string;     
+    type:               RecurrenceType;     
     repeat_interval:    number;
     weekly_day:         string;
     weekly_days:        string[];
@@ -11,7 +19,7 @@ export interface IRecurrence {
 } 
 
 export class Recurrence implements IRecurrence {
-    type:               string  = '';
+    type:               RecurrenceType  = RecurrenceType.NONE;
     
     weekly_day:         string  = '';
     weekly_days:        string[] = [];
