@@ -380,7 +380,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.iso_weekday_2_70s_dow[this.recurrence.weekly_day];
     }
 
-    constructor(meeting?: IMeeting) {
+    constructor(meeting?: any) {
         super(meeting);
         this.initialize(this, meeting);
 
@@ -612,10 +612,9 @@ export class Meeting extends Id implements IMeeting {
                     t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
                     break;
                 case 'object':
-                    t = Meeting.makeFrom24h_That70sDateTime(
+                    t = Meeting.makeThat70sDateTime(
                         time,
-                        timezone as string,
-                        'Thursday',
+                        Meeting.iso_weekday_2_70s_dow['Thursday'],
                         utc);
                     break;
                 default:
