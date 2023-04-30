@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { Id, IId } from '../models/id.class';
 import { SpecificDay } from '../models/search-settings';
 import { IUser, User } from '../models/user.class';
-import { IRecurrence, Recurrence } from './recurrence';
+import { IRecurrence, Recurrence, RecurrenceType } from './recurrence';
 
 export interface IMeeting extends IId {
 
@@ -205,7 +205,7 @@ export class Meeting extends Id implements IMeeting {
             if (this.continuous) {
                 this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
-                if (this.recurrence.type === 'Daily') {
+                if (this.recurrence.type === RecurrenceType.DAILY) {
                     const now = Meeting.makeThat70sTime().toMillis();
                     this._endsIn = this.endTime - now;
                     // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
@@ -224,7 +224,7 @@ export class Meeting extends Id implements IMeeting {
     private _isLive?: boolean | null = null;
     get isLive(): boolean | null {
         if (isNil(this._isLive)) {
-            if (this.recurrence.type === 'Daily') {
+            if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = Meeting.makeThat70sTime().toMillis();
                 this._isLive = this.startTime <= now && now <= this.endTime;      // start <= now <= end
             } else {
@@ -299,7 +299,7 @@ export class Meeting extends Id implements IMeeting {
     private _nextTime: DateTime | null = null;
     get nextTime(): DateTime {
         if (isNil(this._nextTime)) {
-            if (this.recurrence.type === 'Daily') {
+            if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = DateTime.now();
                 const nextTime = DateTime
                     .fromMillis(this.startTime).setZone(this.timezone)
@@ -420,14 +420,22 @@ export class Meeting extends Id implements IMeeting {
     }
 
     public isLiveAt(dateTime: DateTime): boolean {
-
+        dateTime = Meeting.makeThat70sTime(dateTime);   // put required local time: dateTime into That70sTime
         let isLive = false;
-        if (this.recurrence.type === 'Daily') {
+        if (this.recurrence.type === RecurrenceType.DAILY) {
             const _dateTime = Meeting.makeThat70sTime(dateTime).toMillis();
             isLive = this.startTime <= _dateTime && _dateTime <= this.endTime;      // start <= now <= end
         } else {
             const _dateTime = Meeting.makeThat70sDateTime(dateTime).toMillis();
             isLive = (this.continuous) || (this.startDateTime <= _dateTime) && (_dateTime <= this.endDateTime);      // start <= now <= end
+        }
+        if (!isLive && this.endTime === 0) {
+            const startTime = DateTime.fromMillis(this.startTime);
+            const startHour = startTime.startOf('hour').toMillis();
+            const endHour = startTime.endOf('hour').toMillis();
+            const _dateTime = Meeting.makeThat70sTime(dateTime).toMillis();
+
+            isLive = startHour < _dateTime && _dateTime < endHour;
         }
         return isLive;
     }
@@ -552,7 +560,7 @@ export class Meeting extends Id implements IMeeting {
 
     public updateDayTime() {
         try {
-            if (this.recurrence.type === 'Continuous') {
+            if (this.recurrence.type === RecurrenceType.CONTINUOUS) {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = [];
                 this.startTime = -1;
@@ -561,7 +569,7 @@ export class Meeting extends Id implements IMeeting {
                 this.endDateTime = -1;
                 this.startTime$ = '24/7';
                 this.time24h = '00:00';
-            } else if (this.recurrence.type === 'Daily') {
+            } else if (this.recurrence.type === RecurrenceType.DAILY) {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
                 this.recurrence.weekly_day = '';

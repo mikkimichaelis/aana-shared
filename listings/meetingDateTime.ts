@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { IMeeting, IUser } from "../models";
 import { IId } from "../models/id.class";
-import { IRecurrence, Recurrence } from "./recurrence";
+import { IRecurrence, Recurrence, RecurrenceType } from "./recurrence";
 import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
 import { Id } from '../models/id.class';
 import { SpecificDay } from '../models/search-settings';
@@ -74,7 +74,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
             if (this.continuous) {
                 this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
-                if (this.recurrence.type === 'Daily') {
+                if (this.recurrence.type === RecurrenceType.DAILY) {
                     const now = MeetingDateTime.makeThat70sTime().toMillis();
                     this._endsIn = this.endTime - now;
                     // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
@@ -93,7 +93,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
     private _isLive?: boolean | null = null;
     public get isLive(): boolean | null {
         if (isNil(this._isLive)) {
-            if (this.recurrence.type === 'Daily') {
+            if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = MeetingDateTime.makeThat70sTime().toMillis();
                 this._isLive = (this.continuous) || (this.startTime <= now) && (now <= this.endTime);      // start <= now <= end
             } else {
@@ -124,7 +124,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
     private _nextTime: DateTime | null = null;
     public get nextTime(): DateTime {
         if (isNil(this._nextTime)) {
-            if (this.recurrence.type === 'Daily') {
+            if (this.recurrence.type === RecurrenceType.DAILY) {
                 // Daily meetings use startTime to compare with now time
                 const now = MeetingDateTime.makeThat70sTime();
                 const startTime = DateTime.fromMillis(this.startTime);
@@ -335,7 +335,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
 
     private updateDayTime() {
         try {
-            if (this.recurrence.type === 'Continuous') {
+            if (this.recurrence.type === RecurrenceType.CONTINUOUS) {
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = [];
                 this.startTime = -1;
@@ -344,7 +344,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
                 this.endDateTime = -1;
                 this.startTime$ = '24/7';
                 this.time24h = '00:00';
-            } else if (this.recurrence.type === 'Daily') {
+            } else if (this.recurrence.type === RecurrenceType.DAILY) {
                 // If 'daily' meeting, set weekly_days to all days
                 // @ts-ignore
                 this.recurrence.weekly_day = '';

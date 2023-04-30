@@ -174,6 +174,7 @@ export interface IUser extends IUserBase {
     preferences: IUserPreferences,
     profile: IUserProfile;
     favMeetings: string[];
+    adHocMeetings: string[];
     blkMeetings: string[];
 
     created: number;
@@ -181,6 +182,9 @@ export interface IUser extends IUserBase {
 
     addFavoriteMeeting(mid: string): boolean;
     removeFavoriteMeeting(mid: string): boolean;
+
+    addAdHocMeeting(mid: string): boolean;
+    removeAdHocMeeting(mid: string): boolean;
 
     setUserAuthNames(displayName?: string): boolean;
     setUserNames(firstName: string, lastInitial: string): boolean;
@@ -213,6 +217,7 @@ export class User extends UserBase implements IUser {
     profile: IUserProfile = <any>null;
     homeMeeting: string = <any>null;
     favMeetings: any[] = [];
+    adHocMeetings: string[] = [];
     blkMeetings: any[] = [];
 
     _created = DateTime.now().toMillis();   // Because the below is somehow showing up as an ISO time in the cloud
@@ -270,6 +275,32 @@ export class User extends UserBase implements IUser {
                 return value === mid;
             });
             return !this.isFavoriteMeeting(mid);
+        } else {
+            return false;
+        }
+    }
+
+    public isAdHocMeeting(mid: string): boolean {
+        return -1 !== findIndex(this.adHocMeetings, (id => {
+            return (id === mid);
+        }))
+    }
+
+    public addAdHocMeeting(mid: string): boolean {
+        if (!this.isAdHocMeeting(mid)) {
+            this.adHocMeetings.push(mid);
+            return this.isAdHocMeeting(mid);
+        } else {
+            return false;
+        }
+    }
+
+    public removeAdHocMeeting(mid: string): boolean {
+        if (this.isAdHocMeeting(mid)) {
+            const removed = remove(this.adHocMeetings, (value: any, index: number, array: any) => {
+                return value === mid;
+            });
+            return !this.isAdHocMeeting(mid);
         } else {
             return false;
         }
