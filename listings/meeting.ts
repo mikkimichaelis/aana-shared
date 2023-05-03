@@ -317,7 +317,7 @@ export class Meeting extends Id implements IMeeting {
                 }
             } else {
                 // Weekly meetings use startDateTime to compare with now
-                const now = Meeting.makeThat70sDateTime();
+                const now = Meeting.makeThat70sDateTime() as any;
                 const startDateTime = DateTime.fromMillis(this.startDateTime);
                 const next = DateTime.now().set({
                     hour: startDateTime.hour,
@@ -604,17 +604,16 @@ export class Meeting extends Id implements IMeeting {
 
         function returns a DateTime constructed from time with date set to 1/1/1970 in UTC
     */
-    static makeThat70sTime(time?: any, timezone?: string, utc?: boolean): DateTime {
-        let t: DateTime = DateTime.local().set({year: 1970, month: 1, day: 1});
+    static makeThat70sTime(time?: any, timezone?: string): DateTime {
+        let t: any = DateTime.local();
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm' or ISO string
                     t = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
                         : Meeting.makeFrom24h_That70sDateTime(
                             time,
-                            timezone as string,
-                            'Thursday',
-                            utc);
+                            timezone as any,
+                            'Thursday');
                     break;
                 case 'number':
                     t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
@@ -663,7 +662,8 @@ export class Meeting extends Id implements IMeeting {
         try {
             let hour = Number.parseInt(time24h.split(':')[0]);
             let minute = Number.parseInt(time24h.split(':')[1]);
-            let day: number = Meeting.iso_weekday_2_70s_dow[weekday];
+            // @ts-ignore
+            let day: any = Meeting.iso_weekday_2_70s_dow[weekday];
 
             let dateTime = DateTime
                 .fromObject({
