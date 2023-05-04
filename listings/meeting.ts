@@ -604,7 +604,7 @@ export class Meeting extends Id implements IMeeting {
 
         function returns a DateTime constructed from time with date set to 1/1/1970 in UTC
     */
-    static makeThat70sTime(time?: any, timezone?: string): DateTime {
+    static makeThat70sTime(time?: any, timezone?: string, utc?: boolean): DateTime {
         let t: any = DateTime.local();
         if (!isNil(time)) {
             switch (typeof time) {
@@ -613,7 +613,8 @@ export class Meeting extends Id implements IMeeting {
                         : Meeting.makeFrom24h_That70sDateTime(
                             time,
                             timezone as any,
-                            'Thursday');
+                            'Thursday',
+                            utc);
                     break;
                 case 'number':
                     t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
