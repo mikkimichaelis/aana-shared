@@ -287,23 +287,14 @@ export class User extends UserBase implements IUser {
     }
 
     public addAdHocMeeting(mid: string): boolean {
-        if (!this.isAdHocMeeting(mid)) {
-            this.adHocMeetings.push(mid);
-            return this.isAdHocMeeting(mid);
-        } else {
-            return false;
-        }
+        delete this.adHocMeetings[this.adHocMeetings.findIndex(_mid => _mid === mid)];
+        this.adHocMeetings.unshift(mid);
+        return true;
     }
 
     public removeAdHocMeeting(mid: string): boolean {
-        if (this.isAdHocMeeting(mid)) {
-            const removed = remove(this.adHocMeetings, (value: any, index: number, array: any) => {
-                return value === mid;
-            });
-            return !this.isAdHocMeeting(mid);
-        } else {
-            return false;
-        }
+        delete this.adHocMeetings[this.adHocMeetings.findIndex(_mid => _mid === mid)];
+        return true;
     }
 
     public setUserAuthNames(name?: string): boolean {
