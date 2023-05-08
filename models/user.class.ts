@@ -287,13 +287,14 @@ export class User extends UserBase implements IUser {
     }
 
     public addAdHocMeeting(mid: string): boolean {
-        delete this.adHocMeetings[this.adHocMeetings.findIndex(_mid => _mid === mid)];
+        this.removeAdHocMeeting(mid);
         this.adHocMeetings.unshift(mid);
         return true;
     }
 
     public removeAdHocMeeting(mid: string): boolean {
-        delete this.adHocMeetings[this.adHocMeetings.findIndex(_mid => _mid === mid)];
+        const i = this.adHocMeetings.findIndex(_mid => _mid === mid)
+        if (i > -1) this.adHocMeetings.splice(i, 1);
         return true;
     }
 
