@@ -1,9 +1,10 @@
 import { DateTime } from "luxon";
 import { Id, IId } from "./id.class";
 
+// This defines the persisted record for all meeting notes on a single day
 export interface IDailyNote {
     id: string;     // record string index - millis start of day
-    meetings: { mid: string, note: IMeetingNote }[];
+    meetings: IMeetingNote[];
 }
 
 export interface IMeetingNote extends IId {
