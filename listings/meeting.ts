@@ -20,6 +20,7 @@ export interface IMeeting extends IId {
     nothing_count: number;
 
     isVerified: boolean;
+    isAdHoc: boolean;
 
     meetingUrl: string;
     homeUrl: string;
@@ -119,6 +120,7 @@ export class Meeting extends Id implements IMeeting {
 
     isVerified: boolean = false;
     isFeatured = undefined;
+    isAdHoc = false;
 
     meetingUrl: string = '';
     homeUrl: string = '';
@@ -300,7 +302,7 @@ export class Meeting extends Id implements IMeeting {
     // returned DateTime will be in local timezone
     private _nextTime: DateTime | null = null;
     get nextTime(): DateTime {
-        if (isNil(this._nextTime)) {
+        // if (isNil(this._nextTime)) {
             if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = DateTime.now();
                 const nextTime = DateTime
@@ -332,7 +334,7 @@ export class Meeting extends Id implements IMeeting {
                     this._nextTime = next.plus({ weeks: 1 });
                 }
             }
-        }
+        // }
 
         return <any>this._nextTime;
     }
@@ -403,10 +405,9 @@ export class Meeting extends Id implements IMeeting {
     }
 
     toObject(): IMeeting {
-        // list properties that are static or computed (not serialized into the database)
+        // list properties not serialized into the database
         const exclude = ['tMinus', '_tminus',
             'endsIn', '_endsIn',
-            'isVerified',
             'backgroundUpdateEnabled',
             'tags', 'tagsString',
             'meetingTypesString',
@@ -414,11 +415,8 @@ export class Meeting extends Id implements IMeeting {
             'startTimeString', 'daytimeString', 'startTimeFormat', 'startTimeFormatLocal',
             'isLive', 'nextDateTime', 'nextTime', 'nextTimeEnd'];
 
-        // updateDayTime(): void;
-        // updateTags(): void;
-        // isHome(user: User): boolean;       // TODO remove
-
-        return super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
+        const json = super.toObject([...exclude, ...exclude.map(e => `_${e}`)]);
+        return json;
     }
 
     public isLiveAt(dateTime: DateTime): boolean {

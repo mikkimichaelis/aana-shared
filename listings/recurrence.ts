@@ -2,8 +2,7 @@ export enum RecurrenceType {
     NONE = '',
     CONTINUOUS = 'Continuous',
     DAILY = 'Daily',
-    WEEKLY = 'Weekly',
-    AD_HOC = 'Ad Hoc'
+    WEEKLY = 'Weekly'
 }
 
 export interface IRecurrence {
