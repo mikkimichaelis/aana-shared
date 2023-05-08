@@ -79,6 +79,7 @@ export interface IMeeting extends IId {
 
     // Non serialized getter properties
     isLive: boolean | null;
+    isFeatured: boolean | null;    
     tMinus: any;    // TODO
     endsIn: any;
     startTimeString: string | null;
@@ -117,6 +118,7 @@ export class Meeting extends Id implements IMeeting {
     nothing_count: number = 0;
 
     isVerified: boolean = false;
+    isFeatured = undefined;
 
     meetingUrl: string = '';
     homeUrl: string = '';
@@ -605,11 +607,11 @@ export class Meeting extends Id implements IMeeting {
         function returns a DateTime constructed from time with date set to 1/1/1970 in UTC
     */
     static makeThat70sTime(time?: any, timezone?: string, utc?: boolean): DateTime {
-        let t: any = DateTime.local();
+        time = time ? time : DateTime.local();
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm' or ISO string
-                    t = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
+                time = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
                         : Meeting.makeFrom24h_That70sDateTime(
                             time,
                             timezone as any,
@@ -617,10 +619,10 @@ export class Meeting extends Id implements IMeeting {
                             utc);
                     break;
                 case 'number':
-                    t = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
+                    time = Meeting.makeThat70sDateTime(DateTime.fromMillis(time));
                     break;
                 case 'object':
-                    t = Meeting.makeThat70sDateTime(
+                    time = Meeting.makeThat70sDateTime(
                         time,
                         Meeting.iso_weekday_2_70s_dow['Thursday'],
                         utc);
@@ -629,7 +631,7 @@ export class Meeting extends Id implements IMeeting {
                     debugger;
             }
         }
-        return t;
+        return time;
     }
 
     static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any, utc?: boolean): DateTime {
