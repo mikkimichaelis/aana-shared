@@ -80,7 +80,7 @@ export interface IMeeting extends IId {
 
     // Non serialized getter properties
     isLive: boolean | null;
-    isFeatured: boolean | null;    
+    isFeatured: boolean | undefined;    
     tMinus: any;    // TODO
     endsIn: any;
     startTimeString: string | null;
