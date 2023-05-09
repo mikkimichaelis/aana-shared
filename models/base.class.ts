@@ -26,24 +26,29 @@ export class Base implements IBase {
                 if (!existing || has(destination, key)) {
                     // are we specifically excluding this key?
                     if (indexOf(exclude, key) === -1) {
-                        let property = source[key];
-                        // if not an object, perform simple assignment
-                        if (typeof property !== "object") {
-                            destination[key] = property
+                        let value = source[key];
+                        
+                        if (!value) {
+                            destination[key] = value;
+                        }
+                        else if (typeof value !== "object") {
+                            destination[key] = value
                         } else {
                             // if is an array, deepCopy the array non existing 
-                            if (Array.isArray(property)) {
+                            if (Array.isArray(value)) {
                                 destination[key] = [];
-                                this.deepCopy(destination[key], property, exclude, false);
-                            } else if (property['toObject'] !== undefined) {
-                                destination[key] = property.toObject();
+                                this.deepCopy(destination[key], value, exclude, false);
+                            } else if (value['toObject'] !== undefined) {
+                                destination[key] = value.toObject();
+                            } else if (value['toObject'] === undefined) {
+                                destination[key] = value;
                             } else {
-                                if (key === 'point') {  
+                                if (key === 'point') {
                                     // point properties are already Firebase GeoPoint type, use existing object
-                                    destination[key] = property;
+                                    destination[key] = value;
                                 } else {
                                     destination[key] = {};
-                                    this.deepCopy(destination[key], property, exclude, false);
+                                    this.deepCopy(destination[key], value, exclude, false);
                                 }
                             }
                         }

@@ -22,11 +22,10 @@ export interface IDevice extends IBase {
     isVirtual: any;
     serial: any;
     platform_: any;          // shared in both Device and Browser
-
-    // Browser values
-    appCodeName: any;
     appName: any;
     appVersion: any;
+
+    // Browser values
     language: any;
     product: any;
     productSub: any;
@@ -58,10 +57,10 @@ export class Device extends Base implements IDevice {
     isVirtual: any = null;
     serial: any = null;
 
-    // Browser values
-    appCodeName: any = null;
     appName: any = null;
     appVersion: any = null;
+
+    // Browser values
     language: any = null;
     product: any = null;
     productSub: any = null;
