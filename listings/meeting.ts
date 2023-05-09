@@ -188,7 +188,7 @@ export class Meeting extends Id implements IMeeting {
     // + Mills till isLive starts
     private _tminus?: number | null = null;
     get tMinus(): number | null {
-        // if (isNil(this._tminus)) {
+        if (isNil(this._tminus)) {
             if (this.continuous) {
                 this._tminus = 0;
             }
@@ -199,14 +199,14 @@ export class Meeting extends Id implements IMeeting {
                 this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();    // Millis till this meeting ends
                 // positive value means 'starts in'
             }
-        // }
-        // if (this._tminus === 0) debugger;
+        }
+
         return this._tminus;
     }
 
     private _endsIn?: number | null = null;
     get endsIn(): number {    // TODO make Duration
-        // if (isNil(this._endsIn)) {
+        if (isNil(this._endsIn)) {
             if (this.continuous) {
                 this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
@@ -222,13 +222,13 @@ export class Meeting extends Id implements IMeeting {
             } else {
                 this._endsIn = null;
             }
-        // }
+        }
         return <any>this._endsIn;
     }
 
     private _isLive?: boolean | null = null;
     get isLive(): boolean | null {
-        // if (isNil(this._isLive)) {
+        if (isNil(this._isLive)) {
             if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = Meeting.makeThat70sTime().toMillis();
                 this._isLive = this.startTime <= now && now <= this.endTime;      // start <= now <= end
@@ -236,7 +236,7 @@ export class Meeting extends Id implements IMeeting {
                 const now = Meeting.makeThat70sDateTime().toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
-        // }
+        }
         return this.continuous || this._isLive;
     }
 
@@ -303,7 +303,7 @@ export class Meeting extends Id implements IMeeting {
     // returned DateTime will be in local timezone
     private _nextTime: DateTime | null = null;
     get nextTime(): DateTime {
-        // if (isNil(this._nextTime)) {
+        if (isNil(this._nextTime)) {
         if (this.recurrence.type === RecurrenceType.DAILY) {
             const now = DateTime.now();
             const nextTime = DateTime
@@ -344,7 +344,7 @@ export class Meeting extends Id implements IMeeting {
                 this._nextTime = next;  // .plus({ weeks: 1 })
             }
         }
-        // }
+        }
 
         return <any>this._nextTime;
     }
