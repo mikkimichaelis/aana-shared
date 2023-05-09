@@ -80,7 +80,7 @@ export interface IMeeting extends IId {
 
     // Non serialized getter properties
     isLive: boolean | null;
-    isFeatured: boolean | undefined;    
+    isFeatured: boolean | undefined;
     tMinus: any;    // TODO
     endsIn: any;
     startTimeString: string | null;
@@ -96,6 +96,7 @@ export interface IMeeting extends IId {
     tags: string[];
     // makeLocalStartDateTime: DateTime;
 
+    update(): void;
     updateDayTime(): void;
     updateTags(): void;
 
@@ -156,7 +157,7 @@ export class Meeting extends Id implements IMeeting {
     tags_: string[] = [];
 
     parent: string = '';
-    recurrence: IRecurrence = new Recurrence();
+    recurrence: IRecurrence = new Recurrence({});
     siblings: string[] = [];
 
     timezone: string = "America/New_York";
@@ -187,7 +188,7 @@ export class Meeting extends Id implements IMeeting {
     // + Mills till isLive starts
     private _tminus?: number | null = null;
     get tMinus(): number | null {
-        if (isNil(this._tminus)) {
+        // if (isNil(this._tminus)) {
             if (this.continuous) {
                 this._tminus = 0;
             }
@@ -198,14 +199,14 @@ export class Meeting extends Id implements IMeeting {
                 this._tminus = this.nextTime.toMillis() - DateTime.now().toMillis();    // Millis till this meeting ends
                 // positive value means 'starts in'
             }
-        }
+        // }
         // if (this._tminus === 0) debugger;
         return this._tminus;
     }
 
     private _endsIn?: number | null = null;
     get endsIn(): number {    // TODO make Duration
-        if (isNil(this._endsIn)) {
+        // if (isNil(this._endsIn)) {
             if (this.continuous) {
                 this._endsIn = Number.MAX_VALUE;
             } else if (this.isLive) {
@@ -221,13 +222,13 @@ export class Meeting extends Id implements IMeeting {
             } else {
                 this._endsIn = null;
             }
-        }
+        // }
         return <any>this._endsIn;
     }
 
     private _isLive?: boolean | null = null;
     get isLive(): boolean | null {
-        if (isNil(this._isLive)) {
+        // if (isNil(this._isLive)) {
             if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = Meeting.makeThat70sTime().toMillis();
                 this._isLive = this.startTime <= now && now <= this.endTime;      // start <= now <= end
@@ -235,7 +236,7 @@ export class Meeting extends Id implements IMeeting {
                 const now = Meeting.makeThat70sDateTime().toMillis();
                 this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
             }
-        }
+        // }
         return this.continuous || this._isLive;
     }
 
@@ -303,37 +304,46 @@ export class Meeting extends Id implements IMeeting {
     private _nextTime: DateTime | null = null;
     get nextTime(): DateTime {
         // if (isNil(this._nextTime)) {
-            if (this.recurrence.type === RecurrenceType.DAILY) {
-                const now = DateTime.now();
-                const nextTime = DateTime
-                    .fromMillis(this.startTime).setZone(this.timezone)
-                    .set({
-                        year: now.year,
-                        month: now.month,
-                        day: now.day
-                    }).setZone('local'); 
-                if (nextTime > now) {
-                    // this meeting happens later today, adjust now to upcoming hh:mm
-                    this._nextTime = nextTime;
-                } else {
-                    // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
-                    this._nextTime = nextTime.plus({ days: 1 });
-                }
+        if (this.recurrence.type === RecurrenceType.DAILY) {
+            const now = DateTime.now();
+            const nextTime = DateTime
+                .fromMillis(this.startTime).setZone(this.timezone)
+                .set({
+                    year: now.year,
+                    month: now.month,
+                    day: now.day
+                }).setZone('local');
+            if (nextTime > now) {
+                // this meeting happens later today, adjust now to upcoming hh:mm
+                this._nextTime = nextTime;
             } else {
-                // Weekly meetings use startDateTime to compare with now
-                const now = Meeting.makeThat70sDateTime() as any;
-                const startDateTime = DateTime.fromMillis(this.startDateTime);
-                const next = DateTime.now().set({
-                    hour: startDateTime.hour,
-                    minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
-                });
-                if (startDateTime > now) {
-                    this._nextTime = next;
-                } else {
-                    this._nextTime = next.plus({ weeks: 1 });
-                }
+                // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
+                this._nextTime = nextTime.plus({ days: 1 });
             }
+        } else {
+            // Weekly meetings use startDateTime to compare with now
+            const now = Meeting.makeThat70sDateTime() as any;
+            const startDateTime = DateTime.fromMillis(this.startDateTime);
+
+            // const nextTime = startDateTime.setZone(this.timezone)   // const next = DateTime.now().set({
+            //     .set({
+            //         year: now.year,
+            //         month: now.month,
+            //         day: now.day
+            //     });
+
+            const next = DateTime.now().set({
+                hour: startDateTime.hour,
+                minute: startDateTime.minute,
+                weekday: startDateTime.weekday
+            });
+
+            if (startDateTime > now) {
+                this._nextTime = next;
+            } else {
+                this._nextTime = next;  // .plus({ weeks: 1 })
+            }
+        }
         // }
 
         return <any>this._nextTime;
@@ -387,6 +397,8 @@ export class Meeting extends Id implements IMeeting {
     constructor(meeting?: any) {
         super(meeting);
         this.initialize(this, meeting);
+
+        this.recurrence = new Recurrence(meeting.recurrence);
 
         this.updateCounters();
     }
@@ -527,6 +539,9 @@ export class Meeting extends Id implements IMeeting {
     }
 
     public updateProperties() {
+        // remove ' ' and '-' from zid
+        this.zid = this.zid.replace(/\s/g, '').replace('-', '');
+
         if (this.meetingTypes.find(mt => mt === '24/7')) this.continuous = true;
         if (this.meetingTypes.find(mt => mt === 'C')) this.closed = true;
 
@@ -561,6 +576,7 @@ export class Meeting extends Id implements IMeeting {
     public updateDayTime() {
         try {
             if (this.recurrence.type === RecurrenceType.CONTINUOUS) {
+                this.continuous = true;
                 this.recurrence.weekly_day = '';
                 this.recurrence.weekly_days = [];
                 this.startTime = -1;
@@ -609,7 +625,7 @@ export class Meeting extends Id implements IMeeting {
         if (!isNil(time)) {
             switch (typeof time) {
                 case 'string':  // 'hh:mm' or ISO string
-                time = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
+                    time = time.length !== 'hh:mm'.length ? DateTime.fromISO(time)
                         : Meeting.makeFrom24h_That70sDateTime(
                             time,
                             timezone as any,

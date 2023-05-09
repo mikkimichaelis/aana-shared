@@ -1,3 +1,5 @@
+import { Base, IBase } from "../models/base.class";
+
 export enum RecurrenceType {
     NONE = '',
     CONTINUOUS = 'Continuous',
@@ -5,7 +7,7 @@ export enum RecurrenceType {
     WEEKLY = 'Weekly'
 }
 
-export interface IRecurrence {
+export interface IRecurrence extends IBase {
     type:               RecurrenceType;     
     repeat_interval:    number;
     weekly_day:         string;
@@ -17,7 +19,7 @@ export interface IRecurrence {
     end_date_time:      string;
 } 
 
-export class Recurrence implements IRecurrence {
+export class Recurrence extends Base implements IRecurrence {
     type:               RecurrenceType  = RecurrenceType.NONE;
     
     weekly_day:         string  = '';
@@ -30,4 +32,9 @@ export class Recurrence implements IRecurrence {
     monthly_week_day:   number = 0;
     end_times:          number = 0;
     end_date_time:      string = '';
+
+    constructor(irecurrence: any) {
+        super();
+        this.initialize(this, irecurrence);
+    }
 }

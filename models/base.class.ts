@@ -26,21 +26,24 @@ export class Base implements IBase {
                 if (!existing || has(destination, key)) {
                     // are we specifically excluding this key?
                     if (indexOf(exclude, key) === -1) {
+                        let property = source[key];
                         // if not an object, perform simple assignment
-                        if (typeof source[key] !== "object") {
-                            destination[key] = source[key];
+                        if (typeof property !== "object") {
+                            destination[key] = property
                         } else {
                             // if is an array, deepCopy the array non existing 
-                            if (Array.isArray(source[key])) {
+                            if (Array.isArray(property)) {
                                 destination[key] = [];
-                                this.deepCopy(destination[key], source[key], exclude, false);
+                                this.deepCopy(destination[key], property, exclude, false);
+                            } else if (property['toObject'] !== undefined) {
+                                destination[key] = property.toObject();
                             } else {
                                 if (key === 'point') {  
                                     // point properties are already Firebase GeoPoint type, use existing object
-                                    destination[key] = source[key];
+                                    destination[key] = property;
                                 } else {
                                     destination[key] = {};
-                                    this.deepCopy(destination[key], source[key], exclude, false);
+                                    this.deepCopy(destination[key], property, exclude, false);
                                 }
                             }
                         }
