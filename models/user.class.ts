@@ -19,6 +19,8 @@ export interface IUserAuthorization extends IId {
 
     admin: boolean;
     free: boolean;
+    featured: boolean;
+
     attendance: boolean;
 
     value: UserAuthorizationEnum;
@@ -64,6 +66,8 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
     admin: boolean = false;
     free: boolean = false;
+    featured: boolean = false;
+    
     attendance: boolean = false;
     maker: boolean = false;
 
