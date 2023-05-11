@@ -1,9 +1,8 @@
 import { findIndex, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
-import { max, mean } from 'mathjs';
 import { IMeeting } from '../listings';
 import { Base } from './base.class';
-import { Id, IId } from './id.class';
+import { IId, Id } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';
 import { IUserBase, UserBase } from './userBase.class';
 
@@ -67,7 +66,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     admin: boolean = false;
     free: boolean = false;
     featured: boolean = false;
-    
+
     attendance: boolean = false;
     maker: boolean = false;
 
@@ -108,16 +107,10 @@ export interface IUserPreferences {
     homemeeting: boolean;
     pronouns: boolean;
     pronouns_value: string;
-    sobriety: boolean;
-    sobriety_value: number;
-    sobriety_days: boolean;
+    sobriety_value: number; // value for which sobriety_days is calculated
+    sobriety_days: boolean; // shows y/m/d clean or not in name
     location: boolean;
     location_value: string;
-    // deprecated due to spelling error 
-    nintey_start: number;   // date to start 90/90
-    nintey_mtgs: number;    // in person count
-    nintey_mins: number;    // minutes of in person
-
     ninety_start: number;   // date to start 90/90
     meetingMinutesChartDuration: any;
 }
@@ -163,7 +156,7 @@ export interface IUserStats {
 
     meeting_last: number;
     meeting_last$: string;
-    meeting_last_name: string;          
+    meeting_last_name: string;
     meeting_count_total: number;
     meeting_count_today: number;        // updated by meetingCount(), reset to 0 by nightly process to use in calculating running averages
 
@@ -172,7 +165,6 @@ export interface IUserStats {
     meetingCount(meeting: IMeeting): void;
     process(): void;
 }
-
 export interface IUser extends IUserBase {
     uaid: string,
     preferences: IUserPreferences,
@@ -184,11 +176,9 @@ export interface IUser extends IUserBase {
     created: number;
     created$: string;
 
-    addFavoriteMeeting(mid: string): boolean;
-    removeFavoriteMeeting(mid: string): boolean;
-
-    addAdHocMeeting(mid: string): boolean;
-    removeAdHocMeeting(mid: string): boolean;
+    blockMeeting(mid: string);
+    favoriteMeeting(mid: string, add: boolean): boolean;
+    adHocMeeting(mid: string, add: boolean): boolean;
 
     setUserAuthNames(displayName?: string): boolean;
     setUserNames(firstName: string, lastInitial: string): boolean;
@@ -202,21 +192,12 @@ export class User extends UserBase implements IUser {
         homemeeting: false,
         pronouns: false,
         pronouns_value: '',
-        sobriety: false,
         sobriety_value: DateTime.now().startOf('day').toMillis(),
         sobriety_days: false,
         location: false,
         location_value: '',
-
-        // deprecated
-        nintey_start: DateTime.now().startOf('day').toMillis(),
-        nintey_mtgs: 0,
-        nintey_mins: 0,
-
-        ninety_start: 0,
-
-        meetingMinutesChartDuration: 7
-
+        ninety_start: DateTime.now().startOf('day').toMillis(),
+        meetingMinutesChartDuration: '7'
     }
     profile: IUserProfile = <any>null;
     homeMeeting: string = <any>null;
@@ -254,52 +235,49 @@ export class User extends UserBase implements IUser {
         return super.toObject([]);
     }
 
-    public get isHomeMeeting(): boolean {
-        return this.id === this.homeMeeting;
-    }
-
     public isFavoriteMeeting(mid: string): boolean {
         return -1 !== findIndex(this.favMeetings, (id => {
             return (id === mid);
         }))
     }
 
-    public addFavoriteMeeting(mid: string): boolean {
-        if (!this.isFavoriteMeeting(mid)) {
-            this.favMeetings.push(mid);
-            return this.isFavoriteMeeting(mid);
+    public blockMeeting(mid: string) {
+        this.blkMeetings.push(mid);
+    }
+
+    public favoriteMeeting(mid: string, add: boolean = true): boolean {
+        if (add) {
+            if (!this.isFavoriteMeeting(mid)) {
+                this.favMeetings.push(mid);
+                return this.isFavoriteMeeting(mid);
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if (this.isFavoriteMeeting(mid)) {
+                const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
+                    return value === mid;
+                });
+                return !this.isFavoriteMeeting(mid);
+            } else {
+                return false;
+            }
         }
     }
 
-    public removeFavoriteMeeting(mid: string): boolean {
-        if (this.isFavoriteMeeting(mid)) {
-            const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
-                return value === mid;
-            });
-            return !this.isFavoriteMeeting(mid);
+    public adHocMeeting(mid: string, add: boolean = true): boolean {
+        const index = this.adHocMeetings.findIndex(_mid => _mid === mid)
+        if (add) {
+            if (index > -1) return true; // it already exists
+            this.adHocMeetings.push(mid);
         } else {
-            return false;
+            // if it exists, remove it from old position in array
+            if (index > -1) this.adHocMeetings.splice(index, 1);
+
+            // now add it to the top of the array
+            this.adHocMeetings.unshift(mid);
+            return true;
         }
-    }
-
-    public isAdHocMeeting(mid: string): boolean {
-        return -1 !== findIndex(this.adHocMeetings, (id => {
-            return (id === mid);
-        }))
-    }
-
-    public addAdHocMeeting(mid: string): boolean {
-        this.removeAdHocMeeting(mid);
-        this.adHocMeetings.unshift(mid);
-        return true;
-    }
-
-    public removeAdHocMeeting(mid: string): boolean {
-        const i = this.adHocMeetings.findIndex(_mid => _mid === mid)
-        if (i > -1) this.adHocMeetings.splice(i, 1);
-        return true;
     }
 
     public setUserAuthNames(name?: string): boolean {
