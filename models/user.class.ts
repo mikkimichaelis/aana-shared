@@ -270,6 +270,7 @@ export class User extends UserBase implements IUser {
         if (add) {
             if (index > -1) return true; // it already exists
             this.adHocMeetings.push(mid);
+            return true;
         } else {
             // if it exists, remove it from old position in array
             if (index > -1) this.adHocMeetings.splice(index, 1);
