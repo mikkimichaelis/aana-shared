@@ -143,6 +143,7 @@ export interface IUserStats {
     processed$: string;
     timestamp: number;                  // last update ts
 
+    rating_events: number;              // number of events since last rating prompt
     rating_status: string;              // users last rating request result
     rating_prompts: number;
     rating_enjoys: number;
@@ -318,6 +319,7 @@ export class UserStats extends Id implements IUserStats {
     run_duration = 0;
     run_duration$ = '';
 
+    rating_events = 0;                      // number of events since last rating prompt
     rating_status = UserRatingStatus.NONE;
     rating_prompts = 0;
     rating_enjoys = 0;
@@ -352,6 +354,7 @@ export class UserStats extends Id implements IUserStats {
 
     appRun() {
         this.timestamp = DateTime.now().toMillis();
+        this.rating_events = this.rating_events + 1;
         this.app_run_last = DateTime.now().toMillis();
         this.app_runs_total = this.app_runs_total + 1;
         this.app_runs_today = this.app_runs_today + 1;
@@ -365,6 +368,7 @@ export class UserStats extends Id implements IUserStats {
 
     appRatingPrompt(rating: IUserRating) {
         this.timestamp = DateTime.now().toMillis();
+        this.rating_events = 0;     // reset event counter
         this.rating_prompts = this.rating_prompts + 1;
         this.rating_status = rating.status;
         if (rating.rate) this.rating_ratings = this.rating_ratings + 1;
@@ -375,6 +379,7 @@ export class UserStats extends Id implements IUserStats {
 
     meetingCount(meeting: IMeeting) {
         this.timestamp = DateTime.now().toMillis();
+        this.rating_events = this.rating_events + 1;
         this.meeting_last = DateTime.now().toMillis();
         this.meeting_last$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
         this.meeting_last_name = meeting.name;
