@@ -38,6 +38,8 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     public get value(): UserAuthorizationEnum {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
         if (this.free) return UserAuthorizationEnum.FREE;
+        if (this.maker) return UserAuthorizationEnum.MAKER;
+        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
         // use the running app environment to determine which subscriptions to validate for
         if (this.environment.platform === 'device') {
@@ -55,9 +57,6 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         } else {        // spa
             return UserAuthorizationEnum.ATTENDANCE;
         }
-
-        if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
-
         return UserAuthorizationEnum.NONE;
     }
 
