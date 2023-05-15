@@ -6,6 +6,8 @@ export interface IJournalEntry extends IId {
     // rating: number;
     // feelings: IFeeling[];
     key: number;
+    local: number;
+    date: string;
     emoji: string;
     title: string;
     gratitude: string;
@@ -29,7 +31,8 @@ export class JournalEntry extends Id implements IJournalEntry {
     public get key(): number {
         return Number.parseInt(this.id);
     }
-
+    public local = <any>null;
+    public date = '';
     public emoji = '';
     public title = '';
     public gratitude = '';
@@ -41,10 +44,13 @@ export class JournalEntry extends Id implements IJournalEntry {
 
     constructor(entry?: IJournalEntry) {
         // construct from entry otherwise construct a blank one with a proper id for today
-        super(entry ? entry : { id: DateTime.now().startOf('day').toMillis().toString() });
+        super(entry ? entry : { id: DateTime.now().toUTC().startOf('day').toMillis().toString() });
         this.initialize(this, entry);
-    }
 
+        // Defaulting here so entries missing dates will have one added when loaded
+        this.date = DateTime.fromMillis(Number.parseInt(this.id)).toUTC().toLocaleString(DateTime.DATETIME_FULL);
+        this.local = this.local ? this.local : DateTime.fromMillis(this.key).startOf('day').toMillis();
+    }
     public toObject() {
         return super.toObject(['key']);
     }
