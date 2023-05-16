@@ -9,7 +9,7 @@ export interface IDailyNote {
 
 export interface IMeetingNote extends IId {
     id: string;             // key in database - millis of start of day note is for
-    timestamp: number;      // get property returns id as number 
+    timestamp: number;     
     date$: string;          // string of date note created
 
     uid: string;
@@ -38,9 +38,9 @@ export class MeetingNote extends Id implements IMeetingNote {
         super(note);
         this.initialize(this, note);
 
-        if (!this.timestamp) this.timestamp = DateTime.now().toUTC().startOf('day').toMillis();
-        if (!this.id) this.id = this.timestamp.toString();
-
+        if (this.timestamp === 0) this.timestamp = DateTime.now().startOf('day').toMillis();
+        if (this.id === '') this.id = this.timestamp.toString();
+        
         this.date$ = DateTime.fromMillis(this.timestamp).toISO();
     }
 
