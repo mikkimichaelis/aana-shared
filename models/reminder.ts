@@ -34,11 +34,12 @@ export class Reminder extends Id implements IReminder {
         super(reminder);
         this.initialize(this, reminder);
 
-        this.startTime$ = DateTime.fromMillis(this.atMillis).setZone('local').toLocaleString(DateTime.TIME_24_WITH_SHORT_OFFSET);
     }
 
     update() {
+        const localStart = DateTime.fromMillis(this.atMillis).setZone(this.timezone);
         this.atMillis = Math.floor((this.atMillis / 1000) * 1000); // Strip any milliseconds from atMillis
-        this.atDayTime$ = DateTime.fromMillis(this.atMillis).setZone(this.timezone).toFormat('EEEE t');
+        this.atDayTime$ = localStart.toFormat('EEEE t');
+        this.startTime$ = localStart.toLocaleString(DateTime.TIME_SIMPLE);
     }
 }
