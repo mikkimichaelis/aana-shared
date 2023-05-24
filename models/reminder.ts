@@ -33,6 +33,8 @@ export class Reminder extends Id implements IReminder {
     constructor(reminder: IReminder) {
         super(reminder);
         this.initialize(this, reminder);
+
+        this.startTime$ = DateTime.fromMillis(this.atMillis).setZone('local').toLocaleString(DateTime.TIME_24_WITH_SHORT_OFFSET);
     }
 
     update() {
