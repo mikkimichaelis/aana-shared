@@ -304,46 +304,36 @@ export class Meeting extends Id implements IMeeting {
     private _nextTime: DateTime | null = null;
     get nextTime(): DateTime {
         if (isNil(this._nextTime)) {
-        if (this.recurrence.type === RecurrenceType.DAILY) {
-            const now = DateTime.now();
-            const nextTime = DateTime
-                .fromMillis(this.startTime).setZone(this.timezone)
-                .set({
-                    year: now.year,
-                    month: now.month,
-                    day: now.day
-                }).setZone('local');
-            if (nextTime > now) {
-                // this meeting happens later today, adjust now to upcoming hh:mm
-                this._nextTime = nextTime;
+            if (this.recurrence.type === RecurrenceType.DAILY) {
+                const now = DateTime.now();
+                const nextTime = DateTime
+                    .fromMillis(this.startTime).setZone(this.timezone)
+                    .set({
+                        year: now.year,
+                        month: now.month,
+                        day: now.day
+                    }).setZone('local');
+                if (nextTime > now) {
+                    // this meeting happens later today, adjust now to upcoming hh:mm
+                    this._nextTime = nextTime;
+                } else {
+                    // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
+                    this._nextTime = nextTime.plus({ days: 1 });
+                }
             } else {
-                // this meeting occurred earlier today, move startTime to tomorrow at adjusted schedule hh:mm
-                this._nextTime = nextTime.plus({ days: 1 });
-            }
-        } else {
-            // Weekly meetings use startDateTime to compare with now
-            const now = Meeting.makeThat70sDateTime() as any;
-            const startDateTime = DateTime.fromMillis(this.startDateTime);
+                // Weekly meetings use startDateTime to compare with now
+                const now = Meeting.makeThat70sDateTime() as any;
+                const startDateTime = DateTime.fromMillis(this.startDateTime);
 
-            // const nextTime = startDateTime.setZone(this.timezone)   // const next = DateTime.now().set({
-            //     .set({
-            //         year: now.year,
-            //         month: now.month,
-            //         day: now.day
-            //     });
+                let next = DateTime.now().set({
+                    hour: startDateTime.hour,
+                    minute: startDateTime.minute,
+                    weekday: startDateTime.weekday
+                });
 
-            const next = DateTime.now().set({
-                hour: startDateTime.hour,
-                minute: startDateTime.minute,
-                weekday: startDateTime.weekday
-            });
-
-            if (startDateTime > now) {
+                if (next < DateTime.now()) next = next.plus({ weeks: 1 });
                 this._nextTime = next;
-            } else {
-                this._nextTime = next;  // .plus({ weeks: 1 })
             }
-        }
         }
 
         return <any>this._nextTime;
