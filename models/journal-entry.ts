@@ -1,11 +1,7 @@
 import { DateTime } from "luxon";
-import { Id, IId } from "./id.class";
+import { Base, IBase } from "./base.class";
 
-export interface IJournalEntry extends IId {
-    // uid: string;
-    // rating: number;
-    // feelings: IFeeling[];
-    key: number;
+export interface IJournalEntry extends IBase {
     date: string;
     emoji: string;
     title: string;
@@ -17,20 +13,9 @@ export interface IJournalEntry extends IId {
     accomplishments: string;
 }
 
-export interface IFeeling {
-    emoji: number;
-    time: number;
-}
+export class JournalEntry extends Base implements IJournalEntry {
+    public date = DateTime.now().toFormat('yyyy-MM-dd');
 
-export class JournalEntry extends Id implements IJournalEntry {
-    // uid: string = '';
-    // rating: number = 0;
-    // feelings: IFeeling [] = [];
-
-    public get key(): number {
-        return Number.parseInt(this.id);
-    }
-    public date = '';
     public emoji = '';
     public title = '';
     public gratitude = '';
@@ -41,14 +26,10 @@ export class JournalEntry extends Id implements IJournalEntry {
     public accomplishments  = '';
 
     constructor(entry?: IJournalEntry) {
-        // construct from entry otherwise construct a blank one with a proper id for today
-        super(entry ? entry : { id: DateTime.now().startOf('day').toMillis().toString() });
+        super();
         this.initialize(this, entry);
-
-        // Defaulting here so entries missing dates will have one added when loaded
-        this.date = DateTime.fromMillis(Number.parseInt(this.id)).toLocaleString(DateTime.DATETIME_FULL);
     }
     public toObject() {
-        return super.toObject(['key']);
+        return super.toObject();
     }
 }
