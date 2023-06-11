@@ -8,9 +8,10 @@ export interface ISystemSettings {
     first_run: boolean;
     first_use_journal: string;
 
-    intro_tutorial: string;     // null: complete, otherwise string at which to start
-    journal_tutorial: string;   // same...
-    editor_tutorial: string;    // same...
+    intro_tutorial: string;         // null: complete, otherwise string at which to start
+    journal_tutorial: string;       // same...
+    editor_tutorial: string;        // same...
+    attendance_tutorial: string;    // same...
 
     last_run: number;           // ts of last time app was last run
     last_tick: number;          // ts of last run tick used to determine how long app was used last run
@@ -36,6 +37,7 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
     intro_tutorial = 'welcome';
     journal_tutorial = 'start';
     editor_tutorial = 'start';
+    attendance_tutorial = 'start';
 
     last_run = 0;
     last_tick = 0;
