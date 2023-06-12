@@ -1,4 +1,4 @@
-import { SettingsBase } from './settings-base';
+import { SettingsBase } from './settings-base.js';
 export interface IReportSettings {
     email: string;
     cc: boolean;

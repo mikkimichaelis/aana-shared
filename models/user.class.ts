@@ -1,10 +1,10 @@
 import { findIndex, merge, remove } from 'lodash';
 import { DateTime, Duration } from 'luxon';
-import { IMeeting } from '../listings';
-import { Base } from './base.class';
-import { IId, Id } from './id.class';
-import { IUserRating, UserRatingStatus } from './user-rating';
-import { IUserBase, UserBase } from './userBase.class';
+import { IMeeting } from './meeting.js';
+import { Base } from './base.class.js';
+import { IId, Id } from './id.class.js';
+import { IUserRating, UserRatingStatus } from './user-rating.js';
+import { IUserBase, UserBase } from './userBase.class.js';
 
 export enum UserAuthorizationEnum {
     NONE = 0,

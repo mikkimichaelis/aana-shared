@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
-import { IUserStats } from ".";
-import { Id, IId } from "./id.class";
+import { Id, IId } from "./id.class.js";
 
 export enum ChatMessageType {
     HTML = 'html'

@@ -1,5 +1,5 @@
-import { DateTime } from "luxon";
-import { Id, IId } from "./id.class";
+import { DateTime } from 'luxon';
+import { Id, IId } from "./id.class.js";
 
 // This defines the persisted record for all meeting notes on a single day
 export interface IDailyNote {

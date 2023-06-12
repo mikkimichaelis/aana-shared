@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { SettingsBase } from './settings-base';
+import { SettingsBase } from './settings-base.js';
 
 export interface ISystemSettings {
     version: number,

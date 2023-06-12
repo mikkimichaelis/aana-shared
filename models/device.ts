@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import { Base, IBase } from '../models/base.class';
-import { Id, IId } from '../models/id.class';
+import { Base, IBase } from './base.class.js';
+
 export interface IDevice extends IBase {
     id: string;
     uid: string;

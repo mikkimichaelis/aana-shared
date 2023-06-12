@@ -1,8 +1,10 @@
 import { head, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { v4 as uuidv4 } from 'uuid';
-import { IMeeting, IUser } from '../models';
-import { Id, IId } from '../models/id.class';
+import { IMeeting } from './meeting.js';
+import { Id, IId } from './id.class.js';
+import { IUser } from './user.class.js';
+
 export interface IAttendanceRecord extends IId {
     aid: string;
 

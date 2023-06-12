@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import { Base, IBase } from '../models/base.class';
-import { Id, IId } from '../models/id.class';
+import { IId, Id } from './id.class.js';
+
 export interface IAttendanceReport extends IId {
     uid: string;
     timezone: string;       // tz of user at time of attendance
