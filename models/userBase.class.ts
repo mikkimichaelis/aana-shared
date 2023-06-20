@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import lodash from 'lodash';
 import { Md5 } from 'ts-md5';
 import { Id, IId } from './id.class.js';
 
@@ -16,7 +16,7 @@ export class UserBase extends Id implements IUserBase {
     constructor(userBase?: any) {
         super(userBase);
         this.initialize(this, userBase);
-        if( isEmpty(this.avatar) ) {
+        if( lodash.isEmpty(this.avatar) ) {
             const md5 = new Md5();
             this.avatar = `https://www.gravatar.com/avatar/${md5.appendStr(`${this.id.toLowerCase()}@anonymousmeetings.app`).end()}?d=identicon`;;
         }

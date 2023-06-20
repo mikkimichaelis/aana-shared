@@ -1,4 +1,4 @@
-import { has, indexOf, isEmpty } from 'lodash';
+import lodash from 'lodash';
 // import * as geofirex from 'geofirex';
 
 export interface IBase {
@@ -22,10 +22,10 @@ export class Base implements IBase {
 
         if (source) {
             for (const key in source) {
-                // not doing an existing property copy or we are and the destination has an existing dest property
-                if (!existing || has(destination, key)) {
+                // not doing an existing property copy or we are and the destination has the existing property
+                if (!existing || destination[key]) {
                     // are we specifically excluding this key?
-                    if (indexOf(exclude, key) === -1) {
+                    if (lodash.indexOf(exclude, key) === -1) {
                         let value = source[key];
                         
                         if (!value) {
@@ -66,7 +66,7 @@ export class Base implements IBase {
 
     public toGeoObject(geo?: any, exclude?: string[]) {
         const obj = this.toObject(exclude);
-        if (geo && has(obj, 'point') && !isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
+        if (geo && obj['point'] && !lodash.isEmpty(obj.point)) obj.point = geo.point(obj.point.geopoint._latitude, obj.point.geopoint._longitude);
         return obj;
     }
 }
