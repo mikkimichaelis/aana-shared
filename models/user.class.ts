@@ -1,6 +1,6 @@
-import { findIndex, merge, remove } from 'lodash';
+import lodash from 'lodash';
 import { DateTime, Duration } from 'luxon';
-import { IMeeting } from '../listings';
+import { IMeeting } from './meeting';
 import { Base } from './base.class';
 import { IId, Id } from './id.class';
 import { IUserRating, UserRatingStatus } from './user-rating';
@@ -18,12 +18,12 @@ export interface IUserAuthorization extends IId {
 
     admin: boolean;
     free: boolean;
-    featured: boolean;
+    trial: boolean;
+    invalid: boolean;
 
     attendance: boolean;
 
     value: UserAuthorizationEnum;
-    authorized: boolean;
 
     updated$: string;
     updated: number;
@@ -31,8 +31,45 @@ export interface IUserAuthorization extends IId {
 
 export class UserAuthorization extends Id implements IUserAuthorization {
 
-    public get authorized(): boolean {
-        return this.value > UserAuthorizationEnum.NONE;
+    public get apple(): boolean {
+        // @ts-ignore
+        if (this['apple:live.aana.app.attendance.subscription:owned'] === true) return true;
+        return false;
+    }
+
+    public get google(): boolean {
+        // @ts-ignore
+        if (this['google:live.aana.app.attendance.subscription:owned'] === true) return true;
+        return false;
+    }
+
+    public get google_attendance(): boolean {
+        // @ts-ignore
+        if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true) return true;
+        return false;
+    }
+
+    public get google_maker(): boolean {
+        // @ts-ignore
+        if (this['google:live.meetingmaker.app.maker_sub:owned'] === true) return true;
+        return false;
+    }
+
+    public get isTrial(): boolean {
+        // @ts-ignore
+        if (this['apple:live.aana.app.attendance.subscription:owned'] === true &&
+            this['apple:live.aana.app.attendance.subscription:trial'] === true) return true;
+        // @ts-ignore
+        if (this['google:live.aana.app.attendance.subscription:owned'] === true &&
+            this['google:live.aana.app.attendance.subscription:trial'] === true) return true;
+        // @ts-ignore
+        if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true &&
+            this['google:live.meetingmaker.app.attendance_sub:trial'] === true) return true;
+        // @ts-ignore
+        if (this['google:live.meetingmaker.app.maker_sub:owned'] === true &&
+            this['google:live.meetingmaker.app.maker_sub:trial'] === true) return true;
+
+        return false;
     }
 
     public get value(): UserAuthorizationEnum {
@@ -41,30 +78,28 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         if (this.maker) return UserAuthorizationEnum.MAKER;
         if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
 
-        // use the running app environment to determine which subscriptions to validate for
-        if (this.environment.platform === 'device') {
-            if (this.environment.design === 'ios') {
-                // @ts-ignore
-                if (this['apple:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
-            } else {    // md
-                // @ts-ignore
-                if (this['google:live.aana.app.attendance.subscription:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
-                // @ts-ignore
-                if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true) return UserAuthorizationEnum.ATTENDANCE;
-                // @ts-ignore
-                if (this['google:live.meetingmaker.app.maker_sub:owned'] === true) return UserAuthorizationEnum.MAKER;
-            }
-        } else {        // spa
-            return UserAuthorizationEnum.ATTENDANCE;
-        }
+        // Double check the raw data
+        // If the following are ever true and the above checks failed, there is something wrong with the api purchase function
+        if (this.apple) return UserAuthorizationEnum.ATTENDANCE;
+        if (this.google) return UserAuthorizationEnum.ATTENDANCE;
+        if (this.google_attendance) return UserAuthorizationEnum.ATTENDANCE;
+        if (this.google_maker) return UserAuthorizationEnum.MAKER;
+
         return UserAuthorizationEnum.NONE;
+    }
+
+    public get invalid(): boolean {
+        if (this.apple && !this.attendance) return true;
+        if (this.google && !this.attendance) return true;
+        if (this.google_attendance && !this.attendance) return true;
+        if (this.google_maker && !this.maker) return true;
     }
 
     uid: string = '';
 
     admin: boolean = false;
     free: boolean = false;
-    featured: boolean = false;
+    trial: boolean = false;
 
     attendance: boolean = false;
     maker: boolean = false;
@@ -72,14 +107,11 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     updated$: string = ''
     updated: number = <any>null;
 
-    private environment: any;
-
     // pass in running app environment to determine attendance platform
-    constructor(data: IUserAuthorization = <any>{}, environment?: any,) {
+    constructor(data: IUserAuthorization = <any>{}) {
         super(data);
         this.deepCopy(this, data, [], false);
         this.update();
-        this.environment = environment;
     }
 
     update() {
@@ -222,7 +254,7 @@ export class User extends UserBase implements IUser {
             this.profile = new UserProfile(user.profile);
         } else {
             this.profile = new UserProfile(
-                merge(user, {
+                lodash.merge(user, {
                     anonymous: false,
                     avatar: this.avatar
                 }));
@@ -236,7 +268,7 @@ export class User extends UserBase implements IUser {
     }
 
     public isFavoriteMeeting(mid: string): boolean {
-        return -1 !== findIndex(this.favMeetings, (id => {
+        return -1 !== lodash.findIndex(this.favMeetings, (id => {
             return (id === mid);
         }))
     }
@@ -255,7 +287,7 @@ export class User extends UserBase implements IUser {
             }
         } else {
             if (this.isFavoriteMeeting(mid)) {
-                const removed = remove(this.favMeetings, (value: any, index: number, array: any) => {
+                const removed = lodash.remove(this.favMeetings, (value: any, index: number, array: any) => {
                     return value === mid;
                 });
                 return !this.isFavoriteMeeting(mid);
