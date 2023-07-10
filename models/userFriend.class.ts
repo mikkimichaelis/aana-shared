@@ -1,4 +1,4 @@
-import { IUserBase } from './userBase.class.js';
+import { IUserBase } from './userBase.class';
 
 export interface IUserFriend extends IUserBase {
     fid: string;

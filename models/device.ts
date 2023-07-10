@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Base, IBase } from './base.class.js';
+import { Base, IBase } from './base.class';
 
 export interface IDevice extends IBase {
     id: string;

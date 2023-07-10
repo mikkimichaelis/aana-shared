@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Id } from './id.class.js';
+import { Id } from './id.class';
 
 export interface IZoomSchedule extends ISchedule {
     aid: string;    // user id of Zoom account admin

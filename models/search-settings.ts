@@ -1,4 +1,4 @@
-import { SettingsBase } from './settings-base.js';
+import { SettingsBase } from './settings-base';
 
 // ordering here is important
 export enum SpecificDay {

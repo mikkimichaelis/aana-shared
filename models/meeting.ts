@@ -1,8 +1,8 @@
 import { cloneDeep, concat, isEmpty, isNil, join, split } from 'lodash';
 import { DateTime } from 'luxon';
-import { IId, Id } from '../models/id.class.js';
-import { SpecificDay } from '../models/search-settings.js';
-import { IRecurrence, Recurrence, RecurrenceType } from './recurrence.js';
+import { IId, Id } from '../models/id.class';
+import { SpecificDay } from '../models/search-settings';
+import { IRecurrence, Recurrence, RecurrenceType } from './recurrence';
 
 export interface IMeeting extends IId {
 
@@ -631,7 +631,7 @@ export class Meeting extends Id implements IMeeting {
                         utc);
                     break;
                 default:
-                    debugger;
+                    // Debugger;
             }
         }
         return time;

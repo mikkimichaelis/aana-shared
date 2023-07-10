@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
-import { IUserStats } from './user.class.js';
-import { Id, IId } from './id.class.js';
-import { IUserRating } from './user-rating.js';
+import { IUserStats } from './user.class';
+import { Id, IId } from './id.class';
+import { IUserRating } from './user-rating';
 
 export enum UserMessageType {
     FEEDBACK = 'User Feedback',

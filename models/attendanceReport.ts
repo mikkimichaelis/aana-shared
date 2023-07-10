@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { IId, Id } from './id.class.js';
+import { IId, Id } from './id.class';
 
 export interface IAttendanceReport extends IId {
     uid: string;

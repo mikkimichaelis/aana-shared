@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { Md5 } from 'ts-md5';
-import { Id, IId } from './id.class.js';
+import { Id, IId } from './id.class';
 
 export interface IUserBase extends IId {
     name: string;

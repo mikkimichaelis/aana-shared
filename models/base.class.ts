@@ -25,7 +25,7 @@ export class Base implements IBase {
                 // not doing an existing property copy or we are and the destination has the existing property
                 if (!existing || destination[key]) {
                     // are we specifically excluding this key?
-                    if (exclude.indexOf(key) === -1) {
+                    if (exclude && exclude.indexOf(key) === -1) {
                         let value = source[key];
                         
                         if (!value) {

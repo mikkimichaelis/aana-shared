@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import { IUserStats } from './user.class.js';
-import { Id, IId } from './id.class.js';
+import { IUserStats } from './user.class';
+import { Id, IId } from './id.class';
 
 export enum UserRatingStatus {
     NONE = '',

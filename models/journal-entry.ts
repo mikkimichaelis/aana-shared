@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { Id, IId } from "./id.class.js";
+import { Id, IId } from "./id.class";
 
 export interface IJournalEntry extends IId {
     // uid: string;

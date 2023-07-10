@@ -1,4 +1,4 @@
-import { SettingsBase } from './settings-base.js';
+import { SettingsBase } from './settings-base';
 export interface ITimerSettings {
     startMillis: number | null;
     meetingId: string | null;

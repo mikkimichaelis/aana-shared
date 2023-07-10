@@ -1,9 +1,9 @@
 import { head, last } from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { v4 as uuidv4 } from 'uuid';
-import { IMeeting } from './meeting.js';
-import { Id, IId } from './id.class.js';
-import { IUser } from './user.class.js';
+import { IMeeting } from './meeting';
+import { Id, IId } from './id.class';
+import { IUser } from './user.class';
 
 export interface IAttendanceRecord extends IId {
     aid: string;
@@ -194,7 +194,7 @@ export class Attendance extends Id implements IAttendance {
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_ACTIVE_FALSE')) throw new Error('invalid MEETING_ACTIVE_FALSE');
         if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
         // if (-1 === this.records.findIndex(record => record.status === 'MEETING_STATUS_INMEETING')) throw new Error('invalid MEETING_STATUS_INMEETING');
-        // if (this.records.length < 3) debugger; // throw new Error('invalid records length');
+        // if (this.records.length < 3) // Debugger; // throw new Error('invalid records length');
         return true;
     }
 
@@ -228,7 +228,7 @@ export class Attendance extends Id implements IAttendance {
                 case 'invalid record length':
                     throw error;
                 default:
-                    debugger;
+                    // Debugger;
                     throw error;
             }
         });

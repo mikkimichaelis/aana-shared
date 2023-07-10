@@ -1,4 +1,4 @@
-import { Base, IBase } from "../models/base.class.js";
+import { Base, IBase } from "../models/base.class";
 
 export enum RecurrenceType {
     NONE = '',
