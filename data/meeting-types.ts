@@ -1,0 +1,916 @@
+
+export const meetingData = {
+    "source": "http://www.rhodeisland-aa.org/meetings/meeting-types",
+    "types": [
+        {
+            "valid": false,
+            "tx": null,
+            "code": "AB",
+            "type": "As Bill Sees It",
+            "desc": "As Bill Sees It"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "VO",
+            "type": "",
+            "desc": ""
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CC",
+            "type": "Closed Captioned",
+            "desc": "This meeting provides live closed captioning of the speakers audio."
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": "B",
+            "type": "Beginners",
+            "desc": "This meeting is focused on the needs of new members"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BK",
+            "type": "Book Study",
+            "desc": "Approved N.A. Books"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BL",
+            "type": "Bi-Lingual",
+            "desc": "This Meeting can be attended by speakers of English and another language."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BT",
+            "type": "Basic Text",
+            "desc": "This meeting is focused on discussion of the Basic Text of Narcotics Anonymous."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "C",
+            "type": "Closed",
+            "desc": "This meeting is closed to non-addicts. You should attend only if you believe that you may have a problem with substance abuse."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CH",
+            "type": "Closed Holidays",
+            "desc": "This meeting gathers in a facility that is usually closed on holidays."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CL",
+            "type": "Candlelight",
+            "desc": "This meeting is held by candlelight."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "CP",
+            "type": "Concepts",
+            "desc": "This meeting is focused on discussion of the twelve concepts"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "CS",
+            "type": "Children under Supervision",
+            "desc": "Well-behaved, supervised children are welcome."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "CW",
+            "type": "Children Welcome",
+            "desc": "Children are welcome at this meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "D",
+            "type": "Discussion",
+            "desc": "This meeting invites participation by all attendees."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ENG",
+            "type": "English speaking",
+            "desc": "This Meeting can be attended by speakers of English."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ES",
+            "type": "Espanol",
+            "desc": "This meeting is conducted in Spanish."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "FD",
+            "type": "Five and Dime",
+            "desc": "Discussion of the Fifth Step and the Tenth Step"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "GL",
+            "type": "Gay/Lesbian/Transgender",
+            "desc": "This meeting is focused on the needs of gay, lesbian and transgender members"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "HY",
+            "type": "Hybrid Meeting",
+            "desc": "Meets Virtually and In-person"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "ID",
+            "type": "ID Required to Enter",
+            "desc": "This meeting is held in a facility that requires visitors to provide ID to enter."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IL",
+            "type": "Illness",
+            "desc": "This meeting is focused on the needs of members with chronic illness."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IP",
+            "type": "Informational Pamphlet",
+            "desc": "This meeting is focused on discussion of one or more Informational Pamphlets."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "IW",
+            "type": "It Works - How and Why",
+            "desc": "This meeting is focused on discussion of the It Works -How and Why text."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "JT",
+            "type": "Just for Today",
+            "desc": "This meeting is focused on discussion of the Just For Today text."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "L/R",
+            "type": "Lithuanian/Russian",
+            "desc": "Lithuanian/Russian Speaking Meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LC",
+            "type": "Living Clean",
+            "desc": "This is a discussion of the NA book Living Clean -The Journey Continues."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "M",
+            "type": "Men",
+            "desc": "This meeting is focused on topics encountered by men in recovery.",
+            "restricted": true
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ME",
+            "type": "Meditation",
+            "desc": "This meeting encourages its participants to engage in quiet meditation."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "NC",
+            "type": "No Children",
+            "desc": "Please do not bring children to this meeting."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "NS",
+            "type": "No Smoking",
+            "desc": "Smoking is not allowed at this meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "O",
+            "type": "Open",
+            "desc": "This meeting is open to addicts and non-addicts alike. All are welcome."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "OE",
+            "type": "Open-Ended",
+            "desc": "No fixed duration. The meeting continues until everyone present has had a chance to share."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "PER",
+            "type": "Persian",
+            "desc": "Persian speaking meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "PI",
+            "type": "Pitch",
+            "desc": "This meeting has a format that consists of each person who shares picking the next person."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "QA",
+            "type": "Question and Answer",
+            "desc": "Attendees may ask questions and expect answers from Group members."
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "RA",
+            "type": "Restricted Attendance",
+            "desc": "This facility places restrictions on attendees."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "RF",
+            "type": "Rotating Format",
+            "desc": "This meeting has a format that changes for each meeting."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "Rr",
+            "type": "Round Robin",
+            "desc": "This meeting has a fixed sharing order (usually a circle.)"
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "SC",
+            "type": "Surveillance Cameras",
+            "desc": "This meeting is held in a facility that has surveillance cameras."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SD",
+            "type": "Speaker/Discussion",
+            "desc": "This meeting is lead by a speaker, then opened for participation by attendees."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SG",
+            "type": "Step Working Guide",
+            "desc": "This meeting is focused on discussion of the Step Working Guide text."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ASL",
+            "type": "ASL",
+            "desc": "This meeting provides an American Sign Language (ASL) interpreter for the deaf."
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": "SL",
+            "type": "ASL",
+            "desc": "This meeting provides an American Sign Language (ASL) interpreter for the deaf."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SO",
+            "type": "Speaker Only",
+            "desc": "This meeting is a speaker-only meeting. Other attendees do not participate in the discussion."
+        },
+        {
+            "valid": false,
+            "tx": "S",
+            "code": null,
+            "type": "Step",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": null,
+            "code": "TC",
+            "type": "Temporarily Closed",
+            "desc": "Facility is Temporarily Closed"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TI",
+            "type": "Timer",
+            "desc": "This meeting has sharing time limited by a timer."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TO",
+            "type": "Topic",
+            "desc": "This meeting is based upon a topic chosen by a speaker or by group conscience."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TR",
+            "type": "Tradition",
+            "desc": "This meeting is focused on discussion of the Twelve Traditions."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TW",
+            "type": "Traditions Workshop",
+            "desc": "This meeting engages in detailed discussion of one or more of the Twelve Traditions."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "VM",
+            "type": "Virtual Meeting",
+            "desc": "Meets Virtually"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "W",
+            "type": "Women",
+            "desc": "This meeting is focused on topics encountered by women in recovery.",
+            "restricted": true
+        },
+    {
+            "valid": false,
+            "tx": null,
+            "code": "WC",
+            "type": "Wheelchair",
+            "desc": "This meeting is wheelchair accessible."
+        },
+        {
+            "valid": true,
+            "tx": "VM",
+            "code": "WEB",
+            "type": "Online Meeting",
+            "desc": "This is a meeting that gathers on the Internet."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "YP",
+            "type": "Young People",
+            "desc": "This meeting is focused on the needs of younger members."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ZL",
+            "type": "Zoom Login Required to Enter",
+            "desc": "This meeting is held in a facility that requires visitors to provide ID to enter."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BB",
+            "type": "Big Book",
+            "desc": "The book Alcoholic Anonymous (the Big Book) is the text for these meetings. When the focus is on a specific text, usually the group supplies copies of the book for attendees. If you would like to make notations in the text, obtaining a personal copy is useful. In the case of Big Books, a number of meetings in the area give new members a copy to keep for their own use. Ask around for these meetings."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BS",
+            "type": "Big Book Step Study",
+            "desc": "This type of meeting focuses on specific material from the Big Book and the book Twelve Steps and Twelve Traditions (12 & 12). Again texts are usually supplied for attendees, but individual copies are available from Central Service."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "GV",
+            "type": "Grapevine",
+            "desc": "These are chairperson led meetings focusing on the monthly publication of the Grapevine."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LS",
+            "type": "Living Sober",
+            "desc": "A chairperson leads the meeting in a discussion of material drawn from the AA publication Living Sober."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "P",
+            "type": "Promises",
+            "desc": "The Promises of Alcoholics Anonymous are on pages 82 and 83 of the Big Book. These are the focus of a chairperson led discussion."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "R",
+            "type": "Reflections",
+            "desc": "A recent addition to the AA library, Reflections provides daily material for meditation and prayer. Meetings of this type focus on this daily practice."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "S",
+            "type": "Step",
+            "desc": "Using the book Twelve Steps and Twelve Traditions (12 & 12) the meeting focuses on the Steps. Depending on group conscience, a new step is read and discussed each week. Alternately, participants read and discuss individual paragraphs with each week building on the prior weeks work."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SBS",
+            "type": "Big Book Enhanced 12 & 12 Step",
+            "desc": "The key here is the word 'enhanced'. The group's conscience mandates a specific and detailed approach to the Big Book and the 12 & 12."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "ST",
+            "type": "Step / Tradition",
+            "desc": "The meeting focuses on both the 12 Steps and the 12 Traditions. The formats of these meetings vary. Please investigate on your own."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "T",
+            "type": "Tradition",
+            "desc": "The second half of the 12 and 12 are the focus of these meetings."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "TP",
+            "type": "Tradition Promise",
+            "desc": "These meetings are a combination of the Traditions and the Promises."
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BG",
+            "type": "Beginner",
+            "desc": "Any of the above meetings may, by group conscience, be designated as a Beginner meeting. These meetings are usually led by more experienced group members with the primary focus on introducing new members to the tools available for the maintenance of sobriety. Beginners are not restricted to meetings of this type; they are welcomed at all 12 Step meetings. A benefit of a 'beginner' meeting is the opportunity to meet other peers as they start their sober lives."
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "24/7",
+            "type": "24/7",
+            "desc": "Continuous 24/7 meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "ASLI",
+            "type": "ASL Interpreter",
+            "desc": "ASL Interpreter meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "ASL",
+            "type": "American Sign Language",
+            "desc": "American Sign Language meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "BVI",
+            "type": "Blind / Visually Impaired",
+            "desc": "Blind / Visually Impaired meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "DHH",
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing meeting"
+        },
+        {
+            
+            "valid": true,
+            "tx": null,
+            "code": "DHH",
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LGBTQ2+",
+            "type": "LGBTQ2+",
+            "desc": "LGBTQ2+ meeting"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "LGBT",
+            "type": "LGBT"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "LGBTQ",
+            "type": "LGBTQ"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "Gay",
+            "type": "Gay"
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": "Lesbian",
+            "type": "Lesbian"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "LI",
+            "type": "Loners / Isolationists",
+            "desc": "Loners / Isolationists meeting"
+        },
+        {
+            "valid": false,
+            "tx": "B",
+            "code": "Newcomer",
+            "type": "Newcomer"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "RSL",
+            "type": "RSL",
+            "desc": "RSL meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SEC",
+            "type": "Secular",
+            "desc": "Secular meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "SR",
+            "type": "Seniors",
+            "desc": "Seniors meeting"
+        },
+        {
+            "valid": false,
+            "tx": "SO",
+            "code": null,
+            "type": "Speaker",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "S/T",
+            "type": "Steps and Traditions",
+            "desc": "Steps and Traditions meeting"
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "24/7",
+            "type": "24/7",
+            "desc": "24/7",
+            "continuous": true
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": "ASL",
+            "type": "ASL",
+            "desc": "ASL Interpreter"
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "ASL Interpreter",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "American Sign Language",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": null,
+            "type": "Beginner",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BB",
+            "code": null,
+            "type": "Big Book",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": null,
+            "code": "BVI",
+            "type": "Blind / Visually Impaired",
+            "desc": "Blind / Visually Impaired"
+        },
+        {
+            "valid": false,
+            "tx": "C",
+            "code": null,
+            "type": "Closed",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "da",
+            "lang": true,
+            "code": null,
+            "type": "Danish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ASL",
+            "code": null,
+            "type": "Deaf / Hard of Hearing",
+            "desc": "Deaf / Hard of Hearing"
+        },
+        {
+            "valid": false,
+            "tx": "D",
+            "code": null,
+            "type": "Discussion",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "en",
+            "lang": true,
+            "code": null,
+            "type": "English",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fa",
+            "lang": true,
+            "code": null,
+            "type": "Farsi",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fr",
+            "lang": true,
+            "code": null,
+            "type": "French",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "de",
+            "lang": true,
+            "code": null,
+            "type": "German",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "el",
+            "lang": true,
+            "code": null,
+            "type": "Greek",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "hi",
+            "lang": true,
+            "code": null,
+            "type": "Hindi",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "hu",
+            "lang": true,
+            "code": null,
+            "type": "Hungarian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "it",
+            "lang": true,
+            "code": null,
+            "type": "Italian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ja",
+            "lang": true,
+            "code": null,
+            "type": "Japanese",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "code": null,
+            "type": "LGBT",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "LI",
+            "code": null,
+            "type": "Loners / Isolationists",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ME",
+            "code": null,
+            "type": "Meditation",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "M",
+            "code": null,
+            "type": "Men",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "BG",
+            "code": null,
+            "type": "Newcomer",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "O",
+            "code": null,
+            "type": "Open",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "fa",
+            "lang": true,
+            "code": null,
+            "type": "Persian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "pl",
+            "lang": true,
+            "code": null,
+            "type": "Polish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "pt",
+            "lang": true,
+            "code": null,
+            "type": "Portuguese",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "RSL",
+            "code": null,
+            "type": "RSL",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "ru",
+            "lang": true,
+            "code": null,
+            "type": "Russian",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SEC",
+            "code": null,
+            "type": "Secular",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SR",
+            "code": null,
+            "type": "Seniors",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "sk",
+            "lang": true,
+            "code": null,
+            "type": "Slovak",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "es",
+            "lang": true,
+            "code": null,
+            "type": "Spanish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "SO",
+            "code": null,
+            "type": "Speaker",
+            "desc": null
+        },
+        {
+            "valid": true,
+            "tx": "ST",
+            "code": null,
+            "type": "Steps and Traditions",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "sv",
+            "lang": true,
+            "code": null,
+            "type": "Swedish",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "W",
+            "code": null,
+            "type": "Women",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "YP",
+            "code": null,
+            "type": "Young People",
+            "desc": null
+        },
+        {
+            "valid": false,
+            "tx": "YP",
+            "code": "null",
+            "type": "Participation",
+            "desc": "TODO add this meeting type, I like it"
+        }
+    ]
+}
