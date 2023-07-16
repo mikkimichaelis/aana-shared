@@ -25,8 +25,15 @@ export * from './search-settings';
 export * from './report-settings';
 export * from './timer-settings';
 
-export * from '../listings/meeting';
-export * from '../listings/device';
+export * from './meeting';
+export * from './device';
+export * from './attendance';
+export * from './attendanceReport';
+export * from './meetingDateTime';
+export * from './recurrence';
+
+
+
 
 
 
