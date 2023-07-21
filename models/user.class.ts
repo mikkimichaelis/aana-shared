@@ -138,8 +138,9 @@ export interface IUserPreferences {
     homemeeting: boolean;
     pronouns: boolean;
     pronouns_value: string;
-    sobriety_value: number; // value for which sobriety_days is calculated
-    sobriety_days: boolean; // shows y/m/d clean or not in name
+    sobriety_value: number; // users clean date
+    sobriety_date: boolean; // shows date clean
+    sobriety_days: boolean; // shows days clean
     location: boolean;
     location_value: string;
     ninety_start: number;   // date to start 90/90
@@ -225,6 +226,7 @@ export class User extends UserBase implements IUser {
         pronouns: false,
         pronouns_value: '',
         sobriety_value: DateTime.now().startOf('day').toMillis(),
+        sobriety_date: false,
         sobriety_days: false,
         location: false,
         location_value: '',
