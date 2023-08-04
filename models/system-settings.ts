@@ -33,8 +33,8 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
     first_run = true;
 
     // ISO of first day free period
-    first_use_journal: string = null;
-    first_use_dashboard: string = null;
+    first_use_journal: string = null as any;
+    first_use_dashboard: string = null as any;
 
     intro_tutorial = 'welcome';
     journal_tutorial = 'start';

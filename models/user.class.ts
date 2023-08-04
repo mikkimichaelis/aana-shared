@@ -93,6 +93,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
         if (this.google && !this.attendance) return true;
         if (this.google_attendance && !this.attendance) return true;
         if (this.google_maker && !this.maker) return true;
+        return false;
     }
 
     uid: string = '';
