@@ -221,7 +221,7 @@ declare const ONLINE_ACTIVITY = 15;
 export class User extends UserBase implements IUser {
     uaid: string = '';  // depreciated
     preferences: IUserPreferences = {
-        apptag: true,
+        apptag: false,
         homemeeting: false,
         pronouns: false,
         pronouns_value: '',
