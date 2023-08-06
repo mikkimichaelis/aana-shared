@@ -1,4 +1,3 @@
-import lodash from 'lodash';
 import { DateTime, Duration } from 'luxon';
 import { IMeeting } from './meeting';
 import { Base } from './base.class';
@@ -256,12 +255,7 @@ export class User extends UserBase implements IUser {
         if (user?.profile) {
             this.profile = new UserProfile(user.profile);
         } else {
-            this.profile = new UserProfile(
-                lodash.merge(user, {
-                    anonymous: false,
-                    avatar: this.avatar
-                }));
-
+            this.profile = new UserProfile( { ...user, anonymous: false, avatar: this.avatar } );
             this.setUserAuthNames(user.name);
         }
     }
@@ -271,9 +265,7 @@ export class User extends UserBase implements IUser {
     }
 
     public isFavoriteMeeting(mid: string): boolean {
-        return -1 !== lodash.findIndex(this.favMeetings, (id => {
-            return (id === mid);
-        }))
+        return -1 !== this.favMeetings.indexOf(mid);
     }
 
     public blockMeeting(mid: string) {
@@ -290,9 +282,8 @@ export class User extends UserBase implements IUser {
             }
         } else {
             if (this.isFavoriteMeeting(mid)) {
-                const removed = lodash.remove(this.favMeetings, (value: any, index: number, array: any) => {
-                    return value === mid;
-                });
+                const index = this.favMeetings.indexOf(mid);
+                this.favMeetings.splice(index, 1);
                 return !this.isFavoriteMeeting(mid);
             } else {
                 return false;
