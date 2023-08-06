@@ -45,6 +45,16 @@ export class JournalEntry extends Id implements IJournalEntry {
         super(entry ? entry : { id: DateTime.now().startOf('day').toMillis().toString() });
         this.initialize(this, entry);
 
+        if (this.great !== '' && this.great !== '<p></p>') {
+            this.highlights = this.highlights + this.great;
+            this.great = '';
+        }
+
+        if (this.better != '' && this.better !== '<p></p>') {
+            this.highlights = this.highlights + this.better;
+            this.better = '';
+        }
+
         // Defaulting here so entries missing dates will have one added when loaded
         this.date = DateTime.fromMillis(Number.parseInt(this.id)).toLocaleString(DateTime.DATETIME_FULL);
     }
