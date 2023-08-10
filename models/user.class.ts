@@ -10,6 +10,7 @@ export enum UserAuthorizationEnum {
     MAKER,
     ATTENDANCE,
     FREE,
+    BETA,
     ADMIN
 }
 export interface IUserAuthorization extends IId {
@@ -18,6 +19,7 @@ export interface IUserAuthorization extends IId {
     admin: boolean;
     free: boolean;
     trial: boolean;
+    beta: boolean;
     invalid: boolean;
 
     attendance: boolean;
@@ -73,6 +75,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
     public get value(): UserAuthorizationEnum {
         if (this.admin) return UserAuthorizationEnum.ADMIN;
+        if (this.beta) return UserAuthorizationEnum.BETA;
         if (this.free) return UserAuthorizationEnum.FREE;
         if (this.maker) return UserAuthorizationEnum.MAKER;
         if (this.attendance) return UserAuthorizationEnum.ATTENDANCE;
@@ -100,6 +103,7 @@ export class UserAuthorization extends Id implements IUserAuthorization {
     admin: boolean = false;
     free: boolean = false;
     trial: boolean = false;
+    beta: boolean = false;
 
     attendance: boolean = false;
     maker: boolean = false;
