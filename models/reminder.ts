@@ -20,7 +20,7 @@ export class Reminder extends Id implements IReminder {
     uid: string = '';
     mid: string = '';
     created: string = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
-    timezone: string = DateTime.now().zoneName;
+    timezone: string = DateTime.now().zoneName as string;
     active: boolean = true;
     paused: boolean = false;
     recurring: boolean = true;

@@ -17,7 +17,7 @@ export interface IAttendanceReport extends IId {
 
 export class AttendanceReport extends Id implements IAttendanceReport {
     uid: string = '';
-    timezone: string = DateTime.now().zoneName;
+    timezone: string = DateTime.now().zoneName as string;
     created: number = DateTime.now().toMillis();
     created$: string = '';
 

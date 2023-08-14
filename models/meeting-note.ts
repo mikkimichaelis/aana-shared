@@ -41,7 +41,7 @@ export class MeetingNote extends Id implements IMeetingNote {
         if (this.timestamp === 0) this.timestamp = DateTime.now().startOf('day').toMillis();
         if (this.id === '') this.id = this.timestamp.toString();
         
-        this.date$ = DateTime.fromMillis(this.timestamp).toISO();
+        this.date$ = DateTime.fromMillis(this.timestamp).toISO() as string;
     }
 
     public toObject() {

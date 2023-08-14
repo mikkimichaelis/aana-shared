@@ -41,11 +41,11 @@ export class Device extends Base implements IDevice {
     uid: string = '';
     platform: string = '';
     design: string = '';
-    timezone: string = DateTime.now().zoneName;
+    timezone: string = DateTime.now().zoneName as string;
     updated: number = 0;                // update() populated millis
     updated$: string = '';              // update() populated local tz datetime string
     created: number = DateTime.now().toMillis();
-    created$: string = DateTime.now().toISO();
+    created$: string = DateTime.now().toISO() as string;
     count: number = 0;
 
     cordova: any = null;

@@ -33,7 +33,7 @@ export interface IHomeGroup {
 export class HomeGroup extends Base implements IHomeGroup {
   id: string = '';
   name: string = '';
-  dateJoined: string = DateTime.utc().toISO();
+  dateJoined: string = DateTime.utc().toISO() as string;
 
   constructor(group: any) {
     super();
@@ -94,9 +94,9 @@ export class Group extends Id implements IGroup {
   members: IUserMember[] = [];
   schedules: ISchedule[] = [];
 
-  lastActivity: string = DateTime.utc().toISO();
-  lastUpdate: string = DateTime.utc().toISO();
-  created: string = DateTime.utc().toISO();
+  lastActivity: string = DateTime.utc().toISO() as string;
+  lastUpdate: string = DateTime.utc().toISO() as string;
+  created: string = DateTime.utc().toISO() as string;
 
   public get tagsString(): string {
     if (Array.isArray(this.tags)) {

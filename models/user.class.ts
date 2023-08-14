@@ -58,17 +58,13 @@ export class UserAuthorization extends Id implements IUserAuthorization {
 
     public get isTrial(): boolean {
         // @ts-ignore
-        if (this['apple:live.aana.app.attendance.subscription:owned'] === true &&
-            this['apple:live.aana.app.attendance.subscription:trial'] === true) return true;
+        if (this['apple:live.aana.app.attendance.subscription:owned'] === true && this['apple:live.aana.app.attendance.subscription:trial'] === true) return true;
         // @ts-ignore
-        if (this['google:live.aana.app.attendance.subscription:owned'] === true &&
-            this['google:live.aana.app.attendance.subscription:trial'] === true) return true;
+        if (this['google:live.aana.app.attendance.subscription:owned'] === true && this['google:live.aana.app.attendance.subscription:trial'] === true) return true;
         // @ts-ignore
-        if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true &&
-            this['google:live.meetingmaker.app.attendance_sub:trial'] === true) return true;
+        if (this['google:live.meetingmaker.app.attendance_sub:owned'] === true && this['google:live.meetingmaker.app.attendance_sub:trial'] === true) return true;
         // @ts-ignore
-        if (this['google:live.meetingmaker.app.maker_sub:owned'] === true &&
-            this['google:live.meetingmaker.app.maker_sub:trial'] === true) return true;
+        if (this['google:live.meetingmaker.app.maker_sub:owned'] === true && this['google:live.meetingmaker.app.maker_sub:trial'] === true) return true;
 
         return false;
     }
@@ -213,7 +209,7 @@ export interface IUser extends IUserBase {
     created: number;
     created$: string;
 
-    blockMeeting(mid: string);
+    blockMeeting(mid: string): any;
     favoriteMeeting(mid: string, add: boolean): boolean;
     adHocMeeting(mid: string, add: boolean): boolean;
 
