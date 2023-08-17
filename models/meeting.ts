@@ -95,7 +95,8 @@ export interface IMeeting extends IId {
     meetingSub: string;
     weekday: number;
     tags: string[];
-    // makeLocalStartDateTime: DateTime;
+
+    updated: number;
 
     update(): void;
     updateDayTime(): void;
@@ -179,6 +180,8 @@ export class Meeting extends Id implements IMeeting {
     // this is used to search for meetings within a specific day
     startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
     endDateTime: number = 0;
+
+    updated: number = 0;
 
     buymeacoffee: string = '';
 
@@ -520,8 +523,10 @@ export class Meeting extends Id implements IMeeting {
     public update(): Meeting {
         this.updateCounters();
         this.updateProperties();
-        this.updateTags();
+        // this.updateTags();
         this.updateDayTime();
+
+        this.updated = DateTime.now().toMillis();
 
         return this;
     }
@@ -596,6 +601,16 @@ export class Meeting extends Id implements IMeeting {
                 this.endDateTime = this.startDateTime + this.duration * 60 * 1000;
                 this.startTime = -1;
                 this.endTime = -1;
+            }
+
+            // Did endTime roll past 24h?
+            if (this.endTime > Meeting.oneDayMillis) {
+                this.endTime = this.endTime - Meeting.oneDayMillis;
+            }
+
+            // Did endDateTime roll past Jan 7th?
+            if (this.endDateTime > Meeting.oneWeekMillis) {
+                this.endDateTime = this.endDateTime - Meeting.oneWeekMillis;
             }
 
         } catch (error) { }
