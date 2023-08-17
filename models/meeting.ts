@@ -28,6 +28,7 @@ export interface IMeeting extends IId {
 
     zid: string;
     password: string;
+    _password: string;              // this is the url encoded password
     requiresLogin: boolean;
     closed: boolean;
     restricted: boolean;
@@ -129,6 +130,7 @@ export class Meeting extends Id implements IMeeting {
 
     zid: string = '';
     password: string = '';
+    _password: string = null as any;
     requiresLogin: boolean = false;
     closed: boolean = false;
     restricted: boolean = false;
