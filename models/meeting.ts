@@ -159,8 +159,9 @@ export class Meeting extends Id implements IMeeting {
     tags_name_: string[] = [];
     tags_: string[] = [];
 
-    parent: string = '';
     recurrence: IRecurrence = new Recurrence({});
+    
+    parent: string = '';
     siblings: string[] = [];
 
     timezone: string = "America/New_York";
@@ -171,15 +172,15 @@ export class Meeting extends Id implements IMeeting {
     // these fields should only be populated by Daily meetings
     // startTime/endTime creates a window of time which can be searched for containing a specific point in time on any day 
     // this is used to search where meetings are at a specific time on any day
-    startTime: number = 0;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
+    startTime: number = -1;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
     startTime$: string = '';
-    endTime: number = 0;        // startTime + duration
+    endTime: number = -1;        // startTime + duration
 
     // these fields should only be populated by Weekly meetings
     // startDateTime is a point in time this meeting starts which can be searched for within a window of time
     // this is used to search for meetings within a specific day
-    startDateTime: number = 0;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
-    endDateTime: number = 0;
+    startDateTime: number = -1;  // Absolute start DateTime in UTC of Meeting startTime + weekday in Meeting timezone 
+    endDateTime: number = -1;
 
     updated: number = 0;
 
