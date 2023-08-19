@@ -131,7 +131,7 @@ export class Meeting extends Id implements IMeeting {
 
     zid: string = '';
     password: string = '';
-    _password: string = null as any;
+    _password: string = '';
     requiresLogin: boolean = false;
     closed: boolean = false;
     restricted: boolean = false;
@@ -174,6 +174,9 @@ export class Meeting extends Id implements IMeeting {
     // this is used to search where meetings are at a specific time on any day
     startTime: number = -1;      // Millisecond UTC 0 time offset of 1/1/1970 + timezone + startTime
     startTime$: string = '';
+
+    // endTime can not be used in calculations here (startTime + duration) must be used
+    // the reason is endTime can wrap 
     endTime: number = -1;        // startTime + duration
 
     // these fields should only be populated by Weekly meetings
@@ -218,12 +221,12 @@ export class Meeting extends Id implements IMeeting {
             } else if (this.isLive) {
                 if (this.recurrence.type === RecurrenceType.DAILY) {
                     const now = Meeting.makeThat70sTime().toMillis();
-                    this._endsIn = this.endTime - now;
+                    this._endsIn = (this.startTime + this.duration * 60 * 1000) - now;
                     // console.log(`this.endTime: ${this.endTime} \nnow: ${now}`);
                     // console.log(`$(this._isLiveEnd: ${this._endsIn}`)
                 } else {
                     const now = Meeting.makeThat70sDateTime().toMillis();
-                    this._endsIn = this.endDateTime - now;
+                    this._endsIn = (this.startDateTime + this.duration * 60 * 1000) - now;
                 }
             } else {
                 this._endsIn = null;
@@ -237,10 +240,10 @@ export class Meeting extends Id implements IMeeting {
         if (isNil(this._isLive)) {
             if (this.recurrence.type === RecurrenceType.DAILY) {
                 const now = Meeting.makeThat70sTime().toMillis();
-                this._isLive = this.startTime <= now && now <= this.endTime;      // start <= now <= end
+                this._isLive = this.startTime <= now && now <= this.startTime + this.duration * 60 * 1000;      // start <= now <= end
             } else {
                 const now = Meeting.makeThat70sDateTime().toMillis();
-                this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.endDateTime);      // start <= now <= end
+                this._isLive = (this.continuous) || (this.startDateTime <= now) && (now <= this.startDateTime + this.duration * 60 * 1000);      // start <= now <= end
             }
         }
         return this.continuous || this._isLive;
@@ -432,12 +435,13 @@ export class Meeting extends Id implements IMeeting {
         let isLive = false;
         if (this.recurrence.type === RecurrenceType.DAILY) {
             const _dateTime = Meeting.makeThat70sTime(dateTime).toMillis();
-            isLive = this.startTime <= _dateTime && _dateTime <= this.endTime;      // start <= now <= end
+            isLive = this.startTime <= _dateTime && _dateTime <= this.startTime + this.duration * 60 * 1000;      // start <= now <= end
         } else {
             const _dateTime = Meeting.makeThat70sDateTime(dateTime).toMillis();
-            isLive = (this.continuous) || (this.startDateTime <= _dateTime) && (_dateTime <= this.endDateTime);      // start <= now <= end
+            isLive = (this.continuous) || (this.startDateTime <= _dateTime) && (_dateTime <= this.startDateTime + this.duration * 60 * 1000);      // start <= now <= end
         }
-        if (!isLive && this.endTime === 0) {
+
+        if (!isLive && this.endTime === -1) {   // 0
             const startTime = DateTime.fromMillis(this.startTime);
             const startHour = startTime.startOf('hour').toMillis();
             const endHour = startTime.endOf('hour').toMillis();
