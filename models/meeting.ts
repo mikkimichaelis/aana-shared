@@ -5,21 +5,27 @@ import { SpecificDay } from '../models/search-settings';
 import { IUser, User } from '../models/user.class';
 import { IRecurrence, Recurrence, RecurrenceType } from './recurrence';
 
+export enum VerifiedStatus {
+    // ordering here is important as it's used for sorting in api->getNextMeetingVerification()
+    VALID,      // worked!
+    UNKNOWN,    // one reason for this is a meeting that requires a pw we don't have
+    WAITING,    // valid id but not started
+    FAILED,     // invalid id or meeting not exists
+    NEVER       // never been verified
+}
+
 export interface IMeeting extends IId {
 
     iid: string;    // import id (populated during import from unique source identifier)
     uid: string;    // user id of meeting owner
 
     active: boolean;
-    verified: boolean;
     authorized: boolean;
 
-    verified_count: number;
-    password_count: number;
-    waiting_count: number;
-    nothing_count: number;
+    verified: boolean;  // this predates verified_status and exists in indexes so I'm leaving, although it duplicates data in verified_status
+    verified_status: VerifiedStatus;
+    verified_date: number;
 
-    isVerified: boolean;
     isAdHoc: boolean;
 
     meetingUrl: string;
@@ -47,6 +53,7 @@ export interface IMeeting extends IId {
     description: string;
     description_links: string[];    // url/email 
 
+    // TODO review all this tags stuff
     tags_custom: string[];
 
     tags_custom_: string[];
@@ -80,6 +87,7 @@ export interface IMeeting extends IId {
     buymeacoffee: string;
 
     // Non serialized getter properties
+    isVerified: boolean;
     isLive: boolean | null;
     isFeatured: boolean | undefined;
     tMinus: any;    // TODO
@@ -113,15 +121,12 @@ export class Meeting extends Id implements IMeeting {
     uid: string = '';
 
     active: boolean = true;
-    verified: boolean = true;
     authorized: boolean = true;
 
-    verified_count: number = 0;
-    password_count: number = 0;
-    waiting_count: number = 0;
-    nothing_count: number = 0;
+    verified = true;    // default to hope it's a good meeting :-)
+    verified_status = VerifiedStatus.NEVER;
+    verified_date = -1;
 
-    isVerified: boolean = false;
     isFeatured = undefined;
     isAdHoc = false;
 
@@ -191,6 +196,11 @@ export class Meeting extends Id implements IMeeting {
 
     get tags(): string[] {
         return this.tags_;
+    }
+
+    // TODO DEPRECATE - just use verified instead now
+    get isVerified(): boolean {
+        return this.verified;
     }
 
     // - Mills till isLive ends
@@ -420,6 +430,7 @@ export class Meeting extends Id implements IMeeting {
         const exclude = ['tMinus', '_tminus',
             'endsIn', '_endsIn',
             'backgroundUpdateEnabled',
+            'isVerified',
             'tags', 'tagsString',
             'meetingTypesString',
             'meetingSub', 'weekdays', 'weekday',
@@ -452,19 +463,20 @@ export class Meeting extends Id implements IMeeting {
         return isLive;
     }
 
+    // DEPRECATED 
     setFeedback(feedback: any) {
-        if (feedback.success) {
-            this.verified_count++;
+        // if (feedback.success) {
+        //     this.verified_count++;
 
-            // TODO add logic to set verified taking into account bogus 'nothing' reports
-            this.verified = true;
-        } else if (feedback.nothing) {
-            // TODO this can happen if user tries to join at very end of meeting already ended
-            this.nothing_count++;
-            if (this.nothing_count > this.verified_count) this.verified = false;
-        } else if (feedback.password) {
-            this.password_count++;
-        }
+        //     // TODO add logic to set verified taking into account bogus 'nothing' reports
+        //     this.verified = true;
+        // } else if (feedback.nothing) {
+        //     // TODO this can happen if user tries to join at very end of meeting already ended
+        //     this.nothing_count++;
+        //     if (this.nothing_count > this.verified_count) this.verified = false;
+        // } else if (feedback.password) {
+        //     this.password_count++;
+        // }
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -536,8 +548,9 @@ export class Meeting extends Id implements IMeeting {
         return this;
     }
 
+    // DEPRECATED
     public updateCounters() {
-        this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
+        // this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
     }
 
     public updateProperties() {
