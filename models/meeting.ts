@@ -7,11 +7,11 @@ import { IRecurrence, Recurrence, RecurrenceType } from './recurrence';
 
 export enum VerifiedStatus {
     // ordering here is important as it's used for sorting in api->getNextMeetingVerification()
-    VALID,      // worked!
-    UNKNOWN,    // one reason for this is a meeting that requires a pw we don't have
+    FAILED,     // quick-fail - invalid id or meeting not exists 
+    SUCCESS,    // yei!
+    PASSWORD,   // this is technically a
     WAITING,    // valid id but not started
-    FAILED,     // invalid id or meeting not exists
-    NEVER       // never been verified
+    NONE       // never been verified
 }
 
 export interface IMeeting extends IId {
@@ -113,6 +113,7 @@ export interface IMeeting extends IId {
     isLiveAt(dateTime: DateTime): boolean;
 
     refresh(): void;
+    setVerification(status: string);
 }
 
 export class Meeting extends Id implements IMeeting {
@@ -124,7 +125,7 @@ export class Meeting extends Id implements IMeeting {
     authorized: boolean = true;
 
     verified = true;    // default to hope it's a good meeting :-)
-    verified_status = VerifiedStatus.NEVER;
+    verified_status = VerifiedStatus.NONE;
     verified_date = -1;
 
     isFeatured = undefined;
@@ -410,6 +411,29 @@ export class Meeting extends Id implements IMeeting {
         this.recurrence = new Recurrence(meeting.recurrence);
 
         this.updateCounters();
+    }
+
+    setVerification(status: string) {
+        switch (status) {
+            case "success":
+                this.verified = true;
+                this.verified_status = VerifiedStatus.SUCCESS;
+                break; 
+            case "quick-fail":
+                this.verified = false;
+                this.verified_status = VerifiedStatus.FAILED;
+                break;
+            case "waiting-room":
+                this.verified = false;
+                this.verified_status = VerifiedStatus.WAITING;
+                break;
+            case "password":
+                this.verified = false;
+                this.verified_status = VerifiedStatus.PASSWORD;
+                break;
+        }
+
+        this.verified_date = DateTime.now().toMillis();
     }
 
     refresh() {
