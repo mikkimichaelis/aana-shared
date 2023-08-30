@@ -413,7 +413,7 @@ export class Meeting extends Id implements IMeeting {
         this.updateCounters();
     }
 
-    setVerification(status: string) {
+    public setVerification(status: string) {
         switch (status) {
             case "success":
                 this.verified = true;
