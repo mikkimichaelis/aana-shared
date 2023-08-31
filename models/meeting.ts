@@ -465,6 +465,10 @@ export class Meeting extends Id implements IMeeting {
         return json;
     }
 
+    toJSON(): IMeeting {
+        return this.toObject();
+    }
+
     public isLiveAt(dateTime: DateTime): boolean {
         dateTime = Meeting.makeThat70sTime(dateTime);   // put required local time: dateTime into That70sTime
         let isLive = false;
