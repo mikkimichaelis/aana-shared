@@ -11,13 +11,15 @@ export enum VerifiedStatus {
     SUCCESS,    // yei!
     PASSWORD,   // this is technically a
     WAITING,    // valid id but not started
-    NONE       // never been verified
+    NONE        // never been verified
 }
-
 export interface IMeeting extends IId {
 
     iid: string;    // import id (populated during import from unique source identifier)
     uid: string;    // user id of meeting owner
+
+    updated: number;    // last time meeting was updated or imported 
+                        // this is independent of verified_date
 
     active: boolean;
     authorized: boolean;
@@ -65,9 +67,8 @@ export interface IMeeting extends IId {
 
     continuous: boolean;
 
-    parent: string;
+    schedule: string;              // schedule this meeting belongs to
     recurrence: IRecurrence;
-    siblings: string[];
 
     timezone: string;
     time24h: string;                // HH:MM
@@ -103,8 +104,6 @@ export interface IMeeting extends IId {
     meetingSub: string;
     weekday: number;
     tags: string[];
-
-    updated: number;
 
     update(): void;
     updateDayTime(): void;
@@ -167,7 +166,7 @@ export class Meeting extends Id implements IMeeting {
 
     recurrence: IRecurrence = new Recurrence({});
     
-    parent: string = '';
+    schedule: string = '';
     siblings: string[] = [];
 
     timezone: string = "America/New_York";
