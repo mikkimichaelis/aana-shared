@@ -407,7 +407,7 @@ export class Meeting extends Id implements IMeeting {
         super(meeting);
         this.initialize(this, meeting);
 
-        this.recurrence = new Recurrence(meeting.recurrence);
+        this.recurrence = new Recurrence(meeting?.recurrence);
 
         this.updateCounters();
     }

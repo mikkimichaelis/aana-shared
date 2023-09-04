@@ -14,6 +14,7 @@ export interface IReminder extends IId {
     name: string;
     startTime$: string;
     message: string;
+    updated: number;
 }
 
 export class Reminder extends Id implements IReminder {
@@ -29,6 +30,7 @@ export class Reminder extends Id implements IReminder {
     name: string = '';
     startTime$: string = '';
     message: string = '';
+    updated: number = 0; 
 
     constructor(reminder: IReminder) {
         super(reminder);

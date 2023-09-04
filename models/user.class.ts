@@ -209,6 +209,8 @@ export interface IUser extends IUserBase {
     created: number;
     created$: string;
 
+    updated: number;
+
     blockMeeting(mid: string): any;
     favoriteMeeting(mid: string, add: boolean): boolean;
     adHocMeeting(mid: string, add: boolean): boolean;
@@ -239,9 +241,10 @@ export class User extends UserBase implements IUser {
     adHocMeetings: string[] = [];
     blkMeetings: any[] = [];
 
-    _created = DateTime.now().toMillis();   // Because the below is somehow showing up as an ISO time in the cloud
     created = DateTime.now().toMillis();
     created$ = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
+
+    updated = DateTime.now().toMillis();
 
     constructor(user?: any) {
         super(user);
@@ -253,10 +256,13 @@ export class User extends UserBase implements IUser {
 
         // Create Custom Object Properties
         if (user?.profile) {
+            // if there is a profile, use it
             this.profile = new UserProfile(user.profile);
         } else {
+            // no profile (new user creation) create a new one
             this.profile = new UserProfile( { ...user, anonymous: false, avatar: this.avatar } );
-            this.setUserAuthNames(user.name);
+            // set users initial name
+            this.setUserAuthNames(user.name);   // updates updated timestamp
         }
     }
 
@@ -270,12 +276,14 @@ export class User extends UserBase implements IUser {
 
     public blockMeeting(mid: string) {
         this.blkMeetings.push(mid);
+        this.updated = DateTime.now().toMillis();
     }
 
     public favoriteMeeting(mid: string, add: boolean = true): boolean {
         if (add) {
             if (!this.isFavoriteMeeting(mid)) {
                 this.favMeetings.push(mid);
+                this.updated = DateTime.now().toMillis();
                 return this.isFavoriteMeeting(mid);
             } else {
                 return false;
@@ -284,6 +292,7 @@ export class User extends UserBase implements IUser {
             if (this.isFavoriteMeeting(mid)) {
                 const index = this.favMeetings.indexOf(mid);
                 this.favMeetings.splice(index, 1);
+                this.updated = DateTime.now().toMillis();
                 return !this.isFavoriteMeeting(mid);
             } else {
                 return false;
@@ -296,6 +305,7 @@ export class User extends UserBase implements IUser {
         if (add) {
             if (index > -1) return true; // it already exists
             this.adHocMeetings.push(mid);
+            this.updated = DateTime.now().toMillis();
             return true;
         } else {
             // if it exists, remove it from old position in array
@@ -303,6 +313,7 @@ export class User extends UserBase implements IUser {
 
             // now add it to the top of the array
             this.adHocMeetings.unshift(mid);
+            this.updated = DateTime.now().toMillis();
             return true;
         }
     }
@@ -326,6 +337,7 @@ export class User extends UserBase implements IUser {
         this.profile.lastInitial = lastInitial ? lastInitial : '';
         this.profile.name = `${this.profile.firstName} ${this.profile.lastInitial}` + (this.profile.lastInitial.length === 1 ? '.' : '');
         this.name = this.profile.name;
+        this.updated = DateTime.now().toMillis();
         return true;
     }
 }
