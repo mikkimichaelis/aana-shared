@@ -33,7 +33,7 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     timezone: string = DateTime.now().zoneName as string;
     created: number = DateTime.now().toMillis();
     created$: string = '';
-    updated: number = 0;
+    updated: number = DateTime.now().toMillis();
 
     aids: string[] = [];
 
