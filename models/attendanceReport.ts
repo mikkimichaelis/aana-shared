@@ -7,7 +7,7 @@ export interface IAttendanceReport extends IId {
     created: number;        // server utc millis created
     created$: string;
 
-    attendances: string[];
+    aids: string[];         // attendance.id[]
 
     email: string; // recipient
     html: string;
@@ -21,7 +21,7 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     created: number = DateTime.now().toMillis();
     created$: string = '';
 
-    attendances: string[] = [];
+    aids: string[] = [];
 
     email: string = <any>null;
     html: string = '<html></html>';
