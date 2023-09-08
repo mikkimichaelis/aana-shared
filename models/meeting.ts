@@ -15,20 +15,29 @@ export enum VerifiedStatus {
 }
 export interface IMeeting extends IId {
 
-    iid: string;    // import id (populated during import from unique source identifier)
-    uid: string;    // user id of meeting owner
+    // metadata
+    iid: string;        // import id (populated during import from unique source identifier)
+    uid: string;        // user id of meeting owner
+    /*
+        The hash is used to detect changes in data imported externally
+        It does not take into account verified and other meta data,
+        because metadata is preserved when doing import updates.
 
-    updated: number;    // last time meeting was updated or imported 
-                        // this is independent of verified_date
+        Specifically updated is being excluded from the hash.  This allows
+        a locally updated meeting to retain the same hash as an unchanged imported meeting,
+        skipping update altogether.
+    */
+    hash: string;                       // computed hash of meeting details used to detect updates
+    updated: number;                    // last time meeting was updated or imported 
+    active: boolean;                    // is active?
+    authorized: boolean;                // is authorized?  not sure what this was intended for
+    verified: boolean;                  // this predates verified_status and exists in indexes so I'm leaving, although it duplicates data in verified_status
+    verified_status: VerifiedStatus;    // current status of verification
+    verified_date: number;              // date of last verification
+    isAdHoc: boolean;                   // is this a users private adHoc meeting?
+    schedule: string;                   // meeting schedule this meeting belongs to
+    // end metadata
 
-    active: boolean;
-    authorized: boolean;
-
-    verified: boolean;  // this predates verified_status and exists in indexes so I'm leaving, although it duplicates data in verified_status
-    verified_status: VerifiedStatus;
-    verified_date: number;
-
-    isAdHoc: boolean;
 
     meetingUrl: string;
     homeUrl: string;
@@ -67,7 +76,6 @@ export interface IMeeting extends IId {
 
     continuous: boolean;
 
-    schedule: string;              // schedule this meeting belongs to
     recurrence: IRecurrence;
 
     timezone: string;
@@ -105,6 +113,7 @@ export interface IMeeting extends IId {
     weekday: number;
     tags: string[];
 
+    activate(active: boolean): void;
     update(): void;
     updateDayTime(): void;
     updateTags(): void;
@@ -119,6 +128,7 @@ export class Meeting extends Id implements IMeeting {
 
     iid: string = '';
     uid: string = '';
+    hash: string = '';
 
     active: boolean = true;
     authorized: boolean = true;
@@ -165,7 +175,7 @@ export class Meeting extends Id implements IMeeting {
     tags_: string[] = [];
 
     recurrence: IRecurrence = new Recurrence({});
-    
+
     schedule: string = '';
     siblings: string[] = [];
 
@@ -408,8 +418,19 @@ export class Meeting extends Id implements IMeeting {
         this.initialize(this, meeting);
 
         this.recurrence = new Recurrence(meeting?.recurrence);
+    }
 
-        this.updateCounters();
+    public computeHash(): string {
+        let str = `${this.meetingTypes}${this.meetingUrl}${this.name}${this.description}${this.password}${this._password}${this.language}${this.location}${this.duration}${this.time24h}${JSON.stringify(this.recurrence)}${this.closed}${this.zid}`;
+        // console.log(str);
+        var hash = 0,
+            i, chr;
+        for (i = 0; i < str.length; i++) {
+            chr = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return `${hash}`;
     }
 
     public setVerification(status: string) {
@@ -417,7 +438,7 @@ export class Meeting extends Id implements IMeeting {
             case "success":
                 this.verified = true;
                 this.verified_status = VerifiedStatus.SUCCESS;
-                break; 
+                break;
             case "quick-fail":
                 this.verified = false;
                 this.verified_status = VerifiedStatus.FAILED;
@@ -432,7 +453,7 @@ export class Meeting extends Id implements IMeeting {
                 break;
         }
 
-        this.verified_date = DateTime.now().toMillis();
+        this.updated = this.verified_date = DateTime.now().toMillis();
     }
 
     refresh() {
@@ -445,7 +466,6 @@ export class Meeting extends Id implements IMeeting {
         this._startTimeFormatLocal = null;
         this._startTimeString = null;
         this._daytimeString = null;
-        this.updateCounters();
     }
 
     toObject(): IMeeting {
@@ -563,21 +583,23 @@ export class Meeting extends Id implements IMeeting {
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
 
-    // TODO review all these updates...seems some of them are import updates and unnecessary here....
-    public update(): Meeting {
-        this.updateCounters();
-        this.updateProperties();
-        // this.updateTags();
-        this.updateDayTime();
 
+    public activate(activate): void {
+        this.active = activate;
         this.updated = DateTime.now().toMillis();
-
-        return this;
     }
 
-    // DEPRECATED
-    public updateCounters() {
-        // this.isVerified = this.verified_count > (this.password_count + this.waiting_count + this.nothing_count);
+    public update(): Meeting {
+        this.updateProperties();
+        this.updateDayTime();
+
+        const hash = this.computeHash();                // compute hash
+        if (hash !== this.hash) {                       // has anything non meta changed?
+            this.hash = hash;
+            this.updated = DateTime.now().toMillis();   // set new updated
+        }
+
+        return this;
     }
 
     public updateProperties() {
