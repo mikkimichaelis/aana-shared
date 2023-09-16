@@ -9,6 +9,7 @@ export enum VerifiedStatus {
     // ordering here is important as it's used for sorting in api->getNextMeetingVerification()
     FAILED,     // quick-fail - invalid id or meeting not exists 
     SUCCESS,    // yei!
+    EMPTY,      // success but empty
     PASSWORD,   // this is technically a
     WAITING,    // valid id but not started
     NONE        // never been verified
@@ -439,6 +440,10 @@ export class Meeting extends Id implements IMeeting {
                 this.verified = true;
                 this.verified_status = VerifiedStatus.SUCCESS;
                 break;
+            case "empty":
+                this.verified = false;
+                this.verified_status = VerifiedStatus.EMPTY;
+                break;
             case "quick-fail":
                 this.verified = false;
                 this.verified_status = VerifiedStatus.FAILED;
@@ -450,6 +455,10 @@ export class Meeting extends Id implements IMeeting {
             case "password":
                 this.verified = false;
                 this.verified_status = VerifiedStatus.PASSWORD;
+                break;
+            default:
+                this.verified = false;
+                this.verified_status = VerifiedStatus.NONE;
                 break;
         }
 
