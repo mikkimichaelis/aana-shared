@@ -88,12 +88,12 @@ export interface IAttendance extends IId {
     _meetingDuration$: string;
     _meetingName$: string;
 
-    start: number; __start$: string;              // utc millis when participation started
-    end: number; __end$: string;                  // local utc millis when participation ended
-    duration: number; __duration$: string;        // millis end - start
-    credit: number; __credit$: string;            // millis ___valid amount of duration credited for attendance (see log)
-    processed: number; _processed$: string;      // server utc millis processed or null
-    updated: number; _updated$: string;          // server utc millis last updated
+    start: number; __start$: string;                // utc millis when participation started
+    end: number; __end$: string;                    // local utc millis when participation ended
+    duration: number; __duration$: string;          // millis end - start
+    credit: number; __credit$: string;              // millis ___valid amount of duration credited for attendance (see log)
+    processed: number; _processed$: string;         // server utc millis processed or null
+    updated: number; _updated$: string;             // server utc millis last updated
 
     user: IUser;            // [attached] Copies of user and meeting data at time of attendance
     meeting: IMeeting;      // [attached] Set server side when processed
@@ -233,6 +233,9 @@ export class Attendance extends Id implements IAttendance {
         return this;
     }
 
+    /*
+        Attendance is processed when the meeting ends.
+    */
     public async process(): Promise<boolean> {
         this.sort();
         return new Promise<boolean>(async (resolve, reject) => {
