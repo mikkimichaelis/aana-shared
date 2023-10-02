@@ -17,7 +17,7 @@ export interface IAttendanceReport extends IId {
     email: string; // recipient
     html: string;
     messageId: string;
-    data: { meetings: IMeeting[], attendance: IAttendance[] };
+    data: any; // { meetings: IMeeting[], attendance: IAttendance[] };
 
     date: string;
     end: string;
@@ -44,7 +44,7 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     email: string = <any>null;
     html: string = '<html></html>';
     messageId: string = '';
-    data: { meetings: IMeeting[], attendance: IAttendance[] } = { meetings: [], attendance: [] };
+    data: any = {}; // { meetings: IMeeting[], attendance: IAttendance[] } = { meetings: [], attendance: [] };
 
     date: string = ''
     end: string = '';
