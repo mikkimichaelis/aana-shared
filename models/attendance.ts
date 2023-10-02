@@ -99,6 +99,8 @@ export interface IAttendance extends IId {
     meeting: IMeeting;      // [attached] Set server side when processed
     records: IAttendanceRecord[];   // [attached]
 
+    invalid: boolean;   // added to invalidate invalid records (missing meetings)
+
 
     isValid(): Promise<boolean>;
     repair(): Promise<IAttendance>
@@ -143,6 +145,8 @@ export class Attendance extends Id implements IAttendance {
     user: IUser = <any>null;
     meeting: IMeeting = <any>null;
     records: IAttendanceRecord[] = [];
+
+    invalid = false;
 
     // server side called constructor only!
     constructor(attendance: any) {

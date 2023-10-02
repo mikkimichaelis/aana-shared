@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import { Base, IBase } from '../models/base.class';
 import { Id, IId } from '../models/id.class';
+import { IMeeting } from './meeting';
+import { IAttendance } from './attendance';
 export interface IAttendanceReport extends IId {
     uid: string;
     version: number;
@@ -9,12 +11,13 @@ export interface IAttendanceReport extends IId {
     created$: string;
     updated: number;
 
+    attendances: string[]
     aids: string[];         // attendance.id[]
 
     email: string; // recipient
     html: string;
     messageId: string;
-    data: any;
+    data: { meetings: IMeeting[], attendance: IAttendance[] };
 
     date: string;
     end: string;
@@ -35,12 +38,13 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     created$: string = '';
     updated: number = DateTime.now().toMillis();
 
+    attendances: string[] = []; // legacy
     aids: string[] = [];
 
     email: string = <any>null;
     html: string = '<html></html>';
     messageId: string = '';
-    data: any = null;
+    data: { meetings: IMeeting[], attendance: IAttendance[] } = { meetings: [], attendance: [] };
 
     date: string = ''
     end: string = '';
@@ -52,9 +56,9 @@ export class AttendanceReport extends Id implements IAttendanceReport {
     user_email: string = '';
     user_name: string = '';
 
-    constructor(device?: any) {
+    constructor(report?: any) {
         super();
-        this.initialize(this, device);
+        this.initialize(this, report);
 
         this.created$ = DateTime.fromMillis(this.created).setZone(this.timezone).toFormat('FFF');
     }
