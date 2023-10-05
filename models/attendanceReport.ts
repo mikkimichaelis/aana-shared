@@ -12,7 +12,6 @@ export interface IAttendanceReport extends IId {
     updated: number;
 
     attendances: string[]
-    aids: string[];         // attendance.id[]
 
     email: string; // recipient
     html: string;
@@ -32,19 +31,25 @@ export interface IAttendanceReport extends IId {
 
 export class AttendanceReport extends Id implements IAttendanceReport {
     uid: string = '';
-    version: number = 1;
+    version: number = 2;
     timezone: string = DateTime.now().zoneName as string;
     created: number = DateTime.now().toMillis();
     created$: string = '';
     updated: number = DateTime.now().toMillis();
 
-    attendances: string[] = []; // legacy
-    aids: string[] = [];
+    // the following are legacy
+    // data included all data used to generate html report and data.attendance IAttendance[]
+    // attendances was (poorly populated) list of aid's.
+    data: any = {};
+    attendances: string[] = [];
+
+    // now we keep every thing orderly.
+    meetings: IMeeting[] = [];      // copies of all meetings as existed when reported
+    attendance: IAttendance[] = []; // copies of all attendance as existed when reported
 
     email: string = <any>null;
     html: string = '<html></html>';
     messageId: string = '';
-    data: any = {}; // { meetings: IMeeting[], attendance: IAttendance[] } = { meetings: [], attendance: [] };
 
     date: string = ''
     end: string = '';

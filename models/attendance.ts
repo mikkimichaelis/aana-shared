@@ -88,6 +88,7 @@ export interface IAttendance extends IId {
     _meetingDuration$: string;
     _meetingName$: string;
 
+    date: string;
     start: number; __start$: string;                // utc millis when participation started
     end: number; __end$: string;                    // local utc millis when participation ended
     duration: number; __duration$: string;          // millis end - start
@@ -108,6 +109,7 @@ export interface IAttendance extends IId {
     process(): Promise<boolean>;
 }
 export class Attendance extends Id implements IAttendance {
+
     version: number = 72;
 
     uid: string = <any>'';
@@ -133,9 +135,11 @@ export class Attendance extends Id implements IAttendance {
     _meetingDuration$: string = <any>'';
     _meetingName$: string = <any>'';
 
+    date: string = <any>null;
     start: number = DateTime.now().toMillis(); __start$: string = <any>null;                // server populated millis
     end: number = 0; __end$: string = <any>null;                              // server populated millis
     duration: number = 0; __duration$: string = <any>null;                    // server populated millis
+    durationHHMM$: string = <any>null;
     credit: number = 0; __credit$: string = <any>null;                        // server populated millis
 
     processed: number = 0; _processed$: string = <any>null;          // server populated millis
@@ -167,7 +171,10 @@ export class Attendance extends Id implements IAttendance {
         if (this.produced > 0) this.__produced$ = DateTime.fromMillis(this.produced).setZone(<any>this._timezone).toFormat('FFF');
         if (this.processed > 0) this._processed$ = DateTime.fromMillis(this.processed).setZone(<any>this._timezone).toFormat('FFF');
 
-        if (this.duration > 0) this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+        if (this.duration > 0) {
+            this.__duration$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
+            this.durationHHMM$ = this.__duration$.substring(0, 5);   // make hh:mm for UI
+        }
 
         this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
 
@@ -177,6 +184,7 @@ export class Attendance extends Id implements IAttendance {
             this._meetingDuration$ = meeting.continuous ? 'Continuous' : Duration.fromObject({ minutes: meeting.duration }).toFormat('hh:mm:ss');
         }
 
+        this.date = DateTime.fromMillis(this.start).setZone(this._timezone).toFormat('M/d/yy');
         this.updated = DateTime.now().toMillis();
         this._updated$ = DateTime.fromMillis(this.updated).setZone(<any>this._timezone).toFormat('FFF');
     }
