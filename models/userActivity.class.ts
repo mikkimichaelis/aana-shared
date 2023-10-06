@@ -37,8 +37,9 @@ export class UserActivity extends UserBase implements IUserActivity {
     timestamp = 0;
     timestamp$ = '';
 
-    Aster_Michael = 'I Love You x 6!';
-    Arlen_Remi = 'Princess Love (✿ ♥‿♥)';
+    Aera_Leia = 'Aera Leigh (✿ ♥‿♥)'
+    Aster_Michael = 'Aster Michael (✿ ♥‿♥)';
+    Arlen_Remi = 'Arlen Remi (✿ ♥‿♥)';
 
     constructor(data?: any) {
         super();
