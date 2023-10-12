@@ -31,6 +31,7 @@ export * from './attendance';
 export * from './attendanceReport';
 export * from './meetingDateTime';
 export * from './recurrence';
+export * from './purchase';
 
 
 
