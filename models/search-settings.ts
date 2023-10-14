@@ -62,7 +62,7 @@ export class SearchSettings extends SettingsBase implements ISearchSettings {
     zid = <any>null;
     name = <any>null;
     zipcode = <any>null;
-    language = <any>null;
+    language = 'en';
     groupType = <any>null;
     meetingType = <any>null;
     tags: string[] = [];
