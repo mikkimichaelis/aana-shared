@@ -22,12 +22,13 @@ export interface ISystemSettings {
 
     show_web_req: boolean,
     show_use_zoom_req: boolean
+    show_customization: boolean,
 
     total_runs: number
 }
 
 export class SystemSettings extends SettingsBase implements ISystemSettings {
-    version = 6;                // version of these settings
+    version = 7;                // version of these settings
     app_version = <any>null;    // set to null to flag a new app install
                                 // app_version is then set in update.service
     first_run = true;
@@ -46,6 +47,7 @@ export class SystemSettings extends SettingsBase implements ISystemSettings {
 
     show_web_req = true;
     show_use_zoom_req = true;
+    show_customization = true;
 
     total_runs = 0;
 

@@ -235,7 +235,7 @@ export class User extends UserBase implements IUser {
         location_value: '',
         ninety_start: DateTime.now().startOf('day').toMillis(),
         meetingMinutesChartDuration: '7',
-        fellowships: []
+        fellowships: ['AA', 'NA']
     }
     profile: IUserProfile = <any>null;
     homeMeeting: string = <any>null;
@@ -266,6 +266,9 @@ export class User extends UserBase implements IUser {
             // set users initial name
             this.setUserAuthNames(user.name);   // updates updated timestamp
         }
+
+        // Perform upgrades 
+        if (!this.preferences.fellowships) this.preferences.fellowships = ['AA', 'NA'];
     }
 
     toObject(): IUser {
