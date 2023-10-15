@@ -113,7 +113,9 @@ export interface IMeeting extends IId {
     meetingSub: string;
     weekday: number;
     tags: string[];
-    joinUrl: string;
+    meetingTxt: string;
+    meetingShareTxt: string;
+    meetingShareUrl: string;
 
     activate(active: boolean): void;
     update(): void;
@@ -206,9 +208,16 @@ export class Meeting extends Id implements IMeeting {
 
     buymeacoffee: string = '';
 
-    get joinUrl(): string {
-        const pwd = `&pwd=${this.password !== '' ? this.password : this._password ? this._password : ''}`;
-        return `https://us06web.zoom.us/j/${this.zid}?pwd=${pwd}`
+    get meetingTxt(): string {
+        return `${this.meetingShareTxt}${this.meetingShareUrl}`;
+    }
+
+    get meetingShareTxt(): string {
+        let pwd = '';  if(this.password) pwd = `pw: ${this.password}\n`;
+        return `${this.name}\n${pwd}`
+    }
+    get meetingShareUrl(): string {
+        return `https://us06web.zoom.us/j/${this.zid}`
     }
 
     get tags(): string[] {
@@ -485,7 +494,8 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties not serialized into the database
-        const exclude = ['joinUrl', 'tMinus', '_tminus',
+        const exclude = ['meetingTxt', 'meetingShareTxt', 'meetingShareUrl',
+            'tMinus', '_tminus',
             'endsIn', '_endsIn',
             'backgroundUpdateEnabled',
             'isVerified',
