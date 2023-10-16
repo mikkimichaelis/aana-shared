@@ -1,6 +1,17 @@
 import { DateTime } from 'luxon';
 import { Id, IId } from './id.class';
 
+
+export interface IMeetingReminder extends IId {
+    id: string;     // should be mid?
+    uid: string;
+    mid: string;
+    created: string;
+    updated: number;
+    reminders: string[];
+}
+
+
 export interface IReminder extends IId {
     uid: string;
     mid: string;

@@ -604,7 +604,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.weekdays[DateTime.local().weekday]
     }
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
+    // static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
 
