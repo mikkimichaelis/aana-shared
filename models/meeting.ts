@@ -113,6 +113,9 @@ export interface IMeeting extends IId {
     meetingSub: string;
     weekday: number;
     tags: string[];
+    meetingTxt: string;
+    meetingShareTxt: string;
+    meetingShareUrl: string;
 
     activate(active: boolean): void;
     update(): void;
@@ -204,6 +207,18 @@ export class Meeting extends Id implements IMeeting {
     updated: number = 0;
 
     buymeacoffee: string = '';
+
+    get meetingTxt(): string {
+        return `${this.meetingShareTxt}${this.meetingShareUrl}`;
+    }
+
+    get meetingShareTxt(): string {
+        let pwd = '';  if(this.password) pwd = `pw: ${this.password}\n`;
+        return `${this.name}\n${pwd}`
+    }
+    get meetingShareUrl(): string {
+        return `https://us06web.zoom.us/j/${this.zid}`
+    }
 
     get tags(): string[] {
         return this.tags_;
@@ -479,7 +494,8 @@ export class Meeting extends Id implements IMeeting {
 
     toObject(): IMeeting {
         // list properties not serialized into the database
-        const exclude = ['tMinus', '_tminus',
+        const exclude = ['meetingTxt', 'meetingShareTxt', 'meetingShareUrl',
+            'tMinus', '_tminus',
             'endsIn', '_endsIn',
             'backgroundUpdateEnabled',
             'isVerified',
@@ -588,7 +604,7 @@ export class Meeting extends Id implements IMeeting {
         return Meeting.weekdays[DateTime.local().weekday]
     }
     static weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
+    // static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
     static time12to24h = (time12) => new Date(`1970-01-01 ${time12}`).toLocaleTimeString('en-US', { hour12: false }).substring(0, 5)
