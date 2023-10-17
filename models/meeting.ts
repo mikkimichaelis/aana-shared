@@ -591,7 +591,7 @@ export class Meeting extends Id implements IMeeting {
     static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
-
+    static time12to24h = (time12) => new Date(`1970-01-01 ${time12}`).toLocaleTimeString('en-US', { hour12: false }).substring(0, 5)
 
     public activate(activate): void {
         this.active = activate;
