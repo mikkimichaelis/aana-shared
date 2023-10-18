@@ -7,17 +7,21 @@ export interface IUserSettings {
     liveSearchLanguage: boolean;
     liveSearchType: boolean;
     showTimerPage: boolean;
+    showContinuousMeetings: boolean;
+    meetingVerification: boolean;
 }
 
 export class UserSettings extends SettingsBase implements IUserSettings {
     // Default Values
-    version = 7;
-    theme = 'dark-theme pink-toes';
+    version = 8;
+    theme = 'dark-theme blue';
     darkTheme = true;
     useZoomApp = true;
     liveSearchLanguage = false;
     liveSearchType = false;
     showTimerPage = true;
+    showContinuousMeetings = true;
+    meetingVerification = true;
 
     constructor(settings?: IUserSettings) {
         super();

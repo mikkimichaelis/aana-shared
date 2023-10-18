@@ -32,13 +32,14 @@ export interface IMeeting extends IId {
     updated: number;                    // last time meeting was updated or imported 
     active: boolean;                    // is active?
     authorized: boolean;                // is authorized?  not sure what this was intended for
+        
     verified: boolean;                  // this predates verified_status and exists in indexes so I'm leaving, although it duplicates data in verified_status
     verified_status: VerifiedStatus;    // current status of verification
     verified_date: number;              // date of last verification
+
     isAdHoc: boolean;                   // is this a users private adHoc meeting?
     schedule: string;                   // meeting schedule this meeting belongs to
     // end metadata
-
 
     meetingUrl: string;
     homeUrl: string;
@@ -97,7 +98,6 @@ export interface IMeeting extends IId {
     buymeacoffee: string;
 
     // Non serialized getter properties
-    isVerified: boolean;
     isLive: boolean | null;
     isFeatured: boolean | undefined;
     tMinus: any;    // TODO
@@ -137,7 +137,7 @@ export class Meeting extends Id implements IMeeting {
     active: boolean = true;
     authorized: boolean = true;
 
-    verified = true;    // default to hope it's a good meeting :-)
+    verified = false;
     verified_status = VerifiedStatus.NONE;
     verified_date = -1;
 
@@ -222,11 +222,6 @@ export class Meeting extends Id implements IMeeting {
 
     get tags(): string[] {
         return this.tags_;
-    }
-
-    // TODO DEPRECATE - just use verified instead now
-    get isVerified(): boolean {
-        return this.verified;
     }
 
     // - Mills till isLive ends
