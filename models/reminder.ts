@@ -51,7 +51,7 @@ export class Reminder extends Id implements IReminder {
     message: string = '';
     url: string = '';
     pw: string = '';
-    updated: number = 0; 
+    updated: number = DateTime.now().toMillis() 
 
     constructor(reminder: IReminder) {
         super(reminder);
