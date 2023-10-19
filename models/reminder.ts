@@ -13,6 +13,7 @@ export interface IMeetingReminder extends IId {
 
 
 export interface IReminder extends IId {
+    eid: string;        // calendar event id
     uid: string;
     mid: string;
     created: string;
@@ -22,14 +23,18 @@ export interface IReminder extends IId {
     recurring: boolean; // is a one time reminder?
     atDayTime$: string;
     atMillis: number;
+    duration: number;
+    alert: number;
     name: string;
     startTime$: string;
     message: string;
-    
+    url: string;
+    pw: string;
     updated: number;
 }
 
 export class Reminder extends Id implements IReminder {
+    eid: string = '';
     uid: string = '';
     mid: string = '';
     created: string = DateTime.now().toLocaleString(DateTime.DATETIME_SHORT);
@@ -39,9 +44,13 @@ export class Reminder extends Id implements IReminder {
     recurring: boolean = true;
     atDayTime$: string = '';
     atMillis: number = 0;
+    duration: number = 0;
+    alert: number = 0;
     name: string = '';
     startTime$: string = '';
     message: string = '';
+    url: string = '';
+    pw: string = '';
     updated: number = 0; 
 
     constructor(reminder: IReminder) {
