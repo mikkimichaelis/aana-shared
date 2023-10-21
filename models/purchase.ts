@@ -12,7 +12,7 @@ export class Purchase {
     renewalIntent: string = '';
     renewalIntentChangeDate: string = '';
     cancelationReason: string = '';
-    isPending: boolean = false;;
+    isPending: boolean = false;
     isAcknowledged: boolean = false;
     isConsumed: boolean = false;
     isBillingRetryPeriod: boolean = false;

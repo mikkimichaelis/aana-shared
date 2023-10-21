@@ -145,7 +145,8 @@ export interface IUserPreferences {
     location_value: string;
     ninety_start: number;   // date to start 90/90
     meetingMinutesChartDuration: any;
-    fellowships: string[];
+    fellowship: string;     // primary fellowship selection
+    fellowships: string[];  // display fellowship meetings
 }
 export class UserProfile extends Base implements IUserProfile {
     anonymous: boolean = true;
@@ -235,6 +236,7 @@ export class User extends UserBase implements IUser {
         location_value: '',
         ninety_start: DateTime.now().startOf('day').toMillis(),
         meetingMinutesChartDuration: '7',
+        fellowship: '',
         fellowships: ['AA', 'NA']
     }
     profile: IUserProfile = <any>null;
