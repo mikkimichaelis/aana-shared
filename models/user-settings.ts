@@ -8,12 +8,13 @@ export interface IUserSettings {
     liveSearchType: boolean;
     showTimerPage: boolean;
     showContinuousMeetings: boolean;
+    showUnverifiedMeetings: boolean;
     meetingVerification: boolean;
 }
 
 export class UserSettings extends SettingsBase implements IUserSettings {
     // Default Values
-    version = 8;
+    version = 9;
     theme = 'dark-theme blue';
     darkTheme = true;
     useZoomApp = true;
@@ -21,6 +22,7 @@ export class UserSettings extends SettingsBase implements IUserSettings {
     liveSearchType = false;
     showTimerPage = true;
     showContinuousMeetings = true;
+    showUnverifiedMeetings = false;
     meetingVerification = true;
 
     constructor(settings?: IUserSettings) {
