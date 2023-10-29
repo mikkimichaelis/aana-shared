@@ -32,7 +32,7 @@ export interface IMeeting extends IId {
     updated: number;                    // last time meeting was updated or imported 
     active: boolean;                    // is active?
     authorized: boolean;                // is authorized?  not sure what this was intended for
-        
+
     verified: boolean;                  // this predates verified_status and exists in indexes so I'm leaving, although it duplicates data in verified_status
     verified_status: VerifiedStatus;    // current status of verification
     verified_date: number;              // date of last verification
@@ -213,7 +213,7 @@ export class Meeting extends Id implements IMeeting {
     }
 
     get meetingShareTxt(): string {
-        let pwd = '';  if(this.password) pwd = `pw: ${this.password}\n`;
+        let pwd = ''; if (this.password) pwd = `pw: ${this.password}\n`;
         return `${this.name}\n${pwd}`
     }
     get meetingShareUrl(): string {
@@ -454,7 +454,12 @@ export class Meeting extends Id implements IMeeting {
                 this.verified = false;
                 this.verified_status = VerifiedStatus.EMPTY;
                 break;
+            case 'fail':
             case 'quick-fail':
+                if (!this.verified) {
+                    // disable unverified meetings that fail
+                    this.active = false;
+                }
                 this.verified = false;
                 this.verified_status = VerifiedStatus.FAILED;
                 break;
@@ -463,6 +468,10 @@ export class Meeting extends Id implements IMeeting {
                 this.verified_status = VerifiedStatus.WAITING;
                 break;
             case 'password':
+                if (isEmpty(this.password) && isEmpty(this._password)) {
+                    // disable password meetings if we have no password
+                    this.active = false;
+                }
                 this.verified = false;
                 this.verified_status = VerifiedStatus.PASSWORD;
                 break;
