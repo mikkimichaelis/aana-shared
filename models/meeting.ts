@@ -183,8 +183,8 @@ export class Meeting extends Id implements IMeeting {
     schedule: string = '';
     siblings: string[] = [];
 
-    timezone: string = "America/New_York";
-    time24h: string = "00:00";
+    timezone: string = 'America/New_York';
+    time24h: string = '00:00';
     duration: number = 60;
     continuous: boolean = false;
 
@@ -285,9 +285,9 @@ export class Meeting extends Id implements IMeeting {
         if (isNil(this._startTimeString)) {
             // if (this.isLive) return 'Live';
 
-            let timeString = `${this.nextTime?.toFormat("h")}`;
-            timeString = timeString + (this.nextTime?.minute === 0 ? ' - ' : `:${this.nextTime?.toFormat("mm")} - `);
-            timeString = timeString + `${this.nextTimeEnd?.toFormat('h')}` + (this.nextTimeEnd?.minute === 0 ? ' ' : `:${this.nextTimeEnd?.toFormat("mm")} `);
+            let timeString = `${this.nextTime?.toFormat('h')}`;
+            timeString = timeString + (this.nextTime?.minute === 0 ? ' - ' : `:${this.nextTime?.toFormat('mm')} - `);
+            timeString = timeString + `${this.nextTimeEnd?.toFormat('h')}` + (this.nextTimeEnd?.minute === 0 ? ' ' : `:${this.nextTimeEnd?.toFormat('mm')} `);
             timeString = timeString + this.nextTime?.toFormat('a');  // (this.nextTime.weekday === DateTime.now().weekday ? this.daytimeString : 
             this._startTimeString = timeString;
         }
@@ -382,7 +382,7 @@ export class Meeting extends Id implements IMeeting {
     private _startTimeFormat?: string | null = null;
     get startTimeFormat(): string | null {
         if (isNil(this._startTimeFormat)) {
-            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat("HH:mm a"));
+            this._startTimeFormat = this.tConvert(this.startTimeFormatLocal?.toFormat('HH:mm a'));
         }
         return <any>this._startTimeFormat;
     }
@@ -446,23 +446,23 @@ export class Meeting extends Id implements IMeeting {
 
     public setVerification(status: string) {
         switch (status) {
-            case "success":
+            case 'success':
                 this.verified = true;
                 this.verified_status = VerifiedStatus.SUCCESS;
                 break;
-            case "empty":
+            case 'empty':
                 this.verified = false;
                 this.verified_status = VerifiedStatus.EMPTY;
                 break;
-            case "quick-fail":
+            case 'quick-fail':
                 this.verified = false;
                 this.verified_status = VerifiedStatus.FAILED;
                 break;
-            case "waiting-room":
+            case 'waiting-room':
                 this.verified = false;
                 this.verified_status = VerifiedStatus.WAITING;
                 break;
-            case "password":
+            case 'password':
                 this.verified = false;
                 this.verified_status = VerifiedStatus.PASSWORD;
                 break;
@@ -631,12 +631,12 @@ export class Meeting extends Id implements IMeeting {
 
         if (this.meetingTypes.find(mt => mt === 'M')) {
             this.restricted = true;
-            this.restrictedDescription = "Male Only";
+            this.restrictedDescription = 'Male Only';
         }
 
         if (this.meetingTypes.find(mt => mt === 'W')) {
             this.restricted = true;
-            this.restrictedDescription = "Female Only";
+            this.restrictedDescription = 'Female Only';
         }
     }
 
