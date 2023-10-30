@@ -1,4 +1,3 @@
-import { AnyCatcher } from "rxjs/internal/AnyCatcher";
 import { Id } from "./id.class";
 
 /*
