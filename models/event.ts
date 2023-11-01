@@ -47,14 +47,14 @@ export interface IEvent {
 }
 
 export class Event extends Id implements IEvent {
-    hash: string;               // hashed value for event grouping
-    ip: string;                 // ip address
-    url: string;                // app current url
-    type: EventType;    
-    action: EventAction;
-    feature: string;            // feature-specific-identifier
-    data: any;                  // additional data associated with event
-    timestamp: number;
+    hash = '';               // hashed value for event grouping
+    ip = '';                 // ip address
+    url = '';                // app current url
+    type = null;    
+    action = null;
+    feature = '';            // feature-specific-identifier
+    data = null;                  // additional data associated with event
+    timestamp = 0;
 
     constructor(event?: any) {
         super(event);
