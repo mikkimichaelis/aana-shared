@@ -42,19 +42,27 @@ export enum EventAction {
 
 export interface IEvent { 
     id: string;
+    identifier: string;
     ip: string;
+    url: string;
+    type: EventType;
+    action: EventAction;
+    feature: string;
+    data: any;
+    geolocation: any;
     timestamp: number;
 }
 
 export class Event extends Id implements IEvent {
-    hash = '';               // hashed value for event grouping
-    ip = '';                 // ip address
-    url = '';                // app current url
+    identifier = '';        // hashed value for event grouping
+    ip = '';                // ip address
+    url = '';               // app current url
     type = null;    
     action = null;
-    feature = '';            // feature-specific-identifier
-    data = null;                  // additional data associated with event
-    timestamp = 0;
+    feature = '';           // feature-specific-identifier
+    data = null;            // additional data associated with event
+    geolocation = null;     // geolocation of user
+    timestamp = null;
 
     constructor(event?: any) {
         super(event);
