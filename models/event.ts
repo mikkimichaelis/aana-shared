@@ -4,40 +4,39 @@ import { Id } from "./id.class";
     These are the specific app features to analyze activity on
 */
 export enum EventType {
-    START,              // App start
-    VIEW,               // Page view
-    JOIN,               // Meeting Join
-    JOIN_ANY,           // join any
-    SEARCH,             // perform search
-    FAVORITE,           // Add/remove
-    JOURNAL,            // Journal entry created/viewed
-    TUTORIAL,           // access tutorial
-    RESOURCES,          // access any functionality within resources
-    PROFILE,            // access any functionality within profile
-    SETTINGS,           // access any functionality within settings
-    ACCOUNT,            // access any functionality within account
-    SUBSCRIBE,          // subscribe event!!!
-    ABOUT,              // access any functionality within about
-    CLEAN_DATE,         // set clean date
-    MEETING_CALENDAR,   // access calendar
-    NINETY_NINETY,      // reset
-    ATTENDANCE,         // created
-    REPORT,             // view attendance report
-    SEND,               // send attendance report
-    REMINDER,           // CREATE/OPENED
-    REMINDERS_CALENDAR, // 
-    RATING,
-    PING,               // ping
+    VIEW                = 'VIEW',               // Page view
+    JOIN                = 'JOIN',               // Meeting Join
+    JOIN_ANY            = 'JOIN_ANY',           // join any
+    SEARCH              = 'SEARCH',             // perform search
+    FAVORITE            = 'FAVORITE',           // Add/remove
+    JOURNAL             = 'JOURNAL',            // Journal entry created/viewed
+    TUTORIAL            = 'TUTORIAL',           // access tutorial
+    RESOURCES           = 'RESOURCES',          // access any functionality within resources
+    PROFILE             = 'PROFILE',            // access any functionality within profile
+    SETTINGS            = 'SETTINGS',           // access any functionality within settings
+    ACCOUNT             = 'ACCOUNT',            // access any functionality within account
+    SUBSCRIBE           = 'SUBSCRIBE',          // subscribe event!!!
+    ABOUT               = 'ABOUT',              // access any functionality within about
+    CLEAN_DATE          = 'CLEAN_DATE',         // set clean date
+    MEETING_CALENDAR    = 'MEETING_CALENDAR',   // access calendar
+    NINETY_NINETY       = 'NINETY_NINETY',      // reset
+    ATTENDANCE          = 'ATTENDANCE',         // created
+    REPORT              = 'REPORT',             // view attendance report
+    SEND                = 'SEND',               // send attendance report
+    REMINDER            = 'REMINDER',           // CREATE/OPENED
+    REMINDERS_CALENDAR  = 'REMINDERS_CALENDAR', // reminders calendar
+    RATING              = 'RATING',             // rating
+    PING                = 'PING',               // ping
 }
 
-// These indicate the generic actions taken by an event
+// These indicate the specific actions taken by an event and are not required
 export enum EventAction {
-    CREATED,
-    VIEWED,
-    OPENED,             
-    ADDED,
-    REMOVED,
-    UPDATED,
+    CREATED     = 'CREATED',
+    VIEWED      = 'VIEWED',
+    OPENED      = 'OPENED',             
+    ADDED       = 'ADDED',
+    REMOVED     = 'REMOVED',
+    UPDATED     = 'UPDATED',
 }
 
 export interface IEvent { 
