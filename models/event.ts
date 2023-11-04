@@ -26,6 +26,7 @@ export enum EventType {
     REMINDER            = 'REMINDER',           // CREATE/OPENED
     REMINDERS_CALENDAR  = 'REMINDERS_CALENDAR', // reminders calendar
     RATING              = 'RATING',             // rating
+    VERIFICATION        = 'VERIFICATION',       // meeting verification events
     PING                = 'PING',               // ping
 }
 
@@ -46,7 +47,7 @@ export interface IEvent {
     url: string;
     type: EventType;
     action: EventAction;
-    feature: string;
+    feature: string;        // feature is an arbitrary string to group events together by specific feature
     data: any;
     geolocation: any;
     timestamp: number;
