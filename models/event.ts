@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { Id } from "./id.class";
 
 /*
@@ -6,6 +7,7 @@ import { Id } from "./id.class";
 export enum EventType {
     VIEW                = 'VIEW',               // Page view
     JOIN                = 'JOIN',               // Meeting Join
+    VERIFICATION        = 'VERIFICATION',       // meeting verification events
     JOIN_ANY            = 'JOIN_ANY',           // join any
     SEARCH              = 'SEARCH',             // perform search
     FAVORITE            = 'FAVORITE',           // Add/remove
@@ -14,6 +16,7 @@ export enum EventType {
     RESOURCES           = 'RESOURCES',          // access any functionality within resources
     PROFILE             = 'PROFILE',            // access any functionality within profile
     SETTINGS            = 'SETTINGS',           // access any functionality within settings
+    PREFERENCES         = 'PREFERENCES',        // changing preferences
     ACCOUNT             = 'ACCOUNT',            // access any functionality within account
     SUBSCRIBE           = 'SUBSCRIBE',          // subscribe event!!!
     ABOUT               = 'ABOUT',              // access any functionality within about
@@ -26,7 +29,6 @@ export enum EventType {
     REMINDER            = 'REMINDER',           // CREATE/OPENED
     REMINDERS_CALENDAR  = 'REMINDERS_CALENDAR', // reminders calendar
     RATING              = 'RATING',             // rating
-    VERIFICATION        = 'VERIFICATION',       // meeting verification events
     PING                = 'PING',               // ping
 }
 
@@ -61,8 +63,8 @@ export class Event extends Id implements IEvent {
     action = null;
     feature = '';           // feature-specific-identifier
     data = null;            // additional data associated with event
-    geolocation = null;     // geolocation of user
-    timestamp = null;
+    geolocation = null;     // geolocation of ip address
+    timestamp = DateTime.now().toMillis();
 
     constructor(event?: any) {
         super(event);
