@@ -64,6 +64,7 @@ export class Event extends Id implements IEvent {
     feature = '';           // feature-specific-identifier
     data = null;            // additional data associated with event
     geolocation = null;     // geolocation of ip address
+    geohash = null;
     timestamp = DateTime.now().toMillis();
 
     constructor(event?: any) {
