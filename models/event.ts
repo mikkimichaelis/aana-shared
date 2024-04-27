@@ -59,8 +59,8 @@ export class Event extends Id implements IEvent {
     identifier = '';        // hashed value for event grouping
     ip = '';                // ip address
     url = '';               // app current url
-    type = null;    
-    action = null;
+    type = null as any;    
+    action = null as any;
     feature = '';           // feature-specific-identifier
     data = null;            // additional data associated with event
     geolocation = null;     // geolocation of ip address
