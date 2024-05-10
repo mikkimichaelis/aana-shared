@@ -176,7 +176,7 @@ export class Attendance extends Id implements IAttendance {
             this.durationHHMM$ = this.__duration$.substring(0, 5);   // make hh:mm for UI
         }
 
-        this.__credit$ = Duration.fromMillis(this.credit).toFormat('hh:mm:ss');
+        this.__credit$ = Duration.fromMillis(this.duration).toFormat('hh:mm:ss');
 
         if (meeting) {
             this._meetingName$ = meeting.name;
