@@ -17,6 +17,7 @@ export enum VerifiedStatus {
 export interface IMeeting extends IId {
 
     // metadata
+    sid: string;        // schedule id this meeting belongs to if any
     iid: string;        // import id (populated during import from unique source identifier)
     uid: string;        // user id of meeting owner
     /*
@@ -38,7 +39,6 @@ export interface IMeeting extends IId {
     verified_date: number;              // date of last verification
 
     isAdHoc: boolean;                   // is this a users private adHoc meeting?
-    schedule: string;                   // meeting schedule this meeting belongs to
     // end metadata
 
     meetingUrl: string;
@@ -130,6 +130,7 @@ export interface IMeeting extends IId {
 
 export class Meeting extends Id implements IMeeting {
 
+    sid: string = '';
     iid: string = '';
     uid: string = '';
     hash: string = '';
