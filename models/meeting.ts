@@ -650,20 +650,21 @@ export class Meeting extends Id implements IMeeting {
         }
     }
 
-    public updateTags() {
-        this.tags_custom_ = this.tags_custom.map(t => t.toLowerCase());
+    public updateTags(): Meeting {
+        this.tags_custom_ = []; // this.tags_custom.map(t => t.toLowerCase());
 
         // TODO improve this filtering with word filtering
         const filter = (t: string) => {
             return !isNil(t) && !isEmpty(t) && t.length > 2 && !([null, 'Temp', 'not', 'the', 'and', 'but', 'for', 'nor', 'yet', 'from', 'are'].includes(t))
         };
 
-        this.tags_description_ = concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
-        this.tags_name_ = concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
-        this.tags_location_ = concat(split(this.location, ', ')).filter(mt => !isNil(mt) && !isEmpty(mt)); // .map(t => t.toLowerCase()).filter(filter);
+        this.tags_description_ = []; // concat(split(this.description, ' ')).map(t => t.toLowerCase()).filter(filter);
+        this.tags_name_ = []; // concat(split(this.name, ' ')).map(t => t.toLowerCase()).filter(filter);
+        this.tags_location_ = []; // concat(split(this.location, ', ')).filter(mt => !isNil(mt) && !isEmpty(mt)); // .map(t => t.toLowerCase()).filter(filter);
 
-        this.tags_ = concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_).filter(mt => !isNil(mt) && !isEmpty(mt));
+        this.tags_ = []; // concat(this.meetingTypes.map(mt => mt.toLowerCase()), this.tags_custom_, this.tags_name_, this.tags_location_, this.tags_description_).filter(mt => !isNil(mt) && !isEmpty(mt));
 
+        return this;
         // this.description_links= [];
     }
 
