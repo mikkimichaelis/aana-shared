@@ -369,7 +369,7 @@ export class Meeting extends Id implements IMeeting {
                 let next = DateTime.now().set({
                     hour: startDateTime.hour,
                     minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
+                    weekday: startDateTime.weekday as any
                 });
 
                 if (next < DateTime.now()) next = next.plus({ weeks: 1 });

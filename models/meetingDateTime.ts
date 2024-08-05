@@ -146,7 +146,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
                 const next = DateTime.now().set({
                     hour: startDateTime.hour,
                     minute: startDateTime.minute,
-                    weekday: startDateTime.weekday
+                    weekday: startDateTime.weekday as any
                 });
                 if (startDateTime > now) {
                     this._nextTime = next;
