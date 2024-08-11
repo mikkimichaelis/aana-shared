@@ -399,7 +399,7 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
     }
 
     static makeThat70sDateTime(dateTime?: DateTime, iso_weekday?: any): DateTime {
-        let dt = isNil(dateTime) ? DateTime.local() : dateTime;
+        let dt: DateTime = isNil(dateTime) ? DateTime.local() : dateTime;
 
         try {
             // @ts-ignore
