@@ -86,7 +86,7 @@ export class Reminder extends Id implements IReminder {
         while (weekdays[0] !== r2.weekdayLong) {        // Rotate
             weekdays = this.arrayRotate(weekdays, false);
         }
-        let diff = weekdays.indexOf(r1.weekdayLong) - weekdays.indexOf(r2.weekdayLong);
+        let diff = weekdays.indexOf(r1.weekdayLong as string) - weekdays.indexOf(r2.weekdayLong);
 
         r2 = r2.plus({ days: diff });
         while(r2 < DateTime.now()) r2 = r2.plus({weeks: 1});

@@ -239,7 +239,8 @@ export class MeetingDateTime extends Base implements IMeetingDateTime {
         return this._nextTimeEnd;
     }
 
-    private endDateTime: number = MeetingDateTime.oneWeekMillis;
+    // @ts-ignore
+    private endDateTime: number = MeetingDateTime.oneWeekMillis;;
     private timezone: string = "America/New_York";
     private time24h: string = "00:00"; 
     private endTime: number = 0;        // startTime + duration
