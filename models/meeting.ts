@@ -612,7 +612,23 @@ export class Meeting extends Id implements IMeeting {
     // static iso_weekday_2_iso_index(weekday: any) { return Meeting.weekdays.indexOf(weekday) + 1 }
     static oneDayMillis = 86400000;  // 24 * 60 * 60 * 1000
     static oneWeekMillis = (7 * (Meeting.oneDayMillis));
-    static time12to24h = (time12) => new Date(`1970-01-01 ${time12}`).toLocaleTimeString('en-US', { hour12: false }).substring(0, 5)
+    static time12to24h = (time12) => new Date(`1970-01-01 ${time12}`).toLocaleTimeString('en-US', { hour12: false }).substring(0, 5);
+
+
+    // this function takes a starting millis and a frequency.   
+    // The mills for with the next frequency will happen is calculated
+    // 
+    static getNextFrequency = (fromWhen, frequency): number => {
+        // mark 1 would be every minute.  5 ever 5m and so on.
+    
+        let next = DateTime.fromMillis(fromWhen).startOf('minute').plus({ minutes: 1 }); // strips millis / seconds and advance to the next minute
+    
+        // advance next by one minute while minutes are not evenly divisible by _mark
+        while (next.minute % frequency !== 0) next = next.plus({ minutes: 1 });
+    
+        // we have advanced next to the time of the next mark on the clock, return the difference in millis
+        return next.toMillis();
+    }
 
     public activate(activate): void {
         this.active = activate;
