@@ -9,11 +9,12 @@ export interface ISchedule extends IId {
     active: boolean;                    // is active?
     authorized: boolean;                // is authorized?  not sure what this was intended for
 
+    daily: boolean;                     // is this a daily meeting?
     name: string;                       // name of the meeting
-
     mids: string[];                     // meeting ids belonging to this schedule (ordered by string compare)
 
     update(): ISchedule;                // update the schedule and compute hash
+    addMeetings(meetings: Meeting[]): ISchedule;
 }
 
 export class Schedule extends Id implements ISchedule {
@@ -21,14 +22,14 @@ export class Schedule extends Id implements ISchedule {
     updated: number = DateTime.now().toMillis();
     active: boolean = true;
     authorized: boolean = true;
+
+    daily: boolean = false;
     name: string = '';
     mids: string[] = [];
 
     constructor(schedule?: any) {
         super(schedule);
         this.initialize(this, schedule);
-
-        // this.recurrence = new Recurrence(meeting?.recurrence);
     }
 
     public static sortMeetingsByStartTime(meetings: Meeting[]): Meeting[] {
@@ -51,6 +52,30 @@ export class Schedule extends Id implements ISchedule {
             }
             return 0;   // a == b
         });
+    }
+
+    addMeetings(meetings: Meeting[]): ISchedule {
+        this.mids = this.mids.concat(meetings.map(m => m.id));
+
+        while (meetings.length > 6) {
+            // try to extract meetings per DOW with the same name and time as a Daily Meeting
+            const weekdays = Meeting.weekdays.map(day => {
+                return meetings.find(sibling =>
+                    sibling.time24h === meetings[0].time24h
+                    && sibling.name === meetings[0].name
+                    && sibling.recurrence.weekly_day === day);
+            }).filter((sibling: any) => sibling);
+
+            // if we have 7 siblings at the same time, make them a single Daily Meeting
+            if (weekdays.length === 7) {
+                this.daily = true;
+                meetings = meetings.filter(m => !weekdays.includes(m));
+            } else {
+                meetings = meetings.slice(1);
+            }
+        }
+
+        return this;
     }
 
     public update(): ISchedule {

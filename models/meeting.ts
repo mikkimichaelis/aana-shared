@@ -181,9 +181,6 @@ export class Meeting extends Id implements IMeeting {
 
     recurrence: IRecurrence = new Recurrence({});
 
-    schedule: string = '';
-    siblings: string[] = [];
-
     timezone: string = 'America/New_York';
     time24h: string = '00:00';
     duration: number = 60;
