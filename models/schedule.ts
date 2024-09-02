@@ -57,6 +57,8 @@ export class Schedule extends Id implements ISchedule {
     addMeetings(meetings: Meeting[]): ISchedule {
         this.mids = this.mids.concat(meetings.map(m => m.id));
 
+        meetings.forEach(m => m.sid = this.id);
+
         while (meetings.length > 6) {
             // try to extract meetings per DOW with the same name and time as a Daily Meeting
             const weekdays = Meeting.weekdays.map(day => {
