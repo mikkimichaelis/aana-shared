@@ -533,7 +533,7 @@ export const meetingData = {
             "tx": null,
             "code": "LGBTQ2+",
             "type": "LGBTQ2+",
-            "desc": "LGBTQ2+ meeting"
+            "desc": "2SLGBTQIA+ meeting"
         },
         {
             "valid": false,
@@ -911,6 +911,47 @@ export const meetingData = {
             "code": "null",
             "type": "Participation",
             "desc": "TODO add this meeting type, I like it"
-        }
+        },
+        {
+            "valid": false,
+            "tx": "O",
+            "code": "",
+            "type": "Open to non-addicts",
+            "desc": ""
+        },
+        {
+            "valid": false,
+            "tx": "O",
+            "code": "",
+            "type": "Open to non-addicts",
+            "desc": ""
+        },
+        {
+            "valid": false,
+            "tx": "O",
+            "code": "",
+            "type": "Chip",
+            "desc": ""
+        },
+        {
+            "valid": false,
+            "tx": "CC",
+            "type": "Closed Captions",
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "type": "LGBTQI+",
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "type": "Transgender",
+        },
+        {
+            "valid": false,
+            "tx": "LGBTQ2+",
+            "type": "Non-binary",
+        },
     ]
 }
