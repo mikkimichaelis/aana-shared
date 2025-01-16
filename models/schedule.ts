@@ -1,31 +1,37 @@
+import { groupBy } from 'lodash';
 import { DateTime } from 'luxon';
 import { IId, Id } from './id.class';
 import { Meeting, VerifiedStatus } from './meeting';
 import { RecurrenceType } from './recurrence';
+import assert from 'assert';
 
 export interface ISchedule extends IId {
-    hash: string;                       // computed hash of meeting details used to detect updates
-    updated: number;                    // last time meeting was updated or imported or created
     active: boolean;                    // is active?
     authorized: boolean;                // is authorized?  not sure what this was intended for
+    updated: number;                    // last time meeting was updated or imported or created
 
-    daily: boolean;                     // is this a daily meeting?
+    daily: any[];                     // is this a daily meeting?
     name: string;                       // name of the meeting
+    zid: string;                        // zoom id of the meeting
     mids: string[];                     // meeting ids belonging to this schedule (ordered by string compare)
+
+    occurrences: any[];                 // list of meeting occurrences for this schedule
 
     update(): ISchedule;                // update the schedule and compute hash
     addMeetings(meetings: Meeting[]): ISchedule;
 }
 
 export class Schedule extends Id implements ISchedule {
-    hash: string = '';
     updated: number = DateTime.now().toMillis();
     active: boolean = true;
     authorized: boolean = true;
 
-    daily: boolean = false;
+    daily: any[] = [];
     name: string = '';
+    zid: string = '';
     mids: string[] = [];
+
+    occurrences: any = [];
 
     constructor(schedule?: any) {
         super(schedule);
@@ -39,12 +45,6 @@ export class Schedule extends Id implements ISchedule {
             }
             else if (b.recurrence.type === RecurrenceType.CONTINUOUS) return 1;
 
-            // compare by startTime
-            if (a.recurrence.type === RecurrenceType.DAILY) {
-                if (a.startTime < b.startTime) return -1;
-                if (a.startTime > b.startTime) return 1;
-            }
-
             // compare by startDateTime
             if (a.recurrence.type === RecurrenceType.WEEKLY) {
                 if (a.startDateTime < b.startDateTime) return -1;
@@ -55,24 +55,60 @@ export class Schedule extends Id implements ISchedule {
     }
 
     addMeetings(meetings: Meeting[]): ISchedule {
-        this.mids = this.mids.concat(meetings.map(m => m.id));
+        assert(meetings.every(m => m.zid === this.zid), 'All meetings must have the same zid');
+        assert(meetings.every(m => m.name === this.name), 'All meetings must have the same name');
 
         meetings.forEach(m => m.sid = this.id);
+        this.mids = this.mids.concat(meetings.map(m => m.id));
 
+        // lets order acording to standard weekdays
+        meetings = meetings.sort((a, b) => {
+            const _a = Meeting.weekdays.findIndex((w) => w === a.recurrence.weekly_day)
+            const _b = Meeting.weekdays.findIndex((w) => w === b.recurrence.weekly_day)
+            if (_a < _b) return -1;
+            if (_a > _b) return 1;
+            return 0;
+        });
+
+        // now lets order each day by startDateTime
+        // @ts-ignore
+        const day_groups = groupBy(meetings, m => m.recurrence.weekly_day);
+        meetings = [];
+        for (const day in day_groups) {
+            meetings.push(...day_groups[day].sort((a, b) => {
+                if (a.startDateTime < b.startDateTime) return -1;
+                if (a.startDateTime > b.startDateTime) return 1;
+                return 0;
+            }));
+        }
+
+        // create an occurrence for each meeting
+        meetings.forEach(m => {
+            this.occurrences.push({
+                mid: m.id,
+                weekly_day: m.recurrence.weekly_day,
+                startDateTime: m.startDateTime,
+                endDateTime: m.endDateTime,
+                time24h: m.time24h,
+            });
+        });
+
+        // determine if this schedule is a daily schedule
         while (meetings.length > 6) {
-            // try to extract meetings per DOW with the same name and time as a Daily Meeting
+            // try to locate a meeting per DOW
             const weekdays = Meeting.weekdays.map(day => {
                 return meetings.find(sibling =>
-                    sibling.time24h === meetings[0].time24h
-                    && sibling.name === meetings[0].name
-                    && sibling.recurrence.weekly_day === day);
-            }).filter((sibling: any) => sibling);
+                    // lets actually ignore the time24h for now, we are just looking for every day of the week
+                    // sibling.time24h === meetings[0].time24h &&
+                    sibling.recurrence.weekly_day === day);
+            }).filter(m => m !== undefined);
 
-            // if we have 7 siblings at the same time, make them a single Daily Meeting
+            // if we have at least 7 siblings, this is a Daily Schedule
             if (weekdays.length === 7) {
-                this.daily = true;
+                this.daily.push({ startTime: Meeting.makeThat70sTime(weekdays[0].time24h).toMillis() });
                 meetings = meetings.filter(m => !weekdays.includes(m));
             } else {
+                // this meeting by meeting check probably isn't necessary but can't hurt.
                 meetings = meetings.slice(1);
             }
         }
@@ -90,10 +126,10 @@ export class Schedule extends Id implements ISchedule {
             return 0;
         });
 
-        const hash = this.computeHash();                // compute hash
-        if (hash !== this.hash) {                       // has anything changed?
-            this.hash = hash;
-        }
+        // const hash = this.computeHash();                // compute hash
+        // if (hash !== this.hash) {                       // has anything changed?
+        //     this.hash = hash;
+        // }
         return this;
     }
 
