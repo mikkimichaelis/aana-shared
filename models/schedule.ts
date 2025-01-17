@@ -31,7 +31,7 @@ export class Schedule extends Id implements ISchedule {
     zid: string = '';
     mids: string[] = [];
 
-    occurrences: any = [];
+    occurrences: any[] = [];
 
     constructor(schedule?: any) {
         super(schedule);
@@ -105,7 +105,7 @@ export class Schedule extends Id implements ISchedule {
 
             // if we have at least 7 siblings, this is a Daily Schedule
             if (weekdays.length === 7) {
-                this.daily.push({ startTime: Meeting.makeThat70sTime(weekdays[0].time24h).toMillis() });
+                this.daily.push(Meeting.makeThat70sTime(weekdays[0].time24h).toMillis());
                 meetings = meetings.filter(m => !weekdays.includes(m));
             } else {
                 // this meeting by meeting check probably isn't necessary but can't hurt.
