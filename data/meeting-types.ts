@@ -376,7 +376,7 @@ export const meetingData = {
             "desc": "This meeting is wheelchair accessible."
         },
         {
-            "valid": true,
+            "valid": false,
             "tx": "VM",
             "code": "WEB",
             "type": "Online Meeting",
@@ -531,31 +531,38 @@ export const meetingData = {
         {
             "valid": true,
             "tx": null,
+            "code": "2SLGBTQIA+",
+            "type": "2SLGBTQIA+",
+            "desc": "2SLGBTQIA+ meeting"
+        },
+        {
+            "valid": false,
+            "tx": '2SLGBTQIA+',
             "code": "LGBTQ2+",
             "type": "LGBTQ2+",
             "desc": "2SLGBTQIA+ meeting"
         },
         {
             "valid": false,
-            "tx": "LGBTQ2+",
+            "tx": "2SLGBTQIA+",
             "code": "LGBT",
             "type": "LGBT"
         },
         {
             "valid": false,
-            "tx": "LGBTQ2+",
+            "tx": "2SLGBTQIA+",
             "code": "LGBTQ",
             "type": "LGBTQ"
         },
         {
             "valid": false,
-            "tx": "LGBTQ2+",
+            "tx": "2SLGBTQIA+",
             "code": "Gay",
             "type": "Gay"
         },
         {
             "valid": false,
-            "tx": "LGBTQ2+",
+            "tx": "2SLGBTQIA+",
             "code": "Lesbian",
             "type": "Lesbian"
         },
